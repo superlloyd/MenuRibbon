@@ -1,0 +1,508 @@
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vsm="clr-namespace:System.Windows;assembly=System.Windows"
+	xmlns:c="clr-namespace:MenuRibbon.WPF.Controls"
+	xmlns:cm="clr-namespace:MenuRibbon.WPF.Controls.Menu"
+	xmlns:cr="clr-namespace:MenuRibbon.WPF.Controls.Ribbon"
+	xmlns:m="clr-namespace:MenuRibbon.WPF.Markup"
+	>
+
+	<!-- From MahAPP
+	MenuItemSelectionFill
+	MenuBackgroundBrush
+	ControlBorderBrush
+	HighlightBrush
+	ControlTextBrush
+	ControlBackgroundBrush
+	-->
+
+	<m:TextToUIConverter x:Key="Text2UICvt" Foreground="{x:Static SystemColors.ActiveCaptionTextBrush}"/>
+
+	<Style TargetType="{x:Type Button}" x:Key="IconButtonStyle">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ButtonBase}">
+					<Border
+							x:Name="Chrome"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							Margin="0"
+							Background="{TemplateBinding Background}"
+							SnapsToDevicePixels="True">
+						<ContentPresenter
+								ContentTemplate="{TemplateBinding ContentTemplate}"
+								Content="{TemplateBinding Content}"
+								ContentStringFormat="{TemplateBinding ContentStringFormat}"
+								HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+								Margin="{TemplateBinding Padding}"
+								RecognizesAccessKey="True"
+								SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+								VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Foreground" Value="{StaticResource ControlBorderBrush}" />
+		<Setter Property="Margin" Value="0,2,3,0"/>
+		<Setter Property="Padding" Value="5,2"/>
+		<Style.Triggers>
+			<Trigger Property="IsMouseOver" Value="True">
+				<Setter Property="Background" Value="{DynamicResource MenuItemSelectionFill}"/>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style x:Key="{x:Static cm:MenuItem.SeparatorStyleKey}" TargetType="Separator">
+		<Setter Property="Height" Value="1" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Separator">
+					<Border BorderBrush="{DynamicResource ControlBorderBrush}"
+							BorderThickness="1"
+							Margin="17,0,3,0" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="cm:MenuItem">
+		<Setter Property="Focusable" Value="True"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Padding" Value="2"/>
+		<Setter Property="BorderBrush" Value="{Binding Path=Root.BorderBrush, RelativeSource={RelativeSource Self}}" />
+		<Setter Property="Foreground" Value="{Binding Path=Root.Foreground, RelativeSource={RelativeSource Self}}" />
+		<Setter Property="Background" Value="{Binding Path=Root.Background, RelativeSource={RelativeSource Self}}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="cm:MenuItem">
+					<Grid Background="Transparent">
+						<!-- main content -->
+						<Border x:Name="PART_Header" Background="{TemplateBinding Background}"
+								BorderThickness="1,1,1,0" BorderBrush="Transparent"
+								Padding="{TemplateBinding Padding}">
+							<cm:MenuHeaderPanel>
+								<ContentPresenter 
+									x:Name="Column_Icon"
+									MinWidth="17"
+									VerticalAlignment="Center"
+									ContentSource="Icon" />
+								<ContentPresenter 
+									x:Name="Column_Header"
+									ContentSource="Header"
+									VerticalAlignment="Center"
+									/>
+								<ContentPresenter 
+									x:Name="Column_IGT"
+									Margin="8,1,8,1"
+									ContentSource="InputGestureText"
+									VerticalAlignment="Center"
+									/>
+								<Grid Margin="3,0,3,0" x:Name="Column_Arrow">
+									<Path
+										x:Name="PART_NextArrow"
+										HorizontalAlignment="Right"
+										VerticalAlignment="Center"
+										Fill="{TemplateBinding Foreground}"
+										Visibility="Collapsed"
+										Data="M 0,0 L 0,9 5,4.5"
+										/>
+								</Grid>
+							</cm:MenuHeaderPanel>
+						</Border>
+						<Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsOpen}" 
+							   PlacementTarget="{x:Reference PART_Header}" Placement="Right"
+								Focusable="false"
+								PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+								AllowsTransparency="True"
+							   >
+							<Border Background="{TemplateBinding Background}"
+									BorderBrush="{TemplateBinding BorderBrush}"
+									BorderThickness="1"
+									Padding="0,0,0,1"
+									>
+								<Grid>
+									<cm:MenuItemsPanel IsItemsHost="True" x:Name="PART_Items"/>
+								</Grid>
+							</Border>
+						</Popup>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsHighlighted" Value="True">
+							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MenuItemSelectionFill}"/>
+						</Trigger>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsTopLevel" Value="True"/>
+								<Condition Property="IsHighlighted" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource HighlightBrush}"/>
+						</MultiTrigger>
+						<Trigger Property="Role" Value="TopLevelHeader">
+							<Setter TargetName="PART_Popup" Property="Placement" Value="Bottom"/>
+						</Trigger>
+						<Trigger Property="Role" Value="SubmenuHeader">
+							<Setter TargetName="PART_NextArrow" Property="Visibility" Value="Visible"/>
+						</Trigger>
+						<Trigger Property="IsTopLevel" Value="True">
+							<Setter TargetName="Column_Icon" Property="MinWidth" Value="0"/>
+							<Setter TargetName="Column_IGT" Property="Visibility" Value="Collapsed"/>
+							<Setter TargetName="Column_Arrow" Property="Visibility" Value="Collapsed"/>
+						</Trigger>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsOpen" Value="True"/>
+								<Condition Property="IsTopLevel" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{Binding Root.BorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
+						</MultiTrigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+		<Style.Triggers>
+			<Trigger Property="IsTopLevel" Value="True">
+				<Setter Property="Padding" Value="6,0,6,2"/>
+			</Trigger>
+			<Trigger Property="IsChecked" Value="True">
+				<Setter Property="Icon" Value="{Binding Source=a, Converter={StaticResource Text2UICvt}, ConverterParameter=Webdings}"/>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style TargetType="cm:RibbonItem">
+		<Setter Property="Focusable" Value="True"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Padding" Value="6,0,6,2"/>
+		<Setter Property="Foreground" Value="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" />
+		<Setter Property="BorderBrush" Value="{Binding Path=BorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" />
+		<Setter Property="Background" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="cm:RibbonItem">
+					<Grid Background="Transparent">
+						<Border
+							x:Name="xxxBorderSelected"
+							Visibility="Hidden"
+							BorderThickness="0,0,0,3" Margin="0,0,0,-2" BorderBrush="{TemplateBinding Background}" 
+							/>
+						<!-- main content -->
+						<Border x:Name="PART_Header" Background="Transparent"
+								BorderThickness="1,1,1,0" BorderBrush="Transparent"
+								Padding="{TemplateBinding Padding}"
+								>
+								<ContentPresenter 
+									x:Name="Column_Header"
+									ContentSource="Header"
+									VerticalAlignment="Center"
+									/>
+						</Border>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsHighlighted" Value="True">
+							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MenuItemSelectionFill}"/>
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource HighlightBrush}"/>
+							<Setter TargetName="xxxBorderSelected" Property="Visibility" Value="Visible"/>
+						</Trigger>
+						<Trigger Property="IsPinned" Value="True">
+							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"/>
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource HighlightBrush}"/>
+							<Setter TargetName="xxxBorderSelected" Property="Visibility" Value="Visible"/>
+						</Trigger>
+						<!--<Trigger Property="IsOpen" Value="True">
+							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"/>
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource HighlightBrush}"/>
+							<Setter TargetName="xxxBorderSelected" Property="Visibility" Value="Visible"/>
+						</Trigger>-->
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="cm:MenuRibbon">
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="HorizontalContentAlignment" Value="Left"/>
+		<Setter Property="VerticalAlignment" Value="Top"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+		<Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}"/>
+		<Setter Property="ItemsPanel">
+			<Setter.Value>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Horizontal"/>
+				</ItemsPanelTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="cm:MenuRibbon">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<Border x:Name="PART_RibbonHeader"
+								Background="Transparent"
+								BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="{TemplateBinding BorderThickness}"
+								Panel.ZIndex="1"
+								>
+							<ItemsPresenter />
+						</Border>
+						<Popup x:Name="PART_Popup" IsOpen="False" 
+							   PlacementTarget="{x:Reference PART_RibbonHeader}" Width="{TemplateBinding ActualWidth}" 
+							   Height="{TemplateBinding RibbonHeight}"
+								Focusable="false"
+								PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+								AllowsTransparency="True"
+							   >
+							<Border Background="{TemplateBinding Background}"
+								BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="0,1,0,1"
+								>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="36"/>
+									</Grid.ColumnDefinitions>
+									<ContentPresenter  
+										Content="{Binding DroppedRibbonItem.Content, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+										ContentTemplate="{Binding DroppedRibbonItem.ContentTemplate, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+										ContentTemplateSelector="{Binding DroppedRibbonItem.ContentTemplateSelector, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
+										ContentStringFormat="{Binding DroppedRibbonItem.ContentStringFormat, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+										/>
+									<Button Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+											Style="{StaticResource IconButtonStyle}"
+											Command="{Binding TogglePinCommand, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
+											Content="{Binding Source='&#xE141;', Converter={StaticResource Text2UICvt}, ConverterParameter='Segoe UI Symbol'}"></Button>
+								</Grid>
+							</Border>
+						</Popup>
+						<Border Grid.Row="1" x:Name="PART_Pinned" Visibility="Collapsed" 
+								Background="Transparent"
+								BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="0,1,0,1"
+								>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="36"/>
+								</Grid.ColumnDefinitions>
+								<ContentPresenter 
+									Height="{TemplateBinding RibbonHeight}"
+									Content="{Binding PinnedRibbonItem.Content, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+									ContentTemplate="{Binding PinnedRibbonItem.ContentTemplate, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+									ContentTemplateSelector="{Binding PinnedRibbonItem.ContentTemplateSelector, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
+									ContentStringFormat="{Binding PinnedRibbonItem.ContentStringFormat, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+									/>
+								<Button Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+										Style="{StaticResource IconButtonStyle}"
+										Command="{Binding TogglePinCommand, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
+										Content="{Binding Source='&#xE0A0;', Converter={StaticResource Text2UICvt}, ConverterParameter='Segoe UI Symbol'}"></Button>
+							</Grid>
+						</Border>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<Trigger Property="RibbonDisplay" Value="Drop">
+							<Setter TargetName="PART_Popup" Property="IsOpen" Value="True"/>
+						</Trigger>
+						<Trigger Property="RibbonDisplay" Value="Pin">
+							<Setter TargetName="PART_Pinned" Property="Visibility" Value="Visible"/>
+						</Trigger>
+						
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="cr:RibbonBar">
+		<Setter Property="HorizontalAlignment" Value="Left"/>
+		<Setter Property="ItemsPanel">
+			<Setter.Value>
+				<ItemsPanelTemplate>
+					<cr:RibbonBarPanel />
+				</ItemsPanelTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<ItemsPresenter />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="cr:RibbonGroup">
+		<Setter Property="ItemsPanel">
+			<Setter.Value>
+				<ItemsPanelTemplate>
+					<cr:RibbonGroupPanel />
+				</ItemsPanelTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="cr:RibbonGroup">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="16"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<ItemsPresenter />
+						<ContentPresenter Grid.Row="1" ContentSource="Header" HorizontalAlignment="Center" />
+						<Border Grid.Column="1" Grid.RowSpan="2" Margin="1,3,1,3" BorderThickness="1,0,0,0" BorderBrush="LightGray"/>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+		<Style.Triggers>
+			<Trigger Property="cr:RibbonBarPanel.GroupSizeIndex" Value="0"/>
+			<Trigger Property="IsCollapsed" Value="True">
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="cr:RibbonGroup">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="Auto"/>
+								</Grid.ColumnDefinitions>
+								<c:ItemsButton Header="{TemplateBinding Header}" HeaderTemplate="{TemplateBinding HeaderTemplate}" LargeIcon="{Binding LargeIcon, RelativeSource={RelativeSource TemplatedParent}}">
+									<c:ItemsButton.ControlSizeDefinition>
+										<cr:RibbonControlSizeDefinition IconSize="Large"/>
+									</c:ItemsButton.ControlSizeDefinition>
+									<Grid>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="*"/>
+											<RowDefinition Height="16"/>
+										</Grid.RowDefinitions>
+										<ItemsPresenter MaxHeight="74" />
+										<ContentPresenter Grid.Row="1" ContentSource="Header" HorizontalAlignment="Center" />
+									</Grid>
+								</c:ItemsButton>
+								<Border Grid.Column="1" Grid.RowSpan="2" Margin="1,3,1,3" BorderThickness="1,0,0,0" BorderBrush="LightGray"/>
+							</Grid>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style TargetType="c:ItemsButton">
+		<Setter Property="Focusable" Value="True"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Padding" Value="1"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+		<Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="c:ItemsButton">
+					<Grid>
+						<StackPanel x:Name="PART_BUTTON" Orientation="Horizontal">
+							<!-- main content -->
+							<Border x:Name="PART_Header" Background="{TemplateBinding Background}" BorderThickness="1" BorderBrush="Transparent">
+								<StackPanel x:Name="PART_STACK_HEADER" Orientation="Horizontal" Margin="{TemplateBinding Padding}">
+									<ContentPresenter 
+										x:Name="PART_Image"
+										VerticalAlignment="Center"
+										Width="16" Height="16"/>
+									<ContentPresenter 
+										x:Name="Column_Header"
+										ContentSource="Header"
+										VerticalAlignment="Center"
+										/>
+									<Border x:Name="PART_ItemsArrow" Margin="2,0,2,0" BorderThickness="0,1,1,1" Visibility="Collapsed" BorderBrush="Transparent">
+										<Path
+											HorizontalAlignment="Center" VerticalAlignment="Center"
+											Fill="{TemplateBinding Foreground}"
+											Data="M 0,0 L 6,0 3,3.5"
+											/>
+									</Border>
+								</StackPanel>
+							</Border>
+							<Border x:Name="PART_Splitter" Margin="2,0,2,0" BorderThickness="0,1,1,1" Visibility="Collapsed" BorderBrush="Transparent">
+								<Path
+									HorizontalAlignment="Center" VerticalAlignment="Center"
+									Fill="{TemplateBinding Foreground}"
+									Data="M 0,0 L 6,0 3,3.5"
+									/>
+							</Border>
+						</StackPanel>
+						<Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsOpen}" 
+								PlacementTarget="{x:Reference PART_BUTTON}" Placement="Bottom"
+								Focusable="false"
+								PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+								AllowsTransparency="True"
+								>
+							<Border Background="{TemplateBinding Background}"
+									BorderBrush="{TemplateBinding BorderBrush}"
+									BorderThickness="1"
+									>
+								<Grid>
+									<cm:MenuItemsPanel IsItemsHost="True" x:Name="PART_Items"/>
+								</Grid>
+							</Border>
+						</Popup>
+					
+					</Grid>
+					<ControlTemplate.Triggers>
+						<DataTrigger Binding="{Binding ControlSizeDefinition.IconSize, RelativeSource={RelativeSource Self}}" Value="Large">
+							<Setter TargetName="PART_STACK_HEADER" Property="Orientation" Value="Vertical"/>
+							<Setter TargetName="PART_Image" Property="Width" Value="32"/>
+							<Setter TargetName="PART_Image" Property="Height" Value="32"/>
+							<Setter TargetName="PART_Header" Property="MinHeight" Value="70"/>
+							<Setter TargetName="PART_Image" Property="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LargeIcon}" />
+						</DataTrigger>
+						<DataTrigger Binding="{Binding ControlSizeDefinition.IconSize, RelativeSource={RelativeSource Self}}" Value="Small">
+							<Setter TargetName="PART_Image" Property="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SmallIcon}" />
+						</DataTrigger>
+						<DataTrigger Binding="{Binding ControlSizeDefinition.IconSize, RelativeSource={RelativeSource Self}}" Value="Collapsed">
+							<Setter TargetName="PART_Image" Property="Visibility" Value="Collapsed"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding ControlSizeDefinition.IsHeaderVisible, RelativeSource={RelativeSource Self}}" Value="False">
+							<Setter TargetName="Column_Header" Property="Visibility" Value="Collapsed"/>
+						</DataTrigger>
+						<Trigger Property="IsHighlighted" Value="True">
+							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MenuItemSelectionFill}"/>
+							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource HighlightBrush}"/>
+							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+						</Trigger>
+						<Trigger Property="IsOpen" Value="True">
+							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+						</Trigger>
+						<Trigger Property="IsSplitButton" Value="True">
+							<Setter TargetName="PART_Splitter" Property="Visibility" Value="Visible"/>
+						</Trigger>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsSplitButton" Value="False"/>
+								<Condition Property="HasItems" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="PART_ItemsArrow" Property="Visibility" Value="Visible"/>
+						</MultiTrigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+		<Style.Triggers>
+			<DataTrigger Binding="{Binding ControlSizeDefinition.IconSize, RelativeSource={RelativeSource Self}}" Value="Large">
+				<Setter Property="Icon" Value="{Binding LargeIcon, RelativeSource={RelativeSource Self}}"/>
+			</DataTrigger>
+			<DataTrigger Binding="{Binding ControlSizeDefinition.IconSize, RelativeSource={RelativeSource Self}}" Value="Small">
+				<Setter Property="Icon" Value="{Binding SmallIcon, RelativeSource={RelativeSource Self}}"/>
+			</DataTrigger>
+			<Trigger Property="IsChecked" Value="True">
+				<Setter Property="Icon" Value="{Binding Source=a, Converter={StaticResource Text2UICvt}, ConverterParameter=Webdings}"/>
+			</Trigger>
+		</Style.Triggers>	
+	</Style>
+	
+</ResourceDictionary>

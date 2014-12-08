@@ -1,0 +1,231 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using System.Net;
+using System.Reactive.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
+
+namespace MenuRibbon.WPF.Controls
+{
+	/// <summary>
+	/// Base class for a MenuRibbonItem that can act as either a HeaderedContentControl or an HeaderedItemsControl or just ContentControl. 
+	/// It contains general purporse properties which have little impact on ribbon behavior or each other.
+	/// <see cref="Menu.MenuItem"/> could either plain button, or drop down for more menu items or a single control.
+	/// </summary>
+	public class ActionHeaderedItemsControl : HeaderedItemsControl, ICommandSource
+	{
+		static ActionHeaderedItemsControl()
+		{
+		}
+
+		#region Click event
+
+		public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ActionHeaderedItemsControl));
+		public event RoutedEventHandler Click;
+
+		/// <summary>
+		/// Remark: this should be called by subclass. It will update checkable and call command
+		/// </summary>
+		public void OnClick() { OnClick(new RoutedEventArgs(ClickEvent, this)); }
+		protected virtual void OnClick(RoutedEventArgs e)
+		{
+			if (IsCheckable)
+			{
+				IsChecked = !IsChecked;
+			}
+
+			this.ExecuteCommand();
+
+			var he = Click;
+			if (he != null)
+			{
+				he.Invoke(this, e);
+			}
+		}
+
+		#endregion
+
+		#region IsCheckable, IsChecked, Icon
+
+		public bool IsCheckable
+		{
+			get { return (bool)GetValue(IsCheckableProperty); }
+			set { SetValue(IsCheckableProperty, value); }
+		}
+
+		public static readonly DependencyProperty IsCheckableProperty = DependencyProperty.Register(
+			"IsCheckable", typeof(bool), typeof(ActionHeaderedItemsControl)
+			, new PropertyMetadata(default(bool), (o, e) => ((ActionHeaderedItemsControl)o).OnIsCheckableChanged((bool)e.OldValue, (bool)e.NewValue)));
+
+		void OnIsCheckableChanged(bool OldValue, bool NewValue)
+		{
+		}
+
+		public bool IsChecked
+		{
+			get { return (bool)GetValue(IsCheckedProperty); }
+			set { SetValue(IsCheckedProperty, value); }
+		}
+
+		public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register(
+			"IsChecked", typeof(bool), typeof(ActionHeaderedItemsControl)
+			, new PropertyMetadata(default(bool), (o, e) => ((ActionHeaderedItemsControl)o).OnIsCheckedChanged((bool)e.OldValue, (bool)e.NewValue)));
+
+		void OnIsCheckedChanged(bool OldValue, bool NewValue)
+		{
+			if (NewValue)
+			{
+				OnChecked(new RoutedEventArgs(CheckedEvent));
+			}
+			else
+			{
+				OnUnchecked(new RoutedEventArgs(UncheckedEvent));
+			}
+		}
+
+		public static readonly RoutedEvent CheckedEvent = EventManager.RegisterRoutedEvent("Checked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ActionHeaderedItemsControl));
+		public static readonly RoutedEvent UncheckedEvent = EventManager.RegisterRoutedEvent("Unchecked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ActionHeaderedItemsControl));
+		protected virtual void OnChecked(RoutedEventArgs e)
+		{
+			RaiseEvent(e);
+		}
+		protected virtual void OnUnchecked(RoutedEventArgs e)
+		{
+			RaiseEvent(e);
+		}
+
+		public object Icon
+		{
+			get { return (object)GetValue(IconProperty); }
+			set { SetValue(IconProperty, value); }
+		}
+
+		public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
+			"Icon", typeof(object), typeof(ActionHeaderedItemsControl)
+			, new PropertyMetadata(default(object), (o, e) => ((ActionHeaderedItemsControl)o).OnIconChanged((object)e.OldValue, (object)e.NewValue)));
+
+		void OnIconChanged(object OldValue, object NewValue)
+		{
+		}
+
+		public string InputGestureText
+		{
+			get { return (string)GetValue(InputGestureTextProperty); }
+			set { SetValue(InputGestureTextProperty, value); }
+		}
+
+		public static readonly DependencyProperty InputGestureTextProperty = DependencyProperty.Register(
+			"InputGestureText", typeof(string), typeof(ActionHeaderedItemsControl)
+			, new PropertyMetadata(
+				string.Empty,
+				(o, e) => ((ActionHeaderedItemsControl)o).OnInputGestureTextChanged((string)e.OldValue, (string)e.NewValue),
+				new CoerceValueCallback((o, val) => ((ActionHeaderedItemsControl)o).OnCoerceInputGestureText((string)val))
+			));
+
+		void OnInputGestureTextChanged(string OldValue, string NewValue)
+		{
+		}
+
+		string OnCoerceInputGestureText(string value)
+		{
+			RoutedCommand c;
+			if (string.IsNullOrEmpty(value) && (c = Command as RoutedCommand) != null)
+			{
+				var col = c.InputGestures;
+				if ((col != null) && (col.Count >= 1))
+				{
+					for (int i = 0; i < col.Count; i++)
+					{
+						var kg = ((System.Collections.IList)col)[i] as KeyGesture;
+						if (kg != null)
+						{
+							return kg.GetDisplayStringForCulture(CultureInfo.CurrentCulture);
+						}
+					}
+				}
+			}
+
+			return value;
+		}
+
+		#endregion
+
+		#region ICommandSource
+
+		public ICommand Command
+		{
+			get { return (ICommand)GetValue(CommandProperty); }
+			set { SetValue(CommandProperty, value); }
+		}
+
+		public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+			"Command", typeof(ICommand), typeof(ActionHeaderedItemsControl)
+			, new PropertyMetadata(default(ICommand), (o, e) => ((ActionHeaderedItemsControl)o).OnCommandChanged((ICommand)e.OldValue, (ICommand)e.NewValue)));
+
+		void OnCommandChanged(ICommand OldValue, ICommand NewValue)
+		{
+			if (onCommandUpdated == null)
+				onCommandUpdated = (o, e) => UpdateFromCommand();
+			onCommandUpdated.HandleCommandChanged(OldValue, NewValue);
+			UpdateFromCommand();
+		}
+		EventHandler<EventArgs> onCommandUpdated;
+
+		protected virtual void UpdateFromCommand()
+		{
+			if (Command == null)
+			{
+				this.IsEnabled = true;
+			}
+			else
+			{
+				bool enabled = this.CanExecuteCommand();
+				this.IsEnabled = enabled;
+			}
+		}
+
+		public object CommandParameter
+		{
+			get { return (object)GetValue(CommandParameterProperty); }
+			set { SetValue(CommandParameterProperty, value); }
+		}
+
+		public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register(
+			"CommandParameter", typeof(object), typeof(ActionHeaderedItemsControl)
+			, new PropertyMetadata(default(object), (o, e) => ((ActionHeaderedItemsControl)o).OnCommandParameterChanged((object)e.OldValue, (object)e.NewValue)));
+
+		void OnCommandParameterChanged(object OldValue, object NewValue)
+		{
+			UpdateFromCommand();
+		}
+
+		public IInputElement CommandTarget
+		{
+			get { return (IInputElement)GetValue(CommandTargetProperty); }
+			set { SetValue(CommandTargetProperty, value); }
+		}
+
+		public static readonly DependencyProperty CommandTargetProperty = DependencyProperty.Register(
+			"CommandTarget", typeof(IInputElement), typeof(ActionHeaderedItemsControl)
+			, new PropertyMetadata(default(IInputElement), (o, e) => ((ActionHeaderedItemsControl)o).OnCommandTargetChanged((IInputElement)e.OldValue, (IInputElement)e.NewValue)));
+
+		protected virtual void OnCommandTargetChanged(IInputElement OldValue, IInputElement NewValue)
+		{
+			UpdateFromCommand();
+		}
+
+		#endregion
+	}
+}
