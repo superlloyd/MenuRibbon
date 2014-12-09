@@ -122,7 +122,12 @@
 									Padding="0,0,0,1"
 									>
 								<Grid>
-									<cm:MenuItemsPanel IsItemsHost="True" x:Name="PART_Items"/>
+									<cm:MenuItemsPanel 
+										IsItemsHost="True" x:Name="PART_Items" 
+										KeyboardNavigation.TabNavigation="Cycle" 
+										KeyboardNavigation.ControlTabNavigation="Cycle"
+										KeyboardNavigation.DirectionalNavigation="Contained"
+										/>
 								</Grid>
 							</Border>
 						</Popup>

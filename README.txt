@@ -3,7 +3,7 @@ Install-Package MahApps.Metro
 Install-Package Rx-Linq 
 
 Website
-https://menuribbon.codeplex.com/
+http://github.com/superlloyd/MenuRibbon
 
 About Ribbon
 http://msdn.microsoft.com/en-us/library/dn742393.aspx

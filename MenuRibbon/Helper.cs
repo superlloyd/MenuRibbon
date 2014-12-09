@@ -98,13 +98,34 @@ namespace MenuRibbon.WPF
 
 	public static class Helper
 	{
+		public static UIElement FirstFocusableElement(this object o)
+		{
+			Predicate<DependencyObject> where = x =>
+			{
+				var ui = x as UIElement;
+				if (ui == null || !ui.IsEnabled || !ui.Focusable || !ui.IsVisible)
+					return false;
+				return true;
+			};
+
+			var dp = o as DependencyObject;
+			if (dp == null)
+				return null;
+			if (where(dp))
+				return (UIElement)dp;
+			return dp.VisualChildren()
+				.Where(x => where(x))
+				.Select(x => (UIElement)x)
+				.FirstOrDefault();
+		}
+
 		public static object NextEnabledItem(this ItemsControl parent, object current, bool forward, bool cycle, Predicate<object> where = null)
 		{
 			return NextItem(parent, current, forward, cycle, x => parent.IsEnabledContainer(x) && (where == null || where(x)));
 		}
 		public static bool IsEnabledContainer(this ItemsControl parent, object item)
 		{
-			var c = parent.ContainerFromItemOrContainer(item) as UIElement;
+			var c = parent.ItemContainerGenerator.ContainerFromItem(item) as UIElement;
 			return c != null && c.IsEnabled;
 		}
 		public static object NextItem(this ItemsControl parent, object current, bool forward, bool cycle, Predicate<object> where = null)
@@ -117,7 +138,7 @@ namespace MenuRibbon.WPF
 				return where == null || where(it) ? it : null;
 			}
 
-			var index = parent.ItemContainerGenerator.IndexFromContainer(parent.ContainerFromItemOrContainer(current));
+			var index = parent.ItemContainerGenerator.IndexFromContainer(parent.ItemContainerGenerator.ContainerFromItem(current));
 			return Enumerable.Range(1, parent.Items.Count)
 				.Select(x => forward ? index + x : index - x)
 				.Select(x =>
@@ -132,13 +153,6 @@ namespace MenuRibbon.WPF
 				.Where(x => where == null || where(x))
 				.FirstOrDefault();
 		}
-		public static DependencyObject ContainerFromItemOrContainer(this ItemsControl parent, object itemOrContainer)
-		{
-			if (parent.IsItemItsOwnContainer(itemOrContainer))
-				return (DependencyObject)itemOrContainer;
-			return parent.ItemContainerGenerator.ContainerFromItem(itemOrContainer);
-		}
-
 
 		public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
 		{
@@ -200,6 +214,17 @@ namespace MenuRibbon.WPF
 			}
 		}
 
+		public static IEnumerable<DependencyObject> VisualChildren(this DependencyObject obj)
+		{
+			int N = VisualTreeHelper.GetChildrenCount(obj);
+			for (int i = 0; i < N; i++)
+			{
+				var child = VisualTreeHelper.GetChild(obj, i);
+				yield return child;
+				foreach (var subitem in child.VisualChildren())
+					yield return subitem;
+			}
+		}
 		public static IEnumerable<DependencyObject> VisualHierarchy(this DependencyObject element, bool includeLogical = true)
 		{
 			while (element != null)

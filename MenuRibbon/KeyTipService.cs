@@ -82,7 +82,7 @@ namespace MenuRibbon.WPF
 			}
 			else if (ev == Keyboard.PreviewGotKeyboardFocusEvent)
 			{
-
+				//Console.WriteLine("Focus to " + e.StagingItem.Input.Source);
 			}
 		}
 

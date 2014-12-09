@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MenuRibbon.WPF", "MenuRibbon\MenuRibbon.WPF.csproj", "{548A56B2-D54B-42E6-B321-649013867D62}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.csproj", "{1DA4D9BB-BFFF-49B9-879A-9B8ADB6833DF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8894CA16-71A0-4766-9FF9-C2B6734F5692}"
 	ProjectSection(SolutionItems) = preProject
@@ -24,10 +22,6 @@ Global
 		{548A56B2-D54B-42E6-B321-649013867D62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{548A56B2-D54B-42E6-B321-649013867D62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{548A56B2-D54B-42E6-B321-649013867D62}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1DA4D9BB-BFFF-49B9-879A-9B8ADB6833DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1DA4D9BB-BFFF-49B9-879A-9B8ADB6833DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1DA4D9BB-BFFF-49B9-879A-9B8ADB6833DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1DA4D9BB-BFFF-49B9-879A-9B8ADB6833DF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{83E03C74-50B6-495D-9313-C9EC0C57CDA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{83E03C74-50B6-495D-9313-C9EC0C57CDA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83E03C74-50B6-495D-9313-C9EC0C57CDA7}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -557,27 +557,27 @@ namespace MenuRibbon.WPF.Controls.Menu
 			{
 				return x =>
 				{
-					var c = parent.ContainerFromItemOrContainer(x);
+					var c = parent.ItemContainerGenerator.ContainerFromItem(x);
 					if (c is IPopupItem)
 						return true;
 					if (c is Separator)
 						return false;
-					var ui = c as UIElement;
-					return ui != null && ui.Focusable;
+					var first = c.FirstFocusableElement();
+					return first != null;
 				};
 			}
 			else
 			{
 				return x =>
 				{
-					var c = parent.ContainerFromItemOrContainer(x) as UIElement;
+					var c = parent.ItemContainerGenerator.ContainerFromItem(x) as UIElement;
 					return c != null && c.Focusable;
 				};
 			}
 		}
 		void NavigateToItem(ItemsControl parent, object item)
 		{
-			var c = parent.ContainerFromItemOrContainer(item);
+			var c = parent.ItemContainerGenerator.ContainerFromItem(item);
 			var p = c as IPopupItem;
 			if (p != null)
 			{
@@ -585,8 +585,15 @@ namespace MenuRibbon.WPF.Controls.Menu
 			}
 			else
 			{
-				var ui = c as UIElement;
-				ui.Focus();
+				var first = c.FirstFocusableElement();
+				if (first != null)
+				{
+					first.Focus();
+					//KeyboardNavigation.SetDirectionalNavigation(first, KeyboardNavigationMode.Continue);
+					//KeyboardNavigation.SetDirectionalNavigation(c, KeyboardNavigationMode.Continue);
+					var v2 = first.PredictFocus(FocusNavigationDirection.Down);
+					//Console.WriteLine("Focus from {0} WILL to {1}", first, v2);
+				}
 			}
 		}
 

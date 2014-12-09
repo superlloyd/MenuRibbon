@@ -308,7 +308,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 						e.Handled = true;
 						if (PopupManager.IsResponsive)
 						{
-							PopupManager.Enter(this.ContainerFromItemOrContainer(next) as IPopupItem, true);
+							PopupManager.Enter(this.ItemContainerGenerator.ContainerFromItem(next) as IPopupItem, true);
 						}
 						else
 						{
@@ -354,7 +354,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 						if (next != null)
 						{
 							e.Handled = true;
-							PopupManager.Enter(this.ContainerFromItemOrContainer(next) as IPopupItem, true);
+							PopupManager.Enter(this.ItemContainerGenerator.ContainerFromItem(next) as IPopupItem, true);
 						}
 						break;
 					}
