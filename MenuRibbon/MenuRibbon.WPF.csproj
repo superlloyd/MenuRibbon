@@ -84,6 +84,7 @@
     <Compile Include="Controls\Ribbon\RibbonGroup.cs" />
     <Compile Include="Controls\Ribbon\RibbonSizes.cs" />
     <Compile Include="Controls\Ribbon\RibbonGroupPanel.cs" />
+    <Compile Include="IPopupItem.cs" />
     <Compile Include="KeyTipService.cs" />
     <Compile Include="Markup\ImageExtension.cs" />
     <Compile Include="PopupRootTracker.cs" />

@@ -23,14 +23,6 @@ namespace MenuRibbon.WPF
 		void UpdatePopupRoot();
 		PopupManager PopupManager { get; }
 	}
-	public interface IPopupItem
-	{
-		bool IsOpen { get; set; }
-		bool IsHighlighted { get; set; }
-		IPopupItem ParentItem { get; }
-		IPopupRoot PopupRoot { get; }
-		bool Contains(DependencyObject target);
-	}
 
 	/// <summary>
 	/// This class handle nested popup in regard to open / close them and highlight them.

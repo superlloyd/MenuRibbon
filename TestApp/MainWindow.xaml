@@ -32,7 +32,10 @@
 					</mr:MenuItem>
 					<mr:MenuItem Header="test"/>
 				</mr:MenuItem>
-				<Grid>
+				<Grid 
+					KeyboardNavigation.IsTabStop="False"
+					KeyboardNavigation.TabNavigation="Continue" 
+					  >
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="*"/>

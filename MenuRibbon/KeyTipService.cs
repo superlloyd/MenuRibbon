@@ -197,6 +197,7 @@ namespace MenuRibbon.WPF
 				var t = (IInputElement)MenuRibbon.ItemContainerGenerator.ContainerFromItem(MenuRibbon.Items[0]);
 				FocusManager.SetIsFocusScope(MenuRibbon, true);
 				Keyboard.Focus(t);
+				MenuRibbon.PopupManager.IsResponsive = true;
 			}
 		}
 

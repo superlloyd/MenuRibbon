@@ -159,6 +159,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		#region IPopupItem: IsOpen, ParentItem, PopupRoot
 
+		void IPopupItem.Action() { OnClick(); }
 		IPopupRoot IPopupItem.PopupRoot { get { return Root; } }
 		IPopupItem IPopupItem.ParentItem { get { return ParentItem; } }
 		bool IPopupItem.Contains(DependencyObject target)
@@ -276,12 +277,18 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		class MenuItemContainer : ContentControl, IPopupItem
 		{
+			public MenuItemContainer()
+			{
+				Focusable = false;
+			}
+
 			public bool IsOpen
 			{
 				get { return false; }
 				set { }
 			}
 			public bool IsHighlighted { get; set; }
+			void IPopupItem.Action() {}
 			public IPopupItem ParentItem { get { return this.LogicalParent() as IPopupItem; } }
 			public IPopupRoot PopupRoot { get { return ParentItem.PopupRoot; } }
 			bool IPopupItem.Contains(DependencyObject target)
@@ -305,6 +312,70 @@ namespace MenuRibbon.WPF.Controls.Menu
 				base.OnMouseLeave(e);
 				RootAction(r => r.PopupManager.Exit(this));
 			}
+
+			public void SetContent(object content, DataTemplate tpl, DataTemplateSelector sel)
+			{
+				if (sel != null)
+				{
+					tpl = sel.SelectTemplate(content, this);
+				}
+				if (tpl != null)
+				{
+					var dp = tpl.LoadContent();
+					var fe = dp as FrameworkElement;
+					if (fe != null)
+						fe.DataContext = content;
+					content = dp;
+				}
+				Content = content as UIElement;
+			}
+
+			protected override void OnKeyDown(KeyEventArgs e)
+			{
+				this.OnKeyNavigate(e);
+				base.OnKeyDown(e);
+			}
+
+			//public UIElement Content
+			//{
+			//	get { return mContent; }
+			//	set
+			//	{
+			//		if (value == mContent)
+			//			return;
+			//		if (mContent != null)
+			//			base.RemoveVisualChild(mContent);
+			//		mContent = value;
+			//		if (mContent != null)
+			//			base.AddVisualChild(mContent);
+			//		InvalidateVisual();
+			//	}
+			//}
+			//UIElement mContent;
+			//
+			//protected override int VisualChildrenCount { get { return Content == null ? 0 : 1; } }
+			//protected override Visual GetVisualChild(int index) { return Content; }
+			//protected override void ArrangeCore(Rect finalRect)
+			//{
+			//	var ui = Content;
+			//	if (ui != null)
+			//	{
+			//		ui.Arrange(finalRect);
+			//	}
+			//}
+			//protected override Size MeasureCore(Size availableSize)
+			//{
+			//	var ui = Content;
+			//	if (ui != null)
+			//	{
+			//		ui.Measure(availableSize);
+			//		return ui.DesiredSize;
+			//	}
+			//	else
+			//	{
+			//		return Size.Empty;
+			//	}
+			//}
 		}
 
 		public ItemContainerTemplateSelector ItemContainerTemplateSelector
@@ -320,18 +391,22 @@ namespace MenuRibbon.WPF.Controls.Menu
 		protected override bool IsItemItsOwnContainerOverride(object item)
 		{
 			// It can take anything! ^^
-			return item is MenuItem || item is Separator || item is ContentPresenter;// MenuItemContainer;
+			return item is MenuItem || item is Separator || item is MenuItemContainer;
 		}
 		protected override DependencyObject GetContainerForItemOverride()
 		{
-			return new ContentPresenter();// MenuItemContainer();
+			var c = new MenuItemContainer();
+			//KeyboardNavigation.SetDirectionalNavigation(c, KeyboardNavigationMode.Once);
+			//KeyboardNavigation.SetControlTabNavigation(c, KeyboardNavigationMode.Once);
+			//KeyboardNavigation.SetTabNavigation(c, KeyboardNavigationMode.Once);
+			return c;
 		}
 		protected override void ClearContainerForItemOverride(DependencyObject element, object item)
 		{
 			base.ClearContainerForItemOverride(element, item);
-			if (element is ContentPresenter)
+			if (element is MenuItemContainer)
 			{
-				var mic = (ContentPresenter)element;
+				var mic = (MenuItemContainer)element;
 				mic.Content = null;
 			}
 		}
@@ -351,11 +426,10 @@ namespace MenuRibbon.WPF.Controls.Menu
 						sep.Style = st;
 				}
 			}
-			else if (element is ContentPresenter)
+			else if (element is MenuItemContainer)
 			{
-				var mic = (ContentPresenter)element;
-				mic.ContentTemplate = this.ItemTemplate;
-				mic.Content = item;
+				var mic = (MenuItemContainer)element;
+				mic.SetContent(item, this.ItemTemplate, this.ItemTemplateSelector);
 			}
 		}
 		internal void PrepareContainerForItemOverride(MenuItem element, object item)
@@ -428,173 +502,8 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
+			this.OnKeyNavigate(e);
 			base.OnKeyDown(e);
-
-			var key = e.Key;
-			if (this.FlowDirection == FlowDirection.RightToLeft)
-			{
-				switch (key)
-				{
-					case Key.Right:
-						key = Key.Left;
-						break;
-					case Key.Left:
-						key = Key.Right;
-						break;
-				}
-			}
-			bool shift = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
-			switch (key)
-			{
-				case Key.Tab:
-					if (Role == MenuItemRole.TopLevelItem || Role == MenuItemRole.TopLevelHeader)
-					{
-						e.Handled = NavigateTo(shift ? MenuNavigation.Left : MenuNavigation.Rigth);
-					}
-					else
-					{
-						e.Handled = NavigateTo(shift ? MenuNavigation.Up : MenuNavigation.Down);
-					}
-					break;
-				case Key.Escape:
-					if (Role == MenuItemRole.TopLevelItem || Role == MenuItemRole.TopLevelHeader)
-					{
-						KeyTipService.Current.RestoreFocusScope();
-					}
-					else
-					{
-						e.Handled = NavigateTo(MenuNavigation.Left);
-					}
-					break;
-				case Key.Right:
-					e.Handled = NavigateTo(MenuNavigation.Rigth);
-					break;
-				case Key.Left:
-					e.Handled = NavigateTo(MenuNavigation.Left);
-					break;
-				case Key.Up:
-					if (Role == MenuItemRole.TopLevelItem || Role == MenuItemRole.TopLevelHeader)
-					{
-						e.Handled = NavigateChildren();
-					}
-					else
-					{
-						e.Handled = NavigateTo(MenuNavigation.Up);
-					}
-					break;
-				case Key.Down:
-					if (Role == MenuItemRole.TopLevelItem || Role == MenuItemRole.TopLevelHeader)
-					{
-						e.Handled = NavigateChildren();
-					}
-					else
-					{
-						e.Handled = NavigateTo(MenuNavigation.Down);
-					}
-					break;
-				case Key.Enter:
-					switch (Role)
-					{
-						case MenuItemRole.SubmenuHeader:
-						case MenuItemRole.TopLevelHeader:
-							if (IsOpen)
-								this.Root.PopupManager.OpenedItem = this;
-							break;
-						case MenuItemRole.SubmenuItem:
-						case MenuItemRole.TopLevelItem:
-							OnClick();
-							break;
-					}
-					break;
-			}
-		}
-		protected internal virtual bool NavigateTo(MenuNavigation nav)
-		{
-			switch (nav)
-			{
-				case MenuNavigation.Up:
-				case MenuNavigation.Down:
-					{
-						var p = ItemsControl.ItemsControlFromItemContainer(this);
-						var next = p.NextEnabledItem(this, nav == MenuNavigation.Down, true, CanNavigateTo(p));
-						if (next == null)
-							return false;
-						NavigateToItem(p, next);
-						return true;
-					}
-				case MenuNavigation.Left:
-					{
-						var p = this;
-						while (p.ParentItem != null)
-							p = p.ParentItem;
-						return p.NavigateTo(MenuNavigation.Up);
-					}
-				case MenuNavigation.Rigth:
-					{
-						if (NavigateChildren())
-							return true;
-						var p = this;
-						while (p.ParentItem != null)
-							p = p.ParentItem;
-						return p.NavigateTo(MenuNavigation.Down);
-					}
-			}
-			return false;
-		}
-		protected internal virtual bool NavigateChildren()
-		{
-			if (!HasItems)
-				return false;
-			var first = this.NextEnabledItem(null, true, true, CanNavigateTo(this));
-			if (first == null)
-				return false;
-			NavigateToItem(this, first);
-			return true;
-		}
-		Predicate<object> CanNavigateTo(ItemsControl parent)
-		{
-			if (parent is MenuItem)
-			{
-				return x =>
-				{
-					var c = parent.ItemContainerGenerator.ContainerFromItem(x);
-					if (c is IPopupItem)
-						return true;
-					if (c is Separator)
-						return false;
-					var first = c.FirstFocusableElement();
-					return first != null;
-				};
-			}
-			else
-			{
-				return x =>
-				{
-					var c = parent.ItemContainerGenerator.ContainerFromItem(x) as UIElement;
-					return c != null && c.Focusable;
-				};
-			}
-		}
-		void NavigateToItem(ItemsControl parent, object item)
-		{
-			var c = parent.ItemContainerGenerator.ContainerFromItem(item);
-			var p = c as IPopupItem;
-			if (p != null)
-			{
-				Root.PopupManager.Enter(p, true);
-			}
-			else
-			{
-				var first = c.FirstFocusableElement();
-				if (first != null)
-				{
-					first.Focus();
-					//KeyboardNavigation.SetDirectionalNavigation(first, KeyboardNavigationMode.Continue);
-					//KeyboardNavigation.SetDirectionalNavigation(c, KeyboardNavigationMode.Continue);
-					var v2 = first.PredictFocus(FocusNavigationDirection.Down);
-					//Console.WriteLine("Focus from {0} WILL to {1}", first, v2);
-				}
-			}
 		}
 
 		#endregion

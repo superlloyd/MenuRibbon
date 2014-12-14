@@ -138,7 +138,9 @@ namespace MenuRibbon.WPF
 				return where == null || where(it) ? it : null;
 			}
 
-			var index = parent.ItemContainerGenerator.IndexFromContainer(parent.ItemContainerGenerator.ContainerFromItem(current));
+			// ItemContainerGenerator.ContainerFromItem can get confused if passed the container
+			var c = parent.IsItemItsOwnContainer(current) ? (DependencyObject)current : parent.ItemContainerGenerator.ContainerFromItem(current);
+			var index = parent.ItemContainerGenerator.IndexFromContainer(c);
 			return Enumerable.Range(1, parent.Items.Count)
 				.Select(x => forward ? index + x : index - x)
 				.Select(x =>

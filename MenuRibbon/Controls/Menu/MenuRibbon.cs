@@ -323,44 +323,6 @@ namespace MenuRibbon.WPF.Controls.Menu
 		double cumulativeWheelDelta;
 		private const double MouseWheelSelectionChangeThreshold = 100;
 
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			base.OnKeyDown(e);
-
-			var key = e.Key;
-			if (this.FlowDirection == FlowDirection.RightToLeft)
-			{
-				switch (key)
-				{
-					case Key.Right:
-						key = Key.Left;
-						break;
-					case Key.Left:
-						key = Key.Right;
-						break;
-				}
-			}
-			if (key == Key.Tab)
-			{
-				bool shift = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
-				key = shift ? Key.Left : Key.Right;
-			}
-			switch (key)
-			{
-				case Key.Right:
-				case Key.Left:
-					{
-						var next = this.NextEnabledItem(PopupManager.HighlightedItem, key == Key.Right, true);
-						if (next != null)
-						{
-							e.Handled = true;
-							PopupManager.Enter(this.ItemContainerGenerator.ContainerFromItem(next) as IPopupItem, true);
-						}
-						break;
-					}
-			}
-		}
-
 		#endregion
 
 		public PopupManager PopupManager

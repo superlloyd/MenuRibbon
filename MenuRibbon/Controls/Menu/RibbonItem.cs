@@ -97,6 +97,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		#region IPopupItem: IsOpen, ParentItem, PopupRoot
 
+		void IPopupItem.Action() { }
 		IPopupRoot IPopupItem.PopupRoot { get { return MenuRibbon; } }
 		IPopupItem IPopupItem.ParentItem { get { return null; } }
 		bool IPopupItem.Contains(DependencyObject target)
@@ -223,6 +224,12 @@ namespace MenuRibbon.WPF.Controls.Menu
 			var item = MenuRibbon.ItemContainerGenerator.ItemFromContainer(this);
 			MenuRibbon.PinnedItem = item;
 			MenuRibbon.PopupManager.Enter(this, true);
+		}
+
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			this.OnKeyNavigate(e);
+			base.OnKeyDown(e);
 		}
 
 		#endregion

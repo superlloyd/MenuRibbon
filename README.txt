@@ -48,7 +48,7 @@ HeaderedContentControl
 	RibbonItem ([PopupItem])
 
 
-Keyboard Handling:
+Keyboard Handling Tips:
 MS Ribbon Sample: KeyTipService, InputManager.Current.(Pre/Post)ProcessInput
 		InputManager.Current.PostProcessInput += new ProcessInputEventHandler(PostProcessInput);
 		InputManager.Current.PreProcessInput += new PreProcessInputEventHandler(PreProcessInput);
@@ -58,3 +58,5 @@ MS (Menu)Item: OnKeyDown +> handle tab and arrow, move focus
 		KeyboardNavigation.DirectionalNavigationProperty.OverrideMetadata(typeof(Menu), new FrameworkPropertyMetadata(KeyboardNavigationMode.Cycle));
 		EventManager.RegisterClassHandler(typeof(Menu), AccessKeyManager.AccessKeyPressedEvent, new AccessKeyPressedEventHandler(OnAccessKeyPressed));
 KeyTipService singleton
+Keyboard.Focus(null); => restore keyboard to outside FocusScope
+
