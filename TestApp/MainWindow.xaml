@@ -65,9 +65,11 @@
 				<mr:MenuItem Header="test"/>
 			</mr:MenuItem>
 			<mr:MenuItem Header="bloo-x">
+				<TextBlock Background="#E8E8E8" FontSize="12" Height="16">Header 1</TextBlock>
 				<mr:MenuItem Header="test"/>
 				<mr:MenuItem Header="test"/>
 				<Separator/>
+				<TextBlock Background="#E8E8E8" FontSize="12" Height="16">Header 2</TextBlock>
 				<mr:MenuItem Header="Content">
 					<StackPanel Orientation="Vertical" Background="AliceBlue">
 						<TextBlock>fhfjekf</TextBlock>
@@ -472,23 +474,42 @@
 
 			<RichTextBox Height="96"></RichTextBox>
 
-			<mr:ItemsButton Width="120"
-							Header="Hello 1 :)" 
-							LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-							SmallIcon="{mr:Image connected_48.png}"
-							>
-				<mr:MenuItem Header="Ahloha?">
+			<StackPanel Orientation="Horizontal">
+				<mr:ItemsButton Width="120"
+								Header="Hello 1 :)" 
+								LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+								SmallIcon="{mr:Image connected_48.png}"
+								>
+					<mr:MenuItem Header="Ahloha?">
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:MenuItem>
 					<mr:MenuItem Header="1"/>
 					<mr:MenuItem Header="12"/>
+					<Button Content="zapatap" MinWidth="75" Height="28"/>
 					<mr:MenuItem Header="13"/>
 					<mr:MenuItem Header="14"/>
-				</mr:MenuItem>
-				<mr:MenuItem Header="1"/>
-				<mr:MenuItem Header="12"/>
-				<Button Content="zapatap" MinWidth="75" Height="28"/>
-				<mr:MenuItem Header="13"/>
-				<mr:MenuItem Header="14"/>
-			</mr:ItemsButton>
+				</mr:ItemsButton>
+				<mr:ItemsButton Width="120" IsSplitButton="True"
+								Header="Hello 1 :)" 
+								LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+								SmallIcon="{mr:Image connected_48.png}"
+								>
+					<mr:MenuItem Header="Ahloha?">
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:MenuItem>
+					<mr:MenuItem Header="1"/>
+					<mr:MenuItem Header="12"/>
+					<Button Content="zapatap" MinWidth="75" Height="28"/>
+					<mr:MenuItem Header="13"/>
+					<mr:MenuItem Header="14"/>
+				</mr:ItemsButton>
+			</StackPanel>
 
 
 		</StackPanel>

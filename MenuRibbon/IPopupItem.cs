@@ -93,7 +93,7 @@ namespace MenuRibbon.WPF
 						if (item.HasItems())
 						{
 							item.PopupRoot.PopupManager.OpenedItem = item;
-							item.EnabledChildren().FirstOrDefault().NavigateItem();
+							item.EnabledChildren().Focusable().FirstOrDefault().NavigateItem();
 						}
 						else
 						{
@@ -124,7 +124,7 @@ namespace MenuRibbon.WPF
 					if (isRoot)
 					{
 						item.PopupRoot.PopupManager.OpenedItem = item;
-						item.EnabledChildren().FirstOrDefault().NavigateItem();
+						item.EnabledChildren().Focusable().FirstOrDefault().NavigateItem();
 					}
 					else
 					{
@@ -136,7 +136,7 @@ namespace MenuRibbon.WPF
 					if (isRoot)
 					{
 						item.PopupRoot.PopupManager.OpenedItem = item;
-						item.EnabledChildren().FirstOrDefault().NavigateItem();
+						item.EnabledChildren().Focusable().FirstOrDefault().NavigateItem();
 					}
 					else
 					{
@@ -150,6 +150,14 @@ namespace MenuRibbon.WPF
 			}
 		}
 
+		public static IEnumerable<IPopupItem> Focusable(this IEnumerable<IPopupItem> list)
+		{
+			return list.Where(x =>
+			{
+				var ui = x as UIElement;
+				return ui != null && ui.FirstFocusableElement() != null;
+			});
+		}
 		public static IEnumerable<IPopupItem> NextEnabledSiblings(this IPopupItem start, bool forward, bool cycle)
 		{
 			var parent = ItemsControl.ItemsControlFromItemContainer((DependencyObject)start);
@@ -202,7 +210,7 @@ namespace MenuRibbon.WPF
 
 		public static IPopupItem NavigateSibling(this IPopupItem item, bool forward, bool cycle)
 		{
-			var it = item.NextEnabledSiblings(forward, cycle).FirstOrDefault();
+			var it = item.NextEnabledSiblings(forward, cycle).Focusable().FirstOrDefault();
 			if (it != null)
 				it.NavigateItem();
 			return it;
