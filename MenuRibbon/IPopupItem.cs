@@ -92,11 +92,12 @@ namespace MenuRibbon.WPF
 					{
 						if (item.HasItems())
 						{
-							item.FirstChild().NavigateItem();
+							item.PopupRoot.PopupManager.OpenedItem = item;
+							item.EnabledChildren().FirstOrDefault().NavigateItem();
 						}
 						else
 						{
-							top.NavigateSibling(true, true);
+							pm.OpenedItem = top.NavigateSibling(true, true);
 						}
 					}
 					e.Handled = true;
@@ -114,7 +115,7 @@ namespace MenuRibbon.WPF
 						}
 						else
 						{
-							top.NavigateSibling(false, true);
+							pm.OpenedItem = top.NavigateSibling(false, true);
 						}
 					}
 					e.Handled = true;
@@ -122,9 +123,8 @@ namespace MenuRibbon.WPF
 				case Key.Up:
 					if (isRoot)
 					{
-						var first = item.FirstChild();
-						if (first != null)
-							first.NavigateItem();
+						item.PopupRoot.PopupManager.OpenedItem = item;
+						item.EnabledChildren().FirstOrDefault().NavigateItem();
 					}
 					else
 					{
@@ -135,9 +135,8 @@ namespace MenuRibbon.WPF
 				case Key.Down:
 					if (isRoot)
 					{
-						var first = item.FirstChild();
-						if (first != null)
-							first.NavigateItem();
+						item.PopupRoot.PopupManager.OpenedItem = item;
+						item.EnabledChildren().FirstOrDefault().NavigateItem();
 					}
 					else
 					{
@@ -151,15 +150,15 @@ namespace MenuRibbon.WPF
 			}
 		}
 
-		public static IPopupItem NextEnabledSibling(this IPopupItem item, bool next, bool cycle)
+		public static IEnumerable<IPopupItem> NextEnabledSiblings(this IPopupItem start, bool forward, bool cycle)
 		{
-			var parent = ItemsControl.ItemsControlFromItemContainer((DependencyObject)item);
+			var parent = ItemsControl.ItemsControlFromItemContainer((DependencyObject)start);
 			if (parent.Items.Count == 1)
-				return item;
+				return new IPopupItem[0];
 
-			var index = parent.ItemContainerGenerator.IndexFromContainer((DependencyObject)item);
+			var index = parent.ItemContainerGenerator.IndexFromContainer((DependencyObject)start);
 			return Enumerable.Range(1, parent.Items.Count)
-				.Select(x => next ? index + x : index - x)
+				.Select(x => forward ? index + x : index - x)
 				.Select(x =>
 				{
 					if (x < 0)
@@ -168,27 +167,53 @@ namespace MenuRibbon.WPF
 						return cycle ? x - parent.Items.Count : parent.Items.Count - 1;
 					return x;
 				})
+				.Distinct()
 				.Select(x => parent.Items[x])
+				.Select(x => parent.IsItemItsOwnContainer(x) ? x : parent.ItemContainerGenerator.ContainerFromItem(x))
 				.Where(x =>
 				{
+					if (!(x is IPopupItem)) return false;
 					var ui = x as UIElement;
 					return ui != null && ui.IsEnabled && ui.IsVisible;
 				})
-				.Select(x => (IPopupItem)(parent.IsItemItsOwnContainer(x) ? x : parent.ItemContainerGenerator.ContainerFromItem(x)))
-				.FirstOrDefault();
+				.Select(x => (IPopupItem)x)
+				;
 		}
-		public static void NavigateSibling(this IPopupItem item, bool next, bool cycle)
+		public static IEnumerable<IPopupItem> EnabledChildren(this IPopupItem parent)
 		{
-			var it = item.NextEnabledSibling(next, cycle);
-			it.NavigateItem();
+			var ic = parent as ItemsControl;
+			if (ic == null)
+				return new IPopupItem[0];
+
+			if (ic.ItemContainerGenerator.Status != System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
+			{
+				ic.ItemContainerGenerator.GenerateBatches().Dispose();
+			}
+			return ic.Items.Cast<object>()
+				.Select(x => (IPopupItem)(ic.IsItemItsOwnContainer(x) ? x : ic.ItemContainerGenerator.ContainerFromItem(x)))
+				.Where(x =>
+				{
+					if (!(x is IPopupItem)) return false;
+					var ui = x as UIElement;
+					return ui != null && ui.IsEnabled && ui.IsVisible; // ui.Visible might be problematic, but better make it work
+				})
+				;
 		}
-		public static void NavigateItem(this IPopupItem item)
+
+		public static IPopupItem NavigateSibling(this IPopupItem item, bool forward, bool cycle)
+		{
+			var it = item.NextEnabledSiblings(forward, cycle).FirstOrDefault();
+			if (it != null)
+				it.NavigateItem();
+			return it;
+		}
+		public static IPopupItem NavigateItem(this IPopupItem item)
 		{
 			if (item == null)
-				return;
+				return null;
 			var pm = item.PopupRoot.PopupManager;
 			if (!pm.IsResponsive)
-				return;
+				return null;
 
 			pm.OpenedItem = item.ParentItem;
 			pm.HighlightedItem = item;
@@ -196,26 +221,18 @@ namespace MenuRibbon.WPF
 			var c = item.FirstFocusableElement();
 			if (c != null)
 				c.Focus();
+			return item;
 		}
-		public static void Quit(this IPopupItem item)
-		{
-			KeyTipService.Current.RestoreFocusScope();
-		}
-
 		public static bool HasItems(this IPopupItem item)
 		{
 			var ic = item as ItemsControl;
 			return ic != null && ic.Items.Count > 0;
 		}
-		public static IPopupItem FirstChild(this IPopupItem item)
+
+		public static void Quit(this IPopupItem item)
 		{
-			var ic = item as ItemsControl;
-			if (ic.ItemContainerGenerator.Status != System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
-			{
-				ic.ItemContainerGenerator.GenerateBatches().Dispose();
-			}
-			var c = ic.ItemContainerGenerator.ContainerFromItem(ic.Items[0]);
-			return c as IPopupItem;
+			KeyTipService.Current.RestoreFocusScope();
 		}
+
 	}
 }

@@ -229,7 +229,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		protected override DependencyObject GetContainerForItemOverride()
 		{
-			return new MenuItem();
+			return new Menu.MenuItem();
 		}
 		protected override bool IsItemItsOwnContainerOverride(object item)
 		{
@@ -241,9 +241,9 @@ namespace MenuRibbon.WPF.Controls.Menu
 		}
 		protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
 		{
-			if (element is MenuItem)
+			if (element is Menu.MenuItem)
 			{
-				var mi = (MenuItem)element;
+				var mi = (Menu.MenuItem)element;
 				mi.PrepareContainerForItemOverride(mi, item);
 			}
 			else
@@ -279,7 +279,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 					bool forward = cumulativeWheelDelta < 0;
 					cumulativeWheelDelta = 0;
 
-					object selected = null;
+					IPopupItem selected = null;
 					if (PopupManager.IsResponsive)
 					{
 						if (PopupManager.HighlightedItem != null)
@@ -291,28 +291,25 @@ namespace MenuRibbon.WPF.Controls.Menu
 					}
 					else
 					{
-						selected = PinnedItem;
+						var item = PinnedItem;
+						selected = IsItemItsOwnContainer(item) ? (IPopupItem)item : (IPopupItem)ItemContainerGenerator.ContainerFromItem(item);
 					}
 
-					var next = this.NextEnabledItem(selected, forward, false, x => {
-						if (PopupManager.IsResponsive)  { return true; }
-						else 
-						{
-							var it = ItemContainerGenerator.ContainerFromItem(x);
-							return it is RibbonItem;
-						}
-					});
+					var next = selected
+						.NextEnabledSiblings(forward, false)
+						.Where(x => PopupManager.IsResponsive || x is RibbonItem)
+						.FirstOrDefault();
 
 					if (next != null && next != selected)
 					{
 						e.Handled = true;
 						if (PopupManager.IsResponsive)
 						{
-							PopupManager.Enter(this.ItemContainerGenerator.ContainerFromItem(next) as IPopupItem, true);
+							PopupManager.Enter(next, true);
 						}
 						else
 						{
-							PinnedItem = next;
+							PinnedItem = ItemContainerGenerator.ItemFromContainer((DependencyObject)next);
 						}
 					}
 				}

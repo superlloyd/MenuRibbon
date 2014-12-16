@@ -75,7 +75,9 @@
   <ItemGroup>
     <Compile Include="CommandTool.cs" />
     <Compile Include="Controls\ActionHeaderedItemsControl.cs" />
-    <Compile Include="Controls\Menu\MenuItem.cs" />
+    <Compile Include="Controls\Menu\MenuItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Controls\Menu\MenuPanels.cs" />
     <Compile Include="Controls\Menu\RibbonItem.cs" />
     <Compile Include="Controls\Ribbon\RibbonBarPanel.cs" />

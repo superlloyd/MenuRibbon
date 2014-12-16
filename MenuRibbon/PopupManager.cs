@@ -93,7 +93,7 @@ namespace MenuRibbon.WPF
 				if (value)
 				{
 					FocusManager.SetIsFocusScope(FocusManager.GetFocusScope((DependencyObject)popupRoot), true);
-					OpenedItem = HighlightedItem;
+					//OpenedItem = HighlightedItem;
 				}
 				else
 				{

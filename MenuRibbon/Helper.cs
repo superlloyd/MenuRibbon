@@ -119,43 +119,6 @@ namespace MenuRibbon.WPF
 				.FirstOrDefault();
 		}
 
-		public static object NextEnabledItem(this ItemsControl parent, object current, bool forward, bool cycle, Predicate<object> where = null)
-		{
-			return NextItem(parent, current, forward, cycle, x => parent.IsEnabledContainer(x) && (where == null || where(x)));
-		}
-		public static bool IsEnabledContainer(this ItemsControl parent, object item)
-		{
-			var c = parent.ItemContainerGenerator.ContainerFromItem(item) as UIElement;
-			return c != null && c.IsEnabled;
-		}
-		public static object NextItem(this ItemsControl parent, object current, bool forward, bool cycle, Predicate<object> where = null)
-		{
-			if (parent.Items.Count == 0)
-				return null;
-			if (current == null || parent.Items.Count == 1)
-			{
-				var it = parent.Items[0];
-				return where == null || where(it) ? it : null;
-			}
-
-			// ItemContainerGenerator.ContainerFromItem can get confused if passed the container
-			var c = parent.IsItemItsOwnContainer(current) ? (DependencyObject)current : parent.ItemContainerGenerator.ContainerFromItem(current);
-			var index = parent.ItemContainerGenerator.IndexFromContainer(c);
-			return Enumerable.Range(1, parent.Items.Count)
-				.Select(x => forward ? index + x : index - x)
-				.Select(x =>
-				{
-					if (x < 0)
-						return cycle ? x + parent.Items.Count : 0;
-					if (x > parent.Items.Count - 1)
-						return cycle ? x - parent.Items.Count : parent.Items.Count - 1;
-					return x;
-				})
-				.Select(x => parent.Items[x])
-				.Where(x => where == null || where(x))
-				.FirstOrDefault();
-		}
-
 		public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
 		{
 			foreach (var item in source)
