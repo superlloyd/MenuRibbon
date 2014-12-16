@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="CommandTool.cs" />
     <Compile Include="Controls\ActionHeaderedItemsControl.cs" />
+    <Compile Include="Controls\BasePopupItem.cs" />
     <Compile Include="Controls\Menu\MenuItem.cs">
       <SubType>Code</SubType>
     </Compile>

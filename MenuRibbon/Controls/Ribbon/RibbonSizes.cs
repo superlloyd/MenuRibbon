@@ -30,6 +30,22 @@ namespace MenuRibbon.WPF.Controls.Ribbon
 		public double MinWidth { get; set; }
 		public double MaxWidth { get; set; }
 		public double Width { get; set; }
+
+		public static readonly RibbonControlSizeDefinition Small = new RibbonControlSizeDefinition
+		{
+			IconSize = RibbonIconSize.Small,
+			IsHeaderVisible = false,
+		};
+		public static readonly RibbonControlSizeDefinition Medium = new RibbonControlSizeDefinition
+		{
+			IconSize = RibbonIconSize.Small,
+			IsHeaderVisible = true,
+		};
+		public static readonly RibbonControlSizeDefinition Large = new RibbonControlSizeDefinition
+		{
+			IconSize = RibbonIconSize.Large,
+			IsHeaderVisible = true,
+		};
 	}
 
 	[ContentProperty("ControlSizeDefinitions")]

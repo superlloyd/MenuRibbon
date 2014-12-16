@@ -140,9 +140,6 @@ namespace MenuRibbon.WPF
 				if (value == HighlightedItem)
 					return;
 
-				if (value != null)
-					KeyTipService.Current.CaptureFocusScope();
-
 				PathDiff(HighlightedItem, value, PTarget.Highlight);
 				highlightedItem = value;
 

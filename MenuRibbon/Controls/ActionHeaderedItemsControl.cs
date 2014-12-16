@@ -21,7 +21,7 @@ namespace MenuRibbon.WPF.Controls
 {
 	/// <summary>
 	/// Base class for a MenuRibbonItem that can act as either a HeaderedContentControl or an HeaderedItemsControl or just ContentControl. 
-	/// It contains general purporse properties which have little impact on ribbon behavior or each other.
+	/// It contains general purpose properties which have little impact on ribbon behavior or each other.
 	/// <see cref="Menu.MenuItem"/> could either plain button, or drop down for more menu items or a single control.
 	/// </summary>
 	public class ActionHeaderedItemsControl : HeaderedItemsControl, ICommandSource

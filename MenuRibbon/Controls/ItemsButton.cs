@@ -16,7 +16,7 @@ namespace MenuRibbon.WPF.Controls
 		RibbonControlSizeDefinition ControlSizeDefinition { get; set; }
 	}
 
-	public partial class ItemsButton : MM.MenuItem, IPopupRoot, IRibbonGroupControl
+	public partial class ItemsButton : BasePopupItem, IPopupRoot, IRibbonGroupControl
 	{
 		static ItemsButton()
 		{
@@ -37,7 +37,7 @@ namespace MenuRibbon.WPF.Controls
 
 		static readonly DependencyProperty ControlSizeDefinitionProperty = DependencyProperty.Register(
 			"ControlSizeDefinition", typeof(RibbonControlSizeDefinition), typeof(ItemsButton), new FrameworkPropertyMetadata(
-				null,
+				RibbonControlSizeDefinition.Medium,
 				FrameworkPropertyMetadataOptions.AffectsMeasure 
 				| FrameworkPropertyMetadataOptions.AffectsParentMeasure
 				,new PropertyChangedCallback((o, e) => ((ItemsButton)o).OnControlSizeDefinitionChanged((RibbonControlSizeDefinition)e.OldValue, (RibbonControlSizeDefinition)e.NewValue)

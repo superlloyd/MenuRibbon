@@ -472,6 +472,25 @@
 
 			<RichTextBox Height="96"></RichTextBox>
 
+			<mr:ItemsButton Width="120"
+							Header="Hello 1 :)" 
+							LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+							SmallIcon="{mr:Image connected_48.png}"
+							>
+				<mr:MenuItem Header="Ahloha?">
+					<mr:MenuItem Header="1"/>
+					<mr:MenuItem Header="12"/>
+					<mr:MenuItem Header="13"/>
+					<mr:MenuItem Header="14"/>
+				</mr:MenuItem>
+				<mr:MenuItem Header="1"/>
+				<mr:MenuItem Header="12"/>
+				<Button Content="zapatap" MinWidth="75" Height="28"/>
+				<mr:MenuItem Header="13"/>
+				<mr:MenuItem Header="14"/>
+			</mr:ItemsButton>
+
+
 		</StackPanel>
 
 	</Grid>
