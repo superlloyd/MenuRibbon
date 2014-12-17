@@ -123,6 +123,11 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		#region TogglePinCommand
 
+		public void TogglePin()
+		{
+			this.IsPinning = !this.IsPinning;
+		}
+
 		public ICommand TogglePinCommand
 		{
 			get
@@ -149,10 +154,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 				remove { }
 			}
 
-			void ICommand.Execute(object parameter)
-			{
-				ribbon.IsPinning = !ribbon.IsPinning;
-			}
+			void ICommand.Execute(object parameter) { ribbon.TogglePin(); }
 		}
 
 		#endregion
@@ -296,7 +298,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 					}
 
 					var next = selected
-						.NextEnabledSiblings(forward, false)
+						.PopupSiblings(forward, false)
 						.Where(x => PopupManager.IsResponsive || x is RibbonItem)
 						.FirstOrDefault();
 

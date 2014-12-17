@@ -103,7 +103,7 @@ namespace MenuRibbon.WPF
 			Predicate<DependencyObject> where = x =>
 			{
 				var ui = x as UIElement;
-				if (ui == null || !ui.IsEnabled || !ui.Focusable || !ui.IsVisible)
+				if (ui == null || !ui.IsEnabled || !ui.Focusable || !ui.IsVisible || !System.Windows.Input.KeyboardNavigation.GetIsTabStop(ui))
 					return false;
 				return true;
 			};

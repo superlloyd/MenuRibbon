@@ -7,6 +7,14 @@
 		ResizeMode="CanResizeWithGrip"
 		GlowBrush="{DynamicResource AccentColorBrush}"
         Title="MainWindow" Height="350" Width="525">
+	<metro:MetroWindow.Resources>
+		<Style x:Key="HeaderStyle"  TargetType="TextBlock">
+			<Setter Property="Background" Value="#E8E8E8"/>
+			<Setter Property="Padding" Value="6,3"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Foreground" Value="#6D6D6D"/>
+		</Style>
+	</metro:MetroWindow.Resources>
     <Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
@@ -33,15 +41,13 @@
 					<mr:MenuItem Header="test"/>
 				</mr:MenuItem>
 				<Grid 
-					KeyboardNavigation.IsTabStop="False"
-					KeyboardNavigation.TabNavigation="Continue" 
 					  >
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"/>
 						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
 					<TextBlock>X:</TextBlock>
-					<Slider Grid.Column="1"/>
+					<Slider KeyboardNavigation.IsTabStop="True" Grid.Column="1"/>
 				</Grid>
 				<mr:MenuItem Header="test"/>
 				<mr:MenuItem Header="test"/>
@@ -65,12 +71,14 @@
 				<mr:MenuItem Header="test"/>
 			</mr:MenuItem>
 			<mr:MenuItem Header="bloo-x">
-				<TextBlock Background="#E8E8E8" FontSize="12" Height="16">Header 1</TextBlock>
+				<TextBlock Style="{StaticResource HeaderStyle}">Header 1</TextBlock>
 				<mr:MenuItem Header="test"/>
 				<mr:MenuItem Header="test"/>
 				<Separator/>
-				<TextBlock Background="#E8E8E8" FontSize="12" Height="16">Header 2</TextBlock>
+				<mr:MenuItem Header="test"/>
+				<TextBlock Style="{StaticResource HeaderStyle}">Header 2</TextBlock>
 				<mr:MenuItem Header="Content">
+					<mr:MenuItem Header="test"/>
 					<StackPanel Orientation="Vertical" Background="AliceBlue">
 						<TextBlock>fhfjekf</TextBlock>
 						<Button>cdkj</Button>
@@ -480,6 +488,7 @@
 								LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
 								SmallIcon="{mr:Image connected_48.png}"
 								>
+					<TextBlock Style="{StaticResource HeaderStyle}">Stuff</TextBlock>
 					<mr:MenuItem Header="Ahloha?">
 						<mr:MenuItem Header="1"/>
 						<mr:MenuItem Header="12"/>
@@ -488,9 +497,14 @@
 					</mr:MenuItem>
 					<mr:MenuItem Header="1"/>
 					<mr:MenuItem Header="12"/>
+					<TextBlock Style="{StaticResource HeaderStyle}">More Stuff</TextBlock>
 					<Button Content="zapatap" MinWidth="75" Height="28"/>
 					<mr:MenuItem Header="13"/>
 					<mr:MenuItem Header="14"/>
+					<TextBlock Style="{StaticResource HeaderStyle}">And Color</TextBlock>
+					<a:ColorPalette
+						KeyboardNavigation.ControlTabNavigation="Continue"
+						/>
 				</mr:ItemsButton>
 				<mr:ItemsButton Width="120" IsSplitButton="True"
 								Header="Hello 1 :)" 
@@ -510,7 +524,6 @@
 					<mr:MenuItem Header="14"/>
 				</mr:ItemsButton>
 			</StackPanel>
-
 
 		</StackPanel>
 

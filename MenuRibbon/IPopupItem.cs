@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace MenuRibbon.WPF
@@ -29,8 +30,18 @@ namespace MenuRibbon.WPF
 	{
 		public static void OnKeyNavigate(this IPopupItem item, KeyEventArgs e)
 		{
-			if (!item.PopupRoot.PopupManager.IsResponsive)
+			if (e.Handled)
 				return;
+			if (item.PopupRoot == null)
+				return;
+			if (e.OriginalSource is DependencyObject)
+			{
+				var dp = (DependencyObject)e.OriginalSource;
+				if (!dp.VisualHierarchy()
+					.TakeWhile(x => !(x is Window || x is Popup))
+					.Contains((DependencyObject)item))
+					return;
+			}
 
 			var key = e.Key;
 
@@ -77,91 +88,112 @@ namespace MenuRibbon.WPF
 					if (isRoot)
 					{
 						item.Quit();
+						e.Handled = true;
 					}
 					else
 					{
-						item.ParentItem.NavigateItem();
+						e.Handled = null != item.ParentItem.NavigateItem();
 					}
 					break;
 				case Key.Right:
 					if (isRoot)
 					{
-						item.NavigateSibling(true, true);
+						e.Handled = null != item.NavigateSibling(true, true);
 					}
 					else
 					{
 						if (item.HasItems())
 						{
 							item.PopupRoot.PopupManager.OpenedItem = item;
-							item.EnabledChildren().Focusable().FirstOrDefault().NavigateItem();
+							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
+							e.Handled = true;
 						}
 						else
 						{
 							pm.OpenedItem = top.NavigateSibling(true, true);
+							e.Handled = null != pm.OpenedItem;
 						}
 					}
-					e.Handled = true;
 					break;
 				case Key.Left:
 					if (isRoot)
 					{
-						item.NavigateSibling(false, true);
+						e.Handled = null != item.NavigateSibling(false, true);
 					}
 					else
 					{
 						if (item.ParentItem != top)
 						{
-							item.ParentItem.NavigateItem();
+							e.Handled = null != item.ParentItem.NavigateItem();
 						}
 						else
 						{
 							pm.OpenedItem = top.NavigateSibling(false, true);
+							e.Handled = null != pm.OpenedItem;
 						}
 					}
-					e.Handled = true;
 					break;
 				case Key.Up:
 					if (isRoot)
 					{
-						item.PopupRoot.PopupManager.OpenedItem = item;
-						item.EnabledChildren().Focusable().FirstOrDefault().NavigateItem();
+						if (item.HasItems())
+						{
+							item.PopupRoot.PopupManager.OpenedItem = item;
+							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
+							e.Handled = true;
+						}
 					}
 					else
 					{
-						item.NavigateSibling(false, true);
+						e.Handled = null != item.NavigateSibling(false, true);
 					}
-					e.Handled = true;
 					break;
 				case Key.Down:
 					if (isRoot)
 					{
-						item.PopupRoot.PopupManager.OpenedItem = item;
-						item.EnabledChildren().Focusable().FirstOrDefault().NavigateItem();
+						if (item.HasItems())
+						{
+							item.PopupRoot.PopupManager.OpenedItem = item;
+							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
+							e.Handled = true;
+						}
 					}
 					else
 					{
-						item.NavigateSibling(true, true);
+						e.Handled = null != item.NavigateSibling(true, true);
 					}
-					e.Handled = true;
 					break;
 				case Key.Enter:
+				case Key.Space:
 					item.Action();
+					e.Handled = true;
 					break;
+			}
+
+			if (e.Handled)
+			{
+				item.PopupRoot.PopupManager.IsResponsive = true;
 			}
 		}
 
-		public static IEnumerable<IPopupItem> Focusable(this IEnumerable<IPopupItem> list)
+		public static IEnumerable<IPopupItem> SelectableItem(this IEnumerable<IPopupItem> list)
 		{
 			return list.Where(x =>
 			{
 				var ui = x as UIElement;
-				return ui != null && ui.FirstFocusableElement() != null;
+				if (ui == null)
+					return false;
+				if (!ui.IsEnabled || !ui.IsVisible)
+					return false;
+				if (ui.FirstFocusableElement() == null)
+					return false;
+				return true;
 			});
 		}
-		public static IEnumerable<IPopupItem> NextEnabledSiblings(this IPopupItem start, bool forward, bool cycle)
+		public static IEnumerable<IPopupItem> PopupSiblings(this IPopupItem start, bool forward, bool cycle)
 		{
 			var parent = ItemsControl.ItemsControlFromItemContainer((DependencyObject)start);
-			if (parent.Items.Count == 1)
+			if (parent == null || parent.Items.Count < 2)
 				return new IPopupItem[0];
 
 			var index = parent.ItemContainerGenerator.IndexFromContainer((DependencyObject)start);
@@ -178,16 +210,11 @@ namespace MenuRibbon.WPF
 				.Distinct()
 				.Select(x => parent.Items[x])
 				.Select(x => parent.IsItemItsOwnContainer(x) ? x : parent.ItemContainerGenerator.ContainerFromItem(x))
-				.Where(x =>
-				{
-					if (!(x is IPopupItem)) return false;
-					var ui = x as UIElement;
-					return ui != null && ui.IsEnabled && ui.IsVisible;
-				})
+				.Where(x => x is IPopupItem)
 				.Select(x => (IPopupItem)x)
 				;
 		}
-		public static IEnumerable<IPopupItem> EnabledChildren(this IPopupItem parent)
+		public static IEnumerable<IPopupItem> PopupChildren(this IPopupItem parent)
 		{
 			var ic = parent as ItemsControl;
 			if (ic == null)
@@ -199,21 +226,14 @@ namespace MenuRibbon.WPF
 			}
 			return ic.Items.Cast<object>()
 				.Select(x => (IPopupItem)(ic.IsItemItsOwnContainer(x) ? x : ic.ItemContainerGenerator.ContainerFromItem(x)))
-				.Where(x =>
-				{
-					if (!(x is IPopupItem)) return false;
-					var ui = x as UIElement;
-					return ui != null && ui.IsEnabled && ui.IsVisible; // ui.Visible might be problematic, but better make it work
-				})
+				.Where(x => x is IPopupItem)
+				.Select(x => (IPopupItem)x)
 				;
 		}
 
 		public static IPopupItem NavigateSibling(this IPopupItem item, bool forward, bool cycle)
 		{
-			var it = item.NextEnabledSiblings(forward, cycle).Focusable().FirstOrDefault();
-			if (it != null)
-				it.NavigateItem();
-			return it;
+			return item.PopupSiblings(forward, cycle).SelectableItem().FirstOrDefault().NavigateItem();
 		}
 		public static IPopupItem NavigateItem(this IPopupItem item)
 		{

@@ -323,6 +323,10 @@
 	</Style>
 
 	<Style TargetType="cr:RibbonBar">
+		<Setter Property="KeyboardNavigation.IsTabStop" Value="False"/>
+		<Setter Property="KeyboardNavigation.ControlTabNavigation" Value="Cycle"/>
+		<Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Cycle"/>
+		<Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle"/>
 		<Setter Property="HorizontalAlignment" Value="Left"/>
 		<Setter Property="ItemsPanel">
 			<Setter.Value>
@@ -341,6 +345,7 @@
 	</Style>
 
 	<Style TargetType="cr:RibbonGroup">
+		<Setter Property="KeyboardNavigation.IsTabStop" Value="False"/>
 		<Setter Property="ItemsPanel">
 			<Setter.Value>
 				<ItemsPanelTemplate>

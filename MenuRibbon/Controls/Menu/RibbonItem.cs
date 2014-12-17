@@ -97,7 +97,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		#region IPopupItem: IsOpen, ParentItem, PopupRoot
 
-		void IPopupItem.Action() { }
+		void IPopupItem.Action() { MenuRibbon.TogglePin(); }
 		IPopupRoot IPopupItem.PopupRoot { get { return MenuRibbon; } }
 		IPopupItem IPopupItem.ParentItem { get { return null; } }
 		bool IPopupItem.Contains(DependencyObject target)
@@ -216,7 +216,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 		{
 			if (MenuRibbon != null && x.Item2 % 2 == 0)
 			{
-				MenuRibbon.IsPinning = !MenuRibbon.IsPinning;
+				MenuRibbon.TogglePin();
 			}
 		}
 		protected void OnMainUI_LeftMouseDown(MouseButtonEventArgs e)

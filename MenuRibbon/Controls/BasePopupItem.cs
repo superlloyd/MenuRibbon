@@ -323,50 +323,9 @@ namespace MenuRibbon.WPF.Controls
 
 			protected override void OnKeyDown(KeyEventArgs e)
 			{
-				this.OnKeyNavigate(e);
 				base.OnKeyDown(e);
+				//this.OnKeyNavigate(e);
 			}
-
-			//public UIElement Content
-			//{
-			//	get { return mContent; }
-			//	set
-			//	{
-			//		if (value == mContent)
-			//			return;
-			//		if (mContent != null)
-			//			base.RemoveVisualChild(mContent);
-			//		mContent = value;
-			//		if (mContent != null)
-			//			base.AddVisualChild(mContent);
-			//		InvalidateVisual();
-			//	}
-			//}
-			//UIElement mContent;
-			//
-			//protected override int VisualChildrenCount { get { return Content == null ? 0 : 1; } }
-			//protected override Visual GetVisualChild(int index) { return Content; }
-			//protected override void ArrangeCore(Rect finalRect)
-			//{
-			//	var ui = Content;
-			//	if (ui != null)
-			//	{
-			//		ui.Arrange(finalRect);
-			//	}
-			//}
-			//protected override Size MeasureCore(Size availableSize)
-			//{
-			//	var ui = Content;
-			//	if (ui != null)
-			//	{
-			//		ui.Measure(availableSize);
-			//		return ui.DesiredSize;
-			//	}
-			//	else
-			//	{
-			//		return Size.Empty;
-			//	}
-			//}
 		}
 
 		public ItemContainerTemplateSelector ItemContainerTemplateSelector
@@ -381,15 +340,11 @@ namespace MenuRibbon.WPF.Controls
 
 		protected override bool IsItemItsOwnContainerOverride(object item)
 		{
-			// It can take anything! ^^
 			return item is BasePopupItem || item is Separator || item is MenuItemContainer;
 		}
 		protected override DependencyObject GetContainerForItemOverride()
 		{
 			var c = new MenuItemContainer();
-			//KeyboardNavigation.SetDirectionalNavigation(c, KeyboardNavigationMode.Once);
-			//KeyboardNavigation.SetControlTabNavigation(c, KeyboardNavigationMode.Once);
-			//KeyboardNavigation.SetTabNavigation(c, KeyboardNavigationMode.Once);
 			return c;
 		}
 		protected override void ClearContainerForItemOverride(DependencyObject element, object item)
