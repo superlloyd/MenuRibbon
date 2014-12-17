@@ -346,6 +346,9 @@
 
 	<Style TargetType="cr:RibbonGroup">
 		<Setter Property="KeyboardNavigation.IsTabStop" Value="False"/>
+		<Setter Property="KeyboardNavigation.ControlTabNavigation" Value="Continue"/>
+		<Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Continue"/>
+		<Setter Property="KeyboardNavigation.TabNavigation" Value="Continue"/>
 		<Setter Property="ItemsPanel">
 			<Setter.Value>
 				<ItemsPanelTemplate>

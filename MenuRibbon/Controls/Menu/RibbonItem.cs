@@ -230,6 +230,29 @@ namespace MenuRibbon.WPF.Controls.Menu
 		{
 			this.OnKeyNavigate(e);
 			base.OnKeyDown(e);
+			if (!e.Handled)
+			{
+				switch (e.Key)
+				{
+					case Key.Up:
+					case Key.Down:
+						if (MenuRibbon != null && MenuRibbon.RibbonDisplay == RibbonDisplay.Drop)
+						{
+							var c = MenuRibbon.DroppedRibbonItem.Content.FirstFocusableElement();
+							if (c == null)
+							{
+								var p = MenuRibbon.VisualChildren().Where(x => (string)x.GetValue(FrameworkElement.NameProperty) == "PART_Popup").FirstOrDefault() as Popup;
+								if (p != null) c = p.Child.FirstFocusableElement();
+							}
+							if (c != null)
+							{
+								c.Focus();
+								e.Handled = true;
+							}
+						}
+						break;
+				}
+			}
 		}
 
 		#endregion

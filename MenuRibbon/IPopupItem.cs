@@ -104,6 +104,7 @@ namespace MenuRibbon.WPF
 					{
 						if (item.HasItems())
 						{
+							item.PopupRoot.PopupManager.IsResponsive = true;
 							item.PopupRoot.PopupManager.OpenedItem = item;
 							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
 							e.Handled = true;
@@ -138,6 +139,7 @@ namespace MenuRibbon.WPF
 					{
 						if (item.HasItems())
 						{
+							item.PopupRoot.PopupManager.IsResponsive = true;
 							item.PopupRoot.PopupManager.OpenedItem = item;
 							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
 							e.Handled = true;
@@ -153,6 +155,7 @@ namespace MenuRibbon.WPF
 					{
 						if (item.HasItems())
 						{
+							item.PopupRoot.PopupManager.IsResponsive = true; 
 							item.PopupRoot.PopupManager.OpenedItem = item;
 							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
 							e.Handled = true;
@@ -168,11 +171,6 @@ namespace MenuRibbon.WPF
 					item.Action();
 					e.Handled = true;
 					break;
-			}
-
-			if (e.Handled)
-			{
-				item.PopupRoot.PopupManager.IsResponsive = true;
 			}
 		}
 
@@ -192,6 +190,8 @@ namespace MenuRibbon.WPF
 		}
 		public static IEnumerable<IPopupItem> PopupSiblings(this IPopupItem start, bool forward, bool cycle)
 		{
+			if (start.PopupRoot == start)
+				return new IPopupItem[0];
 			var parent = ItemsControl.ItemsControlFromItemContainer((DependencyObject)start);
 			if (parent == null || parent.Items.Count < 2)
 				return new IPopupItem[0];
@@ -239,16 +239,15 @@ namespace MenuRibbon.WPF
 		{
 			if (item == null)
 				return null;
-			var pm = item.PopupRoot.PopupManager;
-			if (!pm.IsResponsive)
+			var c = item.FirstFocusableElement();
+			if (c == null)
 				return null;
 
-			pm.OpenedItem = item.ParentItem;
+			var pm = item.PopupRoot.PopupManager;
+			pm.IsResponsive = true;
+			pm.OpenedItem = (item.ParentItem != null) ? item.ParentItem : item;
 			pm.HighlightedItem = item;
-
-			var c = item.FirstFocusableElement();
-			if (c != null)
-				c.Focus();
+			c.Focus();
 			return item;
 		}
 		public static bool HasItems(this IPopupItem item)

@@ -6,7 +6,7 @@
 		xmlns:a="clr-namespace:TestApp"
 		ResizeMode="CanResizeWithGrip"
 		GlowBrush="{DynamicResource AccentColorBrush}"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="450" Width="545">
 	<metro:MetroWindow.Resources>
 		<Style x:Key="HeaderStyle"  TargetType="TextBlock">
 			<Setter Property="Background" Value="#E8E8E8"/>
@@ -14,6 +14,15 @@
 			<Setter Property="FontWeight" Value="Bold"/>
 			<Setter Property="Foreground" Value="#6D6D6D"/>
 		</Style>
+		
+		<!-- Fix MahApp strange idea about TabStop -->
+		<Style TargetType="{x:Type Slider}" BasedOn="{StaticResource {x:Type Slider}}">
+			<Setter Property="KeyboardNavigation.IsTabStop" Value="True"/>
+		</Style>
+		<Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+			<Setter Property="KeyboardNavigation.IsTabStop" Value="True"/>
+		</Style>
+		
 	</metro:MetroWindow.Resources>
     <Grid>
 		<Grid.RowDefinitions>
