@@ -32,6 +32,8 @@ namespace MenuRibbon.WPF
 				return sCurrent;
 			}
 		}
+
+		// PROBLEM leaks, register with InputManager, never unregister
 		[ThreadStatic]
 		static KeyTipService sCurrent;
 
@@ -82,7 +84,11 @@ namespace MenuRibbon.WPF
 			}
 			else if (ev == Keyboard.PreviewGotKeyboardFocusEvent)
 			{
-				//Console.WriteLine("Focus to " + e.StagingItem.Input.Source);
+				//Console.WriteLine("Got Focus to " + e.StagingItem.Input.Source);
+			}
+			else if (ev == Keyboard.PreviewLostKeyboardFocusEvent)
+			{
+				//Console.WriteLine("Lost Focus to " + e.StagingItem.Input.Source);
 			}
 		}
 

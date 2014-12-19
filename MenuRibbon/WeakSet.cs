@@ -89,7 +89,10 @@ namespace MenuRibbon.WPF
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return GetEnumerator(); }
 
-		void WeakCleanup()
+		/// <summary>
+		/// Remove dead items from the collection now. This method is also called automatically on Add() and enumerate.
+		/// </summary>
+		public void WeakCleanup()
 		{
 			var keys = container.Keys.Cast<WeakRefHashed>().ToList();
 			foreach (var k in keys)

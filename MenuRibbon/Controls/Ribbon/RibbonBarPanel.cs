@@ -66,6 +66,7 @@ namespace MenuRibbon.WPF.Controls.Ribbon
 		{
 			var W = availableSize.Width;
 			var H = availableSize.Height;
+			if (double.IsInfinity(H)) H = (double)Menu.MenuRibbon.RibbonHeightProperty.DefaultMetadata.DefaultValue;
 
 			var children = this.Children.Cast<UIElement>().ToList();
 			var rb = RibbonBar;
@@ -89,7 +90,7 @@ namespace MenuRibbon.WPF.Controls.Ribbon
 
 			// calculate original size
 			double total = 0;
-			var hInf = new Size(double.MaxValue, availableSize.Height);
+			var hInf = new Size(double.MaxValue, H);
 			int MaxSR = 0;
 			int N = 0;
 			foreach (var uic in children)

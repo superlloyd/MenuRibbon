@@ -14,6 +14,18 @@
                 </Setter.Value>
             </Setter>
         </Style>
+		<Style x:Key="focusButtonStyle" TargetType="Control">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Border Margin="-1" BorderThickness="2" BorderBrush="#FEAB38">
+							<Border BorderThickness="0.5" BorderBrush="#FFFFFF">
+							</Border>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
         <LinearGradientBrush x:Key="ButtonNormalBackgroundFill1" EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#FFFFFFFF" Offset="0"/>
             <GradientStop Color="#FFF0F0EA" Offset="0.9"/>
@@ -32,7 +44,7 @@
             <GradientStop Color="#EDEDED" Offset="0.9"/>
         </LinearGradientBrush>
         <Style x:Key="ColorButtonStyleFirstRow" TargetType="{x:Type Button}">
-            <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource focusButtonStyle}"/>
             <Setter Property="Background" Value="{StaticResource ButtonNormalBackgroundFill}"/>
             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -55,7 +67,7 @@
             </Setter>
         </Style>
         <Style x:Key="ColorButtonStyleSecondRow" TargetType="{x:Type Button}">
-            <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource focusButtonStyle}"/>
             <Setter Property="Background" Value="{StaticResource ButtonNormalBackgroundFill}"/>
             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -75,7 +87,7 @@
             </Setter>
         </Style>
         <Style x:Key="ColorButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource focusButtonStyle}"/>
             <Setter Property="Background" Value="{StaticResource ButtonNormalBackgroundFill}"/>
             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -158,7 +170,7 @@
     	</LinearGradientBrush>
     	<SolidColorBrush x:Key="ButtonBorder" Color="#FF003C74"/>
     	<Style x:Key="BorderLessButtonStyle" TargetType="{x:Type Button}">
-    		<Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+    		<Setter Property="FocusVisualStyle" Value="{StaticResource focusButtonStyle}"/>
     		<Setter Property="Background" Value="{StaticResource ButtonNormalBackgroundFill}"/>
     		<Setter Property="BorderBrush" Value="{StaticResource ButtonBorder}"/>
     		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>

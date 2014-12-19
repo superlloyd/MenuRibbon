@@ -65,8 +65,7 @@ namespace MenuRibbon.WPF
 
 				if (root != null)
 				{
-					FocusManager.RemoveGotFocusHandler(root, OnFocusManagerFocusChangedEventHandler);
-					Keyboard.RemovePreviewGotKeyboardFocusHandler(root, OnKeyboardFocusChangedEventHandler);
+					FocusTracker.Current.FocusedElementChanged -= Current_FocusedElementChanged;
 					Mouse.RemovePreviewMouseDownHandler(root, OnPreviewMouseButtonEventHandler);
 					if (root is Window)
 					{
@@ -76,8 +75,7 @@ namespace MenuRibbon.WPF
 				root = value;
 				if (root != null)
 				{
-					FocusManager.AddGotFocusHandler(root, OnFocusManagerFocusChangedEventHandler);
-					Keyboard.AddPreviewGotKeyboardFocusHandler(root, OnKeyboardFocusChangedEventHandler);
+					FocusTracker.Current.FocusedElementChanged += Current_FocusedElementChanged;
 					Mouse.AddPreviewMouseDownHandler(root, OnPreviewMouseButtonEventHandler);
 					if (root is Window)
 					{
@@ -87,6 +85,11 @@ namespace MenuRibbon.WPF
 			}
 		}
 		DependencyObject root;
+
+		void Current_FocusedElementChanged(object sender, EventArgs e)
+		{
+			Console.WriteLine("Focus => " + FocusTracker.Current.FocusedElement);
+		}
 
 		void RootTracker_Deactivated(object sender, EventArgs e)
 		{
@@ -114,14 +117,6 @@ namespace MenuRibbon.WPF
 		void OnPreviewMouseButtonEventHandler(object sender, MouseButtonEventArgs e)
 		{
 			OnAction(e);
-		}
-		void OnKeyboardFocusChangedEventHandler(object sender, KeyboardFocusChangedEventArgs e)
-		{
-			//OnAction(e.Source as DependencyObject);
-		}
-		void OnFocusManagerFocusChangedEventHandler(object sender, RoutedEventArgs e)
-		{
-			//OnAction(e.Source as DependencyObject);
 		}
 	}
 }
