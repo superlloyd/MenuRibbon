@@ -69,6 +69,7 @@ namespace MenuRibbon.WPF
 					dispatch = feElement.Dispatcher;
 				}
 				UpdateRoot();
+				OnPropertyChanged();
 			}
 		}
 		IPopupRoot element;
@@ -113,6 +114,7 @@ namespace MenuRibbon.WPF
 					Mouse.AddPreviewMouseDownHandler(root, onPreviewMouseDown);
 					if (root is Window) ((Window)root).Deactivated += onWindowDeactivated;
 				}
+				OnPropertyChanged();
 			}
 		}
 		DependencyObject root;
@@ -137,69 +139,55 @@ namespace MenuRibbon.WPF
 					if (root != null) Mouse.RemovePreviewMouseDownHandler(root, onPreviewMouseDown);
 					if (root is Window) ((Window)root).Deactivated -= onWindowDeactivated;
 				}
+				PopupRoot.UpdatePopupRoot();
+				OnPropertyChanged();
 			}
 		}
 		bool mTracking;
 
 		void PrepareTrackHandlers()
 		{
-			onFocusChanged = (o, e) => { };
-			onWindowDeactivated = (o, e) => { IsResponsive = false; };
-			onPreviewMouseDown = (o, e) => { OnAction(e); };
+			Action leave = () => 
+			{ 
+				Tracking = false;
+				OpenedItem = null;
+				HighlightedItem = null;
+			};
+
+			onFocusChanged = (o, e) => 
+			{
+				if (feElement == null || !feElement.IsKeyboardFocusWithin)
+				{
+					leave();
+				}
+			};
+			onWindowDeactivated = (o, e) => 
+			{
+				leave();
+			};
+			onPreviewMouseDown = (o, e) =>
+			{
+				var target = e.OriginalSource as DependencyObject;
+				if (target == null)
+					return;
+				if (!feElement.Contains(target))
+				{
+					leave();
+				}
+				else if (OpenedItem != null)
+				{
+					var op = OpenedItem;
+					while (op != null && !op.Contains(target))
+					{
+						op = op.ParentItem;
+					}
+					OpenedItem = op;
+				}
+			};
 		}
 		EventHandler onFocusChanged, onWindowDeactivated;
 		MouseButtonEventHandler onPreviewMouseDown;
 
-		void OnAction(InputEventArgs e)
-		{
-			var target = e.OriginalSource as DependencyObject;
-			if (target == null)
-				return;
-			if (!feElement.Contains(target))
-			{
-				IsResponsive = false;
-			}
-			else if (OpenedItem != null)
-			{
-				var op = OpenedItem;
-				while (op != null && !op.Contains(target))
-				{
-					op = op.ParentItem;
-				}
-				OpenedItem = op;
-			}
-		}
-
-		#endregion
-
-		#region IsResponsive
-
-		/// <summary>
-		/// While it is not responsive, it will only show highlight on top level, but not open anything
-		/// </summary>
-		public bool IsResponsive
-		{
-			get { return responsive; }
-			set
-			{
-				responsive = value;
-				if (value)
-				{
-					//FocusManager.SetIsFocusScope(FocusManager.GetFocusScope((DependencyObject)PopupRoot), true);
-					//OpenedItem = HighlightedItem;
-				}
-				else
-				{
-					//FocusManager.SetIsFocusScope(FocusManager.GetFocusScope((DependencyObject)PopupRoot), false);
-					Close();
-				}
-
-				PopupRoot.UpdatePopupRoot();
-				OnPropertyChanged();
-			}
-		}
-		bool responsive = false;
- 
 		#endregion
 
 		#region HighlightedItem, OpenedItem
@@ -226,7 +214,6 @@ namespace MenuRibbon.WPF
 			get { return openedItem; }
 			set
 			{
-				if (!IsResponsive) value = null;
 				if (value == OpenedItem)
 					return;
 
@@ -296,7 +283,6 @@ namespace MenuRibbon.WPF
 		{
 			if (forceNow)
 			{
-				IsResponsive = true;
 				HighlightedItem = p;
 				OpenedItem = p;
 			}

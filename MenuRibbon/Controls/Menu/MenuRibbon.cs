@@ -199,7 +199,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 		void UpdateRibbonAppearance()
 		{
 			var h = ItemContainerGenerator.ContainerFromItem(PopupManager.HighlightedItem) as RibbonItem;
-			if (!PopupManager.IsResponsive)
+			if (!PopupManager.Tracking)
 				h = null;
 			var org = ItemContainerGenerator.ContainerFromItem(PinnedItem) as RibbonItem;
 			if (!IsPinning)
@@ -211,7 +211,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 				DroppedRibbonItem = null;
 				PinnedRibbonItem = item;
 			}
-			else if (PopupManager.IsResponsive && item != null)
+			else if (PopupManager.Tracking && item != null)
 			{
 				RibbonDisplay = RibbonDisplay.Drop;
 				DroppedRibbonItem = item;
@@ -273,7 +273,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
 		{
-			if (PopupManager.IsResponsive || IsPinning)
+			if (PopupManager.Tracking || IsPinning)
 			{
 				cumulativeWheelDelta += e.Delta;
 				if (Math.Abs(cumulativeWheelDelta) > MouseWheelSelectionChangeThreshold)
@@ -282,7 +282,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 					cumulativeWheelDelta = 0;
 
 					IPopupItem selected = null;
-					if (PopupManager.IsResponsive)
+					if (PopupManager.Tracking)
 					{
 						if (PopupManager.HighlightedItem != null)
 						{
@@ -299,13 +299,13 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 					var next = selected
 						.PopupSiblings(forward, false)
-						.Where(x => PopupManager.IsResponsive || x is RibbonItem)
+						.Where(x => PopupManager.Tracking || x is RibbonItem)
 						.FirstOrDefault();
 
 					if (next != null && next != selected)
 					{
 						e.Handled = true;
-						if (PopupManager.IsResponsive)
+						if (PopupManager.Tracking)
 						{
 							PopupManager.Enter(next, true);
 						}
@@ -321,6 +321,12 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		double cumulativeWheelDelta;
 		private const double MouseWheelSelectionChangeThreshold = 100;
+
+		protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+		{
+			base.OnPreviewGotKeyboardFocus(e);
+			PopupManager.Tracking = true;
+		}
 
 		#endregion
 

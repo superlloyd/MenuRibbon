@@ -104,7 +104,6 @@ namespace MenuRibbon.WPF
 					{
 						if (item.HasItems())
 						{
-							item.PopupRoot.PopupManager.IsResponsive = true;
 							item.PopupRoot.PopupManager.OpenedItem = item;
 							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
 							e.Handled = true;
@@ -139,7 +138,6 @@ namespace MenuRibbon.WPF
 					{
 						if (item.HasItems())
 						{
-							item.PopupRoot.PopupManager.IsResponsive = true;
 							item.PopupRoot.PopupManager.OpenedItem = item;
 							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
 							e.Handled = true;
@@ -155,7 +153,6 @@ namespace MenuRibbon.WPF
 					{
 						if (item.HasItems())
 						{
-							item.PopupRoot.PopupManager.IsResponsive = true; 
 							item.PopupRoot.PopupManager.OpenedItem = item;
 							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
 							e.Handled = true;
@@ -244,7 +241,6 @@ namespace MenuRibbon.WPF
 				return null;
 
 			var pm = item.PopupRoot.PopupManager;
-			pm.IsResponsive = true;
 			pm.OpenedItem = (item.ParentItem != null) ? item.ParentItem : item;
 			pm.HighlightedItem = item;
 			c.Focus();

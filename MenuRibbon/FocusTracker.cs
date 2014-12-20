@@ -84,7 +84,8 @@ namespace MenuRibbon.WPF
 
 		void RaiseFocusedElementChanged()
 		{
-			foreach (var h in mFocusChangedHandlers)
+			var hList = mFocusChangedHandlers.ToArray();
+			foreach (var h in hList)
 				h(this, EventArgs.Empty);
 		}
 	}

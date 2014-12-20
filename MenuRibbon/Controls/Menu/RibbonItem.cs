@@ -141,16 +141,21 @@ namespace MenuRibbon.WPF.Controls.Menu
 			{
 				SetValue(IsHoveringPropertyKey, BooleanBoxes.Box(value));
 
-				if (MenuRibbon != null)
+				if (MenuRibbon != null && MenuRibbon.PopupManager.Tracking)
 				{
 					if (value)
 					{
+						Focus();
 						MenuRibbon.PopupManager.Enter(this);
 					}
 					else
 					{
-						// leave it there!
+						MenuRibbon.PopupManager.Exit(this);
 					}
+				}
+				else
+				{
+					IsHighlighted = IsHovering;
 				}
 			}
 		}
@@ -163,11 +168,12 @@ namespace MenuRibbon.WPF.Controls.Menu
 		public bool IsHighlighted
 		{
 			get { return (bool)GetValue(IsHighlightedProperty); }
+			private set { SetValue(IsHighlightedPropertyKey, BooleanBoxes.Box(value)); }
 		}
 		bool IPopupItem.IsHighlighted
 		{
-			get { return (bool)GetValue(IsHighlightedProperty); }
-			set { SetValue(IsHighlightedPropertyKey, BooleanBoxes.Box(value)); }
+			get { return IsHighlighted; }
+			set { IsHighlighted = value; }
 		}
 
 		static readonly DependencyPropertyKey IsHighlightedPropertyKey = DependencyProperty.RegisterReadOnly(
@@ -177,20 +183,6 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		protected virtual void OnIsHighlightedChanged(bool OldValue, bool NewValue)
 		{
-			if (NewValue)
-				Focus();
-		}
-
-		protected override void OnGotFocus(RoutedEventArgs e)
-		{
-			base.OnGotFocus(e);
-			if (!IsHighlighted)
-			{
-				var p = (IPopupItem)this;
-				var pr = p.PopupRoot;
-				if (pr != null)
-					pr.PopupManager.HighlightedItem = this;
-			}
 		}
 
 		#endregion		
@@ -262,6 +254,36 @@ namespace MenuRibbon.WPF.Controls.Menu
 			if (r != null)
 			{
 				r.PopupManager.Tracking = true;
+			}
+		}
+
+
+		protected override void OnGotFocus(RoutedEventArgs e)
+		{
+			base.OnGotFocus(e);
+
+			var pr = MenuRibbon;
+			if (pr != null)
+			{
+				pr.PopupManager.HighlightedItem = this;
+			}
+			else
+			{
+				IsHighlighted = true;
+			}
+		}
+		protected override void OnLostFocus(RoutedEventArgs e)
+		{
+			base.OnLostFocus(e);
+
+			var pr = MenuRibbon;
+			if (pr != null)
+			{
+				pr.PopupManager.Exit(this);
+			}
+			else
+			{
+				IsHighlighted = false;
 			}
 		}
 

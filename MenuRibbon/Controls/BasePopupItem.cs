@@ -210,16 +210,21 @@ namespace MenuRibbon.WPF.Controls
 			{
 				SetValue(IsHoveringPropertyKey, BooleanBoxes.Box(value));
 
-				if (Root != null)
+				if (Root != null && Root.PopupManager.Tracking)
 				{
 					if (value)
 					{
-						Root.PopupManager.Enter(this);
+						Focus();
+						Root.PopupManager.OpenLater(this);
 					}
 					else
 					{
 						Root.PopupManager.Exit(this);
 					}
+				}
+				else
+				{
+					IsHighlighted = value;
 				}
 			}
 		}
@@ -232,11 +237,12 @@ namespace MenuRibbon.WPF.Controls
 		public bool IsHighlighted
 		{
 			get { return (bool)GetValue(IsHighlightedProperty); }
+			private set { SetValue(IsHighlightedPropertyKey, BooleanBoxes.Box(value)); }
 		}
 		bool IPopupItem.IsHighlighted
 		{
-			get { return (bool)GetValue(IsHighlightedProperty); }
-			set { SetValue(IsHighlightedPropertyKey, BooleanBoxes.Box(value)); }
+			get { return IsHighlighted; }
+			set { IsHighlighted = value; }
 		}
 
 		static readonly DependencyPropertyKey IsHighlightedPropertyKey = DependencyProperty.RegisterReadOnly(
@@ -246,19 +252,34 @@ namespace MenuRibbon.WPF.Controls
 
 		protected virtual void OnIsHighlightedChanged(bool OldValue, bool NewValue)
 		{
-			if (NewValue)
-				Focus();
 		}
 
 		protected override void OnGotFocus(RoutedEventArgs e)
 		{
 			base.OnGotFocus(e);
-			if (!IsHighlighted)
+
+			var pr = Root;
+			if (pr != null)
 			{
-				var p = (IPopupItem)this;
-				var pr = p.PopupRoot;
-				if (pr != null)
-					pr.PopupManager.HighlightedItem = this;
+				pr.PopupManager.HighlightedItem = this;
+			}
+			else
+			{
+				IsHighlighted = true;
+			}
+		}
+		protected override void OnLostFocus(RoutedEventArgs e)
+		{
+			base.OnLostFocus(e);
+
+			var pr = Root;
+			if (pr != null)
+			{
+				pr.PopupManager.Exit(this);
+			}
+			else
+			{
+				IsHighlighted = false;
 			}
 		}
 
@@ -409,15 +430,12 @@ namespace MenuRibbon.WPF.Controls
 
 		protected override void OnClick(RoutedEventArgs e)
 		{
-			if (Root != null)
+			switch (Role)
 			{
-				switch (Role)
-				{
-					case MenuItemRole.TopLevelItem:
-					case MenuItemRole.SubmenuItem:
-						Root.PopupManager.IsResponsive = false;
-						break;
-				}
+				case MenuItemRole.TopLevelItem:
+				case MenuItemRole.SubmenuItem:
+					Keyboard.Focus(null);
+					break;
 			}
 			base.OnClick(e);
 		}
@@ -427,12 +445,13 @@ namespace MenuRibbon.WPF.Controls
 			switch (Role)
 			{
 				case MenuItemRole.TopLevelHeader:
-					if (Root.PopupManager.IsResponsive)
+					if (Root != null && Root.PopupManager.Tracking)
 					{
-						Root.PopupManager.IsResponsive = false;
+						Keyboard.Focus(null);
 					}
 					else
 					{
+						Focus();
 						Root.PopupManager.Enter(this, true);
 					}
 					break;
