@@ -302,7 +302,7 @@ namespace MenuRibbon.WPF.Controls
 			public bool IsHighlighted { get; set; }
 			void IPopupItem.Action() {}
 			public IPopupItem ParentItem { get { return this.LogicalParent() as IPopupItem; } }
-			public IPopupRoot PopupRoot { get { return ParentItem.PopupRoot; } }
+			public IPopupRoot PopupRoot { get { return (IPopupRoot)this.LogicalHierarchy().FirstOrDefault(x => x is IPopupRoot); } }
 			bool IPopupItem.Contains(DependencyObject target)
 			{
 				return target.VisualHierarchy().Contains(this);
@@ -317,12 +317,24 @@ namespace MenuRibbon.WPF.Controls
 			protected override void OnMouseEnter(MouseEventArgs e)
 			{
 				base.OnMouseEnter(e);
-				RootAction(r => r.PopupManager.Enter(this));
+				RootAction(r => 
+				{ 
+					r.PopupManager.Enter(this); 
+					if (r.PopupManager.Tracking)
+					{
+						var t = this.FirstFocusableElement();
+						if (t != null)
+							t.Focus();
+					}
+				});
 			}
 			protected override void OnMouseLeave(MouseEventArgs e)
 			{
 				base.OnMouseLeave(e);
-				RootAction(r => r.PopupManager.Exit(this));
+				RootAction(r => 
+				{ 
+					r.PopupManager.Exit(this);
+				});
 			}
 
 			public void SetContent(object content, DataTemplate tpl, DataTemplateSelector sel)

@@ -215,6 +215,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 		{
 			var item = MenuRibbon.ItemContainerGenerator.ItemFromContainer(this);
 			MenuRibbon.PinnedItem = item;
+			Focus();
 			MenuRibbon.PopupManager.Enter(this, true);
 		}
 

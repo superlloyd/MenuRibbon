@@ -156,6 +156,8 @@ namespace MenuRibbon.WPF
 
 			onFocusChanged = (o, e) => 
 			{
+				if (FocusTracker.Current.FocusedElement == null)
+					return;
 				if (feElement == null || !feElement.IsKeyboardFocusWithin)
 				{
 					leave();
