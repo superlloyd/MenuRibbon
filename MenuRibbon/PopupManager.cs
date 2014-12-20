@@ -25,57 +25,150 @@ namespace MenuRibbon.WPF
 	}
 
 	/// <summary>
-	/// This class handle nested popup in regard to open / close them and highlight them.
+	/// This class handle nested popup in regard to open / close them. 
+	/// Also automatically close, un-highlight them when needed.
 	/// </summary>
 	public class PopupManager : IDisposable, INotifyPropertyChanged
 	{
-		Dispatcher dispatch;
-		Action onDispatchTimer;
-		PopupRootTracker tracker = new PopupRootTracker();
-		IPopupRoot popupRoot;
-
-		public PopupManager(IPopupRoot root)
+		public PopupManager(IPopupRoot root = null)
 		{
-			popupRoot = root;
-			dispatch = ((FrameworkElement)root).Dispatcher;
-			onDispatchTimer = OnLater;
-
-			tracker.Element = root;
+			PrepareTrackHandlers();
+			PopupRoot = root;
 		}
 
 		public void Dispose()
 		{
-			Stop();
+			PopupRoot = null; // stop being tracked by event handlers
+			Tracking = false; // stop being tracked by event handlers
+			Stop(); // stop being tracked by timer
 		}
 
-		#region timer...
+		#region PopupRoot UIRoot Tracking
 
-		void Start()
+		public IPopupRoot PopupRoot
 		{
-			if (popupTimer == null)
-				popupTimer = new Timer(OnTimer);
-			popupTimer.Change(Delay, Delay);
-		}
-		void Stop()
-		{
-			// try to reduce incidence of possible ObjectDisposeException (in OnTimer)
-			// by nullifying first and then disposing
-			var pt = popupTimer;
-			popupTimer = null;
-			if (pt != null)
+			get { return element; }
+			set
 			{
-				pt.Dispose();
-				pt = null;
+				if (element == value) return;
+				if (value != null && !(value is FrameworkElement))
+					throw new ArgumentException("PopupRoot must be a FrameworkElement.");
+
+				if (feElement != null)
+				{
+					feElement.Initialized -= element_Initialized;
+					feElement.IsVisibleChanged -= element_IsVisibleChanged;
+					dispatch = null;
+				}
+				feElement = (FrameworkElement)value;
+				element = value;
+				if (feElement != null)
+				{
+					feElement.Initialized += element_Initialized;
+					feElement.IsVisibleChanged += element_IsVisibleChanged;
+					dispatch = feElement.Dispatcher;
+				}
+				UpdateRoot();
 			}
 		}
-		void OnTimer(object state)
+		IPopupRoot element;
+		FrameworkElement feElement;
+		Dispatcher dispatch;
+
+		void element_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) { UpdateRoot(); }
+		void element_Initialized(object sender, EventArgs e) { UpdateRoot(); }
+
+		void UpdateRoot()
 		{
-			var pt = popupTimer;
-			try { if (pt != null) pt.Change(Timeout.Infinite, Timeout.Infinite); }
-			catch (ObjectDisposedException) { }
-			dispatch.BeginInvoke(onDispatchTimer);
+			if (feElement == null || !feElement.IsInitialized || !feElement.IsVisible)
+			{
+				UIRoot = null;
+			}
+			else
+			{
+				UIRoot = feElement.VisualHierarchy().Last();
+			}
 		}
-		Timer popupTimer;
+
+		public DependencyObject UIRoot
+		{
+			get { return root; }
+			private set
+			{
+				if (value == root)
+					return;
+
+				if (root != null)
+				{
+					Mouse.RemovePreviewMouseDownHandler(root, onPreviewMouseDown);
+					if (root is Window) ((Window)root).Deactivated -= onWindowDeactivated;
+				}
+				root = value;
+				if (root == null)
+				{
+					Tracking = false;
+				}
+				else if (Tracking)
+				{
+					Mouse.AddPreviewMouseDownHandler(root, onPreviewMouseDown);
+					if (root is Window) ((Window)root).Deactivated += onWindowDeactivated;
+				}
+			}
+		}
+		DependencyObject root;
+
+		public bool Tracking 
+		{
+			get { return mTracking; }
+			internal set
+			{
+				if (value == mTracking)
+					return;
+				mTracking = value;
+				if (value)
+				{
+					FocusTracker.Current.FocusedElementChanged += onFocusChanged;
+					if (root != null) Mouse.AddPreviewMouseDownHandler(root, onPreviewMouseDown);
+					if (root is Window) ((Window)root).Deactivated += onWindowDeactivated;
+				}
+				else
+				{
+					FocusTracker.Current.FocusedElementChanged -= onFocusChanged;
+					if (root != null) Mouse.RemovePreviewMouseDownHandler(root, onPreviewMouseDown);
+					if (root is Window) ((Window)root).Deactivated -= onWindowDeactivated;
+				}
+			}
+		}
+		bool mTracking;
+
+		void PrepareTrackHandlers()
+		{
+			onFocusChanged = (o, e) => { };
+			onWindowDeactivated = (o, e) => { IsResponsive = false; };
+			onPreviewMouseDown = (o, e) => { OnAction(e); };
+		}
+		EventHandler onFocusChanged, onWindowDeactivated;
+		MouseButtonEventHandler onPreviewMouseDown;
+
+		void OnAction(InputEventArgs e)
+		{
+			var target = e.OriginalSource as DependencyObject;
+			if (target == null)
+				return;
+			if (!feElement.Contains(target))
+			{
+				IsResponsive = false;
+			}
+			else if (OpenedItem != null)
+			{
+				var op = OpenedItem;
+				while (op != null && !op.Contains(target))
+				{
+					op = op.ParentItem;
+				}
+				OpenedItem = op;
+			}
+		}
 
 		#endregion
 
@@ -92,42 +185,21 @@ namespace MenuRibbon.WPF
 				responsive = value;
 				if (value)
 				{
-					FocusManager.SetIsFocusScope(FocusManager.GetFocusScope((DependencyObject)popupRoot), true);
+					//FocusManager.SetIsFocusScope(FocusManager.GetFocusScope((DependencyObject)PopupRoot), true);
 					//OpenedItem = HighlightedItem;
 				}
 				else
 				{
-					FocusManager.SetIsFocusScope(FocusManager.GetFocusScope((DependencyObject)popupRoot), false);
+					//FocusManager.SetIsFocusScope(FocusManager.GetFocusScope((DependencyObject)PopupRoot), false);
 					Close();
 				}
 
-				popupRoot.UpdatePopupRoot();
+				PopupRoot.UpdatePopupRoot();
 				OnPropertyChanged();
 			}
 		}
 		bool responsive = false;
  
-		#endregion
-
-		#region Delay
-
-		/// <summary>
-		/// Delay before opening child popup
-		/// </summary>
-		public TimeSpan Delay
-		{
-			get { return delay; }
-			set
-			{
-				if (value < TimeSpan.Zero)
-					throw new ArgumentOutOfRangeException();
-				delay = value;
-
-				OnPropertyChanged();
-			}
-		}
-		TimeSpan delay = TimeSpan.FromMilliseconds(SystemParameters.MenuShowDelay);
-
 		#endregion
 
 		#region HighlightedItem, OpenedItem
@@ -143,7 +215,7 @@ namespace MenuRibbon.WPF
 				PathDiff(HighlightedItem, value, PTarget.Highlight);
 				highlightedItem = value;
 
-				popupRoot.UpdatePopupRoot();
+				if (PopupRoot != null) PopupRoot.UpdatePopupRoot();
 				OnPropertyChanged();
 			}
 		}
@@ -218,7 +290,7 @@ namespace MenuRibbon.WPF
 
 		#endregion
 
-		#region Enter(), Exit(), Close(), OnLater()
+		#region Enter(), Exit(), Close(), OnLater() + timer
 
 		public void Enter(IPopupItem p, bool forceNow = false)
 		{
@@ -259,6 +331,55 @@ namespace MenuRibbon.WPF
 			laterItem = null;
 		}
 		IPopupItem laterItem;
+
+		void Start()
+		{
+			if (popupTimer == null) popupTimer = new Timer(OnTimer);
+			if (onDispatchTimer == null) onDispatchTimer = OnLater;
+			popupTimer.Change(Delay, Delay);
+		}
+		void Stop()
+		{
+			// try to reduce incidence of possible ObjectDisposeException (in OnTimer)
+			// by nullifying first and then disposing
+			var pt = popupTimer;
+			popupTimer = null;
+			if (pt != null)
+			{
+				pt.Dispose();
+				pt = null;
+			}
+		}
+		void OnTimer(object state)
+		{
+			var pt = popupTimer;
+			try 
+			{
+				if (pt != null) pt.Change(Timeout.Infinite, Timeout.Infinite);
+				if (dispatch != null) dispatch.BeginInvoke(onDispatchTimer);
+			}
+			catch (ObjectDisposedException) { }
+		}
+		Timer popupTimer;
+		Action onDispatchTimer;
+
+
+		/// <summary>
+		/// Delay before opening child popup
+		/// </summary>
+		public TimeSpan Delay
+		{
+			get { return delay; }
+			set
+			{
+				if (value < TimeSpan.Zero)
+					throw new ArgumentOutOfRangeException();
+				delay = value;
+
+				OnPropertyChanged();
+			}
+		}
+		TimeSpan delay = TimeSpan.FromMilliseconds(SystemParameters.MenuShowDelay);
 
 		#endregion
 

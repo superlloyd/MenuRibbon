@@ -23,7 +23,20 @@ namespace TestApp
 	{
 		public MainWindow()
 		{
+			RandomList = new List<string>
+			{
+				"One",
+				"Two",
+				"Three",
+			};
+
 			InitializeComponent();
+		}
+		public List<string> RandomList { get; set; }
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+
 		}
 	}
 }

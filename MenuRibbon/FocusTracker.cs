@@ -35,19 +35,27 @@ namespace MenuRibbon.WPF
 		void Current_PreProcessInput(object sender, PreProcessInputEventArgs e)
 		{
 			var ev = e.StagingItem.Input.RoutedEvent;
-			if (ev == Keyboard.GotKeyboardFocusEvent)
+			if (ev == Keyboard.PreviewLostKeyboardFocusEvent)
 			{
-				//FocusedElement = Keyboard.FocusedElement; // could also do that
-				FocusedElement = (IInputElement)e.StagingItem.Input.Source;
+			}
+			else if (ev == Keyboard.PreviewGotKeyboardFocusEvent)
+			{
+				mFutureFocus = (IInputElement)e.StagingItem.Input.Source;
 			}
 			else if (ev == Keyboard.LostKeyboardFocusEvent)
 			{
-				FocusedElement = null;
+				FocusedElement = mFutureFocus;
+			}
+			else if (ev == Keyboard.GotKeyboardFocusEvent)
+			{
+				// just to be sure, update to last one
+				//FocusedElement = Keyboard.FocusedElement; // could also do that
+				FocusedElement = (IInputElement)e.StagingItem.Input.Source;
 			}
 		}
 
 		/// <summary>
-		/// <see cref="IInputElement"/> which currently hold the keyboard focus
+		/// The <see cref="IInputElement"/> which currently hold the keyboard focus
 		/// </summary>
 		public IInputElement FocusedElement
 		{
@@ -57,10 +65,12 @@ namespace MenuRibbon.WPF
 				if (Equals(value, mFocusedElement))
 					return;
 				mFocusedElement = value;
+				mFutureFocus = null;
 				RaiseFocusedElementChanged();
 			}
 		}
 		IInputElement mFocusedElement;
+		IInputElement mFutureFocus;
 
 		/// <summary>
 		/// Weak event fired when the <see cref="FocusedElement"/> changes.

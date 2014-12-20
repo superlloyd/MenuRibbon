@@ -78,19 +78,20 @@ namespace MenuRibbon.WPF
 			var k = new WeakRefHashed(item);
 			var r = container.ContainsKey(k);
 			container.Remove(k);
+			WeakCleanup();
 			return r;
 		}
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			WeakCleanup();
+			// don't clean on enumerate, operation should be cheap!
 			return container.Keys.Cast<WeakRefHashed>().Where(x => x.IsAlive).Select(x => (T)x.Target).GetEnumerator();
 		}
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return GetEnumerator(); }
 
 		/// <summary>
-		/// Remove dead items from the collection now. This method is also called automatically on Add() and enumerate.
+		/// Remove dead items from the collection now. This method is also called automatically on Add(), Remove() and Count.
 		/// </summary>
 		public void WeakCleanup()
 		{

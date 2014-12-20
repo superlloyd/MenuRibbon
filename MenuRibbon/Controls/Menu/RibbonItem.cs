@@ -255,6 +255,16 @@ namespace MenuRibbon.WPF.Controls.Menu
 			}
 		}
 
+		protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+		{
+			base.OnPreviewGotKeyboardFocus(e);
+			var r = MenuRibbon;
+			if (r != null)
+			{
+				r.PopupManager.Tracking = true;
+			}
+		}
+
 		#endregion
 	}
 }

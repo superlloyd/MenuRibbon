@@ -452,6 +452,16 @@ namespace MenuRibbon.WPF.Controls
 			base.OnKeyDown(e);
 		}
 
+		protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+		{
+			base.OnPreviewGotKeyboardFocus(e);
+			var r = Root;
+			if (r != null)
+			{
+				r.PopupManager.Tracking = true;
+			}
+		}
+
 		#endregion
 
 		#region SeparatorStyleKey

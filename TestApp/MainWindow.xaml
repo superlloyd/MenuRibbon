@@ -1,4 +1,6 @@
-﻿<metro:MetroWindow x:Class="TestApp.MainWindow"
+﻿<metro:MetroWindow 
+		x:Class="TestApp.MainWindow"
+		x:Name="root"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:mr="http://schemas.menuribbon.net/xaml"
@@ -30,7 +32,7 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<mr:MenuRibbon>
+		<mr:MenuRibbon x:Name="ribbon">
 			<mr:MenuItem Header="bkjhb">
 				<mr:MenuItem Header="lol">
 					<mr:MenuItem>
@@ -81,6 +83,17 @@
 					</mr:MenuItem.Icon>
 				</mr:MenuItem>
 				<mr:MenuItem Header="test"/>
+			</mr:MenuItem>
+			<mr:MenuItem Header="DataContextList" ItemsSource="{Binding RandomList, ElementName=root}">
+				<mr:MenuItem.ItemTemplate>
+					<DataTemplate>
+						<mr:MenuItem Header="{Binding}">
+							<mr:MenuItem Header="Child 1"/>
+							<mr:MenuItem Header="Child 2"/>
+							<mr:MenuItem Header="Child 3"/>
+						</mr:MenuItem>
+					</DataTemplate>
+				</mr:MenuItem.ItemTemplate>
 			</mr:MenuItem>
 			<mr:MenuItem Header="bloo-x">
 				<TextBlock Style="{StaticResource HeaderStyle}">Header 1</TextBlock>
@@ -490,6 +503,7 @@
 				HorizontalAlignment="Left" VerticalAlignment="Top"
 				Width="96"
 				Height="96"
+				Click="Button_Click"
 				>ijfhsdk</Button>
 
 			<RichTextBox Height="96"></RichTextBox>
