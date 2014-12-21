@@ -1,5 +1,6 @@
 ## MenuRibbon.WPF
 A WPF control library providing a single control that can act as a Menu bar, a Ribbon bar, or even both at the same time.
+
 Source on GitHub: http://github.com/superlloyd/MenuRibbon
 
 All the `MenuRibbon.WPF` classes can be referenced in XAML by the following namespace declaration:
@@ -66,9 +67,11 @@ Below is the source code for a very minimalistic ribbon. Note that the window is
 </metro:MetroWindow>
 ```
 This will produce that window:
+
 ![](./docs/simple1.png)
 
 If the Ribbon is expanded and the menu open you will get that:
+
 ![](./docs/simple2.png)
 
 
@@ -113,6 +116,7 @@ Here is how one MenuItem with databing is set in the sample:
 
 #### Resizing Ribbon Bar
 A `RibbonItem` could have any kind of content. However if the content is a `RibbonBar` which contains multiple `RibbonGroup` which contains mulitple `ItemsButton` it will resize like the Microsoft Ribbon.
+
 [MS-Ribbon Layout and Resizing](http://msdn.microsoft.com/en-us/library/ff701790(v=vs.110).aspx)
 
 - A `RibbonBar` could have a `GroupSizeReductionOrder` which specifies the name of the `RibbonGroup` in the order they must be reduced.
@@ -163,9 +167,11 @@ Here is a simple `RibbonBar` setup.
 </mr:RibbonItem>
 ```
 And voila, this is a properly resizing ribbon:
+
 ![](./docs/simple4.png)
 
 All the way down to collapsed group:
+
 ![](./docs/simple5.jpg)
 
 
