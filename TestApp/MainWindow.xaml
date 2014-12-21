@@ -4,7 +4,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:mr="http://schemas.menuribbon.net/xaml"
-		xmlns:metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+		xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
 		xmlns:a="clr-namespace:TestApp"
 		ResizeMode="CanResizeWithGrip"
 		GlowBrush="{DynamicResource AccentColorBrush}"
@@ -94,7 +94,7 @@
 			</mr:MenuItem>
 			<mr:MenuItem Header="DataContextList" ItemsSource="{Binding RandomList, ElementName=root}">
 				<mr:MenuItem.ItemTemplate>
-					<DataTemplate DataType="a:AAA">
+					<DataTemplate>
 						<mr:MenuItem Header="{Binding Header}"
 									 InputGestureText="{Binding Shortcut}"
 									 ItemsSource="{Binding Children}">

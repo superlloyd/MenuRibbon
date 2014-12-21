@@ -153,7 +153,7 @@
 							<Setter TargetName="PART_NextArrow" Property="Visibility" Value="Visible"/>
 						</Trigger>
 						<Trigger Property="IsEnabled" Value="False">
-							<Setter TargetName="Column_Icon" Property="Opacity" Value="0.4" />
+							<Setter TargetName="PART_Header" Property="Opacity" Value="0.4" />
 						</Trigger>
 						<Trigger Property="IsTopLevel" Value="True">
 							<Setter TargetName="Column_Icon" Property="MinWidth" Value="0"/>
@@ -184,9 +184,6 @@
 			</Trigger>
 			<Trigger Property="IsChecked" Value="True">
 				<Setter Property="Icon" Value="{Binding Source=a, Converter={StaticResource Text2UICvt}, ConverterParameter=Webdings}"/>
-			</Trigger>
-			<Trigger Property="IsEnabled" Value="False">
-				<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -461,7 +458,7 @@
 									</Border>
 								</StackPanel>
 							</Border>
-							<Border x:Name="PART_Splitter" Margin="2,0,2,0" BorderThickness="0,1,1,1" Visibility="Collapsed" BorderBrush="Transparent">
+							<Border x:Name="PART_Splitter" Padding="2" BorderThickness="0,1,1,1" Visibility="Collapsed" BorderBrush="Transparent">
 								<Path
 									HorizontalAlignment="Center" VerticalAlignment="Center"
 									Fill="{TemplateBinding Foreground}"
@@ -489,10 +486,14 @@
 					<ControlTemplate.Triggers>
 						<DataTrigger Binding="{Binding ControlSizeDefinition.IconSize, RelativeSource={RelativeSource Self}}" Value="Large">
 							<Setter TargetName="PART_STACK_HEADER" Property="Orientation" Value="Vertical"/>
+							<Setter TargetName="PART_Splitter" Property="BorderThickness" Value="1,0,1,1"/>
 							<Setter TargetName="PART_Image" Property="Width" Value="32"/>
 							<Setter TargetName="PART_Image" Property="Height" Value="32"/>
-							<Setter TargetName="PART_Header" Property="MinHeight" Value="70"/>
 							<Setter TargetName="PART_Image" Property="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LargeIcon}" />
+							<Setter TargetName="Column_Header" Property="Width" Value="32"/>
+							<Setter TargetName="Column_Header" Property="HorizontalAlignment" Value="Center"/>
+							<Setter TargetName="Column_Header" Property="VerticalAlignment" Value="Top"/>
+							<Setter TargetName="PART_Header" Property="MinHeight" Value="70"/>
 						</DataTrigger>
 						<DataTrigger Binding="{Binding ControlSizeDefinition.IconSize, RelativeSource={RelativeSource Self}}" Value="Small">
 							<Setter TargetName="PART_Image" Property="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SmallIcon}" />
@@ -504,9 +505,9 @@
 							<Setter TargetName="Column_Header" Property="Visibility" Value="Collapsed"/>
 						</DataTrigger>
 						<Trigger Property="IsHighlighted" Value="True">
-							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MenuItemSelectionFill}"/>
 							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource HighlightBrush}"/>
 							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+							<Setter TargetName="PART_Splitter" Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
 						</Trigger>
 						<Trigger Property="IsOpen" Value="True">
 							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
@@ -520,6 +521,13 @@
 								<Condition Property="HasItems" Value="True"/>
 							</MultiTrigger.Conditions>
 							<Setter TargetName="PART_ItemsArrow" Property="Visibility" Value="Visible"/>
+						</MultiTrigger>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsSplitButton" Value="False"/>
+								<Condition Property="IsHighlighted" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MenuItemSelectionFill}"/>
 						</MultiTrigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>

@@ -20,7 +20,7 @@ namespace MenuRibbon.WPF.Controls.Ribbon
 		protected override Size ArrangeOverride(Size finalSize)
 		{
 			if (this.Children.Count == 0)
-				return Size.Empty;
+				return finalSize;
 
 			double w = 0, wTot = 0;
 			double y = 0, yMax = 0;

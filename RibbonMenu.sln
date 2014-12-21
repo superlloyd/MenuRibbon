@@ -13,6 +13,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{83E03C74-50B6-495D-9313-C9EC0C57CDA7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{C36ABC70-0575-49DA-8244-463C7594B345}"
+	ProjectSection(SolutionItems) = preProject
+		docs\simple1.png = docs\simple1.png
+		docs\simple2.png = docs\simple2.png
+		docs\simple3.png = docs\simple3.png
+		docs\simple4.png = docs\simple4.png
+		docs\simple5.jpg = docs\simple5.jpg
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +39,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C36ABC70-0575-49DA-8244-463C7594B345} = {8894CA16-71A0-4766-9FF9-C2B6734F5692}
 	EndGlobalSection
 EndGlobal
