@@ -198,7 +198,9 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		void UpdateRibbonAppearance()
 		{
-			var h = ItemContainerGenerator.ContainerFromItem(PopupManager.HighlightedItem) as RibbonItem;
+			RibbonItem h = DroppedRibbonItem;
+			if (PopupManager.HighlightedItem != null)
+				h = ItemContainerGenerator.ContainerFromItem(PopupManager.HighlightedItem) as RibbonItem;
 			if (!PopupManager.Tracking)
 				h = null;
 			var org = ItemContainerGenerator.ContainerFromItem(PinnedItem) as RibbonItem;
