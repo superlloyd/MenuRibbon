@@ -95,6 +95,7 @@ Then add a `TextBlock` with that style to the menu
 </mr:MenuItem>
 ```
 And voila, a nice header!
+
 ![](./docs/simple3.png)
 
 
