@@ -13,13 +13,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 	{
 		MenuItemsPanel ItemsPanel 
 		{
-			get
-			{
-				DependencyObject p = this;
-				while (p != null && !(p is MenuItemsPanel))
-					p = VisualTreeHelper.GetParent(p);
-				return p as MenuItemsPanel;
-			}
+			get { return (MenuItemsPanel)this.VisualHierarchy().FirstOrDefault(x => x is MenuItemsPanel); }
 		}
 
 		protected override Size ArrangeOverride(Size finalSize)

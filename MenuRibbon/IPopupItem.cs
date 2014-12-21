@@ -20,12 +20,6 @@ namespace MenuRibbon.WPF
 		void Action();
 	}
 
-	public enum PopupNavigation
-	{
-		Previous,
-		Next,
-	}
-
 	public static class IPopupItemEx
 	{
 		public static void OnKeyNavigate(this IPopupItem item, KeyEventArgs e)
@@ -64,10 +58,10 @@ namespace MenuRibbon.WPF
 			}
 
 			var pm = item.PopupRoot.PopupManager;
-			bool isRoot = item.ParentItem == null;
+			bool isRoot = item.ParentItem() == null;
 			var top = item;
-			while (top.ParentItem != null)
-				top = top.ParentItem;
+			while (top.ParentItem() != null)
+				top = top.ParentItem();
 
 			if (key == Key.Tab)
 			{
@@ -92,7 +86,7 @@ namespace MenuRibbon.WPF
 					}
 					else
 					{
-						e.Handled = null != item.ParentItem.NavigateItem();
+						e.Handled = null != item.ParentItem().NavigateItem(false);
 					}
 					break;
 				case Key.Right:
@@ -122,9 +116,9 @@ namespace MenuRibbon.WPF
 					}
 					else
 					{
-						if (item.ParentItem != top)
+						if (item.ParentItem() != top)
 						{
-							e.Handled = null != item.ParentItem.NavigateItem();
+							e.Handled = null != item.ParentItem().NavigateItem();
 						}
 						else
 						{
@@ -185,11 +179,35 @@ namespace MenuRibbon.WPF
 				return true;
 			});
 		}
+		public static IPopupItem ParentItem(this IPopupItem p)
+		{
+			// MenuItemContainer need work around
+			if (p == null)
+				return null;
+			// skip MenuItemContainer
+			do p = p.ParentItem;
+			while (p != null && !(p is ItemsControl));
+			return p;
+		}
 		public static IEnumerable<IPopupItem> PopupSiblings(this IPopupItem start, bool forward, bool cycle)
 		{
 			if (start.PopupRoot == start)
 				return new IPopupItem[0];
-			var parent = ItemsControl.ItemsControlFromItemContainer((DependencyObject)start);
+
+			// MenuItemContainer need work around
+			ItemsControl parent = null;
+			foreach (var item in ((DependencyObject)start).VisualHierarchy().Skip(1))
+			{
+				if (item is ItemsControl)
+				{
+					parent = (ItemsControl)item;
+					break;
+				}
+				else if (item is IPopupItem)
+				{
+					start = (IPopupItem)item;
+				}
+			}
 			if (parent == null || parent.Items.Count < 2)
 				return new IPopupItem[0];
 
@@ -232,7 +250,7 @@ namespace MenuRibbon.WPF
 		{
 			return item.PopupSiblings(forward, cycle).SelectableItem().FirstOrDefault().NavigateItem();
 		}
-		public static IPopupItem NavigateItem(this IPopupItem item)
+		public static IPopupItem NavigateItem(this IPopupItem item, bool openChildren = true)
 		{
 			if (item == null)
 				return null;
@@ -241,8 +259,7 @@ namespace MenuRibbon.WPF
 				return null;
 
 			var pm = item.PopupRoot.PopupManager;
-			pm.OpenedItem = (item.ParentItem != null) ? item.ParentItem : item;
-			pm.HighlightedItem = item;
+			pm.OpenedItem = (!openChildren || item.ParentItem() != null) ? item.ParentItem() : item;
 			c.Focus();
 			return item;
 		}

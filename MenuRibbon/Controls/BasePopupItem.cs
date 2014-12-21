@@ -38,16 +38,16 @@ namespace MenuRibbon.WPF.Controls
 
 		#region Role, Root, IsTopLevel
 
-		public IPopupRoot Root
+		public IPopupRoot PopupRoot
 		{
-			get { return (IPopupRoot)GetValue(RootProperty); }
+			get { return (IPopupRoot)GetValue(PopupRootProperty); }
 			private set { SetValue(RootPropertyKey, value); }
 		}
 
 		static readonly DependencyPropertyKey RootPropertyKey = DependencyProperty.RegisterReadOnly(
-			"Root", typeof(IPopupRoot), typeof(BasePopupItem), new PropertyMetadata(default(IPopupRoot)));
+			"PopupRoot", typeof(IPopupRoot), typeof(BasePopupItem), new PropertyMetadata(default(IPopupRoot)));
 
-		public static readonly DependencyProperty RootProperty = RootPropertyKey.DependencyProperty;
+		public static readonly DependencyProperty PopupRootProperty = RootPropertyKey.DependencyProperty;
 
 		public IPopupItem Top
 		{
@@ -115,7 +115,7 @@ namespace MenuRibbon.WPF.Controls
 				if (p is IPopupItem)
 					top = (IPopupItem)p;
 			}
-			Root = p as IPopupRoot;
+			PopupRoot = p as IPopupRoot;
 			Top = top;
 			IsTopLevel = top == this;
 		}
@@ -151,13 +151,11 @@ namespace MenuRibbon.WPF.Controls
 		#region IPopupItem: IsOpen, ParentItem, PopupRoot
 
 		void IPopupItem.Action() { OnClick(); }
-		IPopupRoot IPopupItem.PopupRoot { get { return Root; } }
-		IPopupItem IPopupItem.ParentItem { get { return ParentItem; } }
 		bool IPopupItem.Contains(DependencyObject target)
 		{
 			return target.VisualHierarchy().Contains(this);
 		}
-		public virtual BasePopupItem ParentItem { get { return this is IPopupRoot ? null : this.VisualHierarchy().Skip(1).FirstOrDefault(x => x is BasePopupItem) as BasePopupItem; } }
+		public IPopupItem ParentItem { get { return this is IPopupRoot ? null : this.VisualHierarchy().Skip(1).FirstOrDefault(x => x is IPopupItem) as IPopupItem; } }
 
 		public bool IsOpen
 		{
@@ -210,16 +208,16 @@ namespace MenuRibbon.WPF.Controls
 			{
 				SetValue(IsHoveringPropertyKey, BooleanBoxes.Box(value));
 
-				if (Root != null && Root.PopupManager.Tracking)
+				if (PopupRoot != null && PopupRoot.PopupManager.Tracking)
 				{
 					if (value)
 					{
 						Focus();
-						Root.PopupManager.OpenLater(this);
+						PopupRoot.PopupManager.OpenLater(this);
 					}
 					else
 					{
-						Root.PopupManager.Exit(this);
+						PopupRoot.PopupManager.Exit(this);
 					}
 				}
 				else
@@ -258,7 +256,7 @@ namespace MenuRibbon.WPF.Controls
 		{
 			base.OnGotFocus(e);
 
-			var pr = Root;
+			var pr = PopupRoot;
 			if (pr != null)
 			{
 				pr.PopupManager.HighlightedItem = this;
@@ -272,7 +270,7 @@ namespace MenuRibbon.WPF.Controls
 		{
 			base.OnLostFocus(e);
 
-			var pr = Root;
+			var pr = PopupRoot;
 			if (pr != null)
 			{
 				pr.PopupManager.Exit(this);
@@ -314,15 +312,20 @@ namespace MenuRibbon.WPF.Controls
 				if (r != null)
 					a(r);
 			}
+			IPopupItem GetPopupTarget()
+			{
+				return Content as IPopupItem ?? this;
+			}
 			protected override void OnMouseEnter(MouseEventArgs e)
 			{
 				base.OnMouseEnter(e);
 				RootAction(r => 
-				{ 
-					r.PopupManager.Enter(this); 
+				{
+					var p = GetPopupTarget();
+					r.PopupManager.Enter(p); 
 					if (r.PopupManager.Tracking)
 					{
-						var t = this.FirstFocusableElement();
+						var t = p.FirstFocusableElement();
 						if (t != null)
 							t.Focus();
 					}
@@ -332,7 +335,7 @@ namespace MenuRibbon.WPF.Controls
 			{
 				base.OnMouseLeave(e);
 				RootAction(r => 
-				{ 
+				{
 					r.PopupManager.Exit(this);
 				});
 			}
@@ -346,9 +349,17 @@ namespace MenuRibbon.WPF.Controls
 				if (tpl != null)
 				{
 					var dp = tpl.LoadContent();
+
 					var fe = dp as FrameworkElement;
 					if (fe != null)
 						fe.DataContext = content;
+
+					var ic = dp as ItemsControl;
+					if (ic != null && ic.HasDefaultValue(ItemsControl.ItemTemplateProperty))
+					{
+						ic.ItemTemplate = tpl;
+					}
+
 					content = dp;
 				}
 				Content = content as UIElement;
@@ -457,14 +468,15 @@ namespace MenuRibbon.WPF.Controls
 			switch (Role)
 			{
 				case MenuItemRole.TopLevelHeader:
-					if (Root != null && Root.PopupManager.Tracking)
+					if (PopupRoot != null && PopupRoot.PopupManager.Tracking)
 					{
 						Keyboard.Focus(null);
 					}
 					else
 					{
 						Focus();
-						Root.PopupManager.Enter(this, true);
+						if (PopupRoot != null)
+							PopupRoot.PopupManager.Enter(this, true);
 					}
 					break;
 				case MenuItemRole.TopLevelItem:
@@ -472,7 +484,7 @@ namespace MenuRibbon.WPF.Controls
 					break;
 				case MenuItemRole.SubmenuHeader:
 				default:
-					Root.PopupManager.OpenedItem = this;
+					PopupRoot.PopupManager.OpenedItem = this;
 					break;
 			}
 		}
@@ -486,7 +498,7 @@ namespace MenuRibbon.WPF.Controls
 		protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
 		{
 			base.OnPreviewGotKeyboardFocus(e);
-			var r = Root;
+			var r = PopupRoot;
 			if (r != null)
 			{
 				r.PopupManager.Tracking = true;

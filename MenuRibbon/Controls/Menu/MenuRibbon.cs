@@ -252,6 +252,16 @@ namespace MenuRibbon.WPF.Controls.Menu
 			{
 				var ri = (RibbonItem)element;
 			}
+
+			var c = (Control)element;
+			Action<DependencyProperty> copyIfEmpty = dp =>
+			{
+				if (c.HasDefaultValue(dp))
+					BindingOperations.SetBinding(c, dp, new Binding(dp.Name) { Source = this });
+			};
+			copyIfEmpty(Control.BackgroundProperty);
+			copyIfEmpty(Control.ForegroundProperty);
+			copyIfEmpty(Control.BorderBrushProperty);
 		}
 		protected override void OnItemsChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{

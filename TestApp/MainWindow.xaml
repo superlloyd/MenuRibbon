@@ -60,8 +60,16 @@
 					<TextBlock>X:</TextBlock>
 					<Slider KeyboardNavigation.IsTabStop="True" Grid.Column="1"/>
 				</Grid>
-				<mr:MenuItem Header="test"/>
-				<mr:MenuItem Header="test"/>
+				<mr:MenuItem IsEnabled="False" Header="test" InputGestureText="Ctrl+H,Ctrl+H">
+					<mr:MenuItem.Icon>
+						<Image Width="16" Source="connected_48.png"/>
+					</mr:MenuItem.Icon>
+				</mr:MenuItem>
+				<mr:MenuItem Header="test">
+					<mr:MenuItem.Icon>
+						<Image Width="16" Source="GrayButton.png"/>
+					</mr:MenuItem.Icon>
+				</mr:MenuItem>
 				<Button MinWidth="120" MinHeight="25" Content="Click Me!"/>
 			</mr:MenuItem>
 			<mr:MenuItem Header="bloo" Background="Aqua">
@@ -86,11 +94,10 @@
 			</mr:MenuItem>
 			<mr:MenuItem Header="DataContextList" ItemsSource="{Binding RandomList, ElementName=root}">
 				<mr:MenuItem.ItemTemplate>
-					<DataTemplate>
-						<mr:MenuItem Header="{Binding}">
-							<mr:MenuItem Header="Child 1"/>
-							<mr:MenuItem Header="Child 2"/>
-							<mr:MenuItem Header="Child 3"/>
+					<DataTemplate DataType="a:AAA">
+						<mr:MenuItem Header="{Binding Header}"
+									 InputGestureText="{Binding Shortcut}"
+									 ItemsSource="{Binding Children}">
 						</mr:MenuItem>
 					</DataTemplate>
 				</mr:MenuItem.ItemTemplate>
@@ -509,8 +516,7 @@
 			<RichTextBox Height="96"></RichTextBox>
 
 			<StackPanel Orientation="Horizontal">
-				<mr:ItemsButton Width="120"
-								Header="Hello 1 :)" 
+				<mr:ItemsButton Header="Hello 1 :)" 
 								LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
 								SmallIcon="{mr:Image connected_48.png}"
 								>
@@ -532,7 +538,7 @@
 						KeyboardNavigation.ControlTabNavigation="Continue"
 						/>
 				</mr:ItemsButton>
-				<mr:ItemsButton Width="120" IsSplitButton="True"
+				<mr:ItemsButton IsSplitButton="True"
 								Header="Hello 1 :)" 
 								LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
 								SmallIcon="{mr:Image connected_48.png}"
@@ -549,370 +555,391 @@
 					<mr:MenuItem Header="13"/>
 					<mr:MenuItem Header="14"/>
 				</mr:ItemsButton>
+				<mr:MenuRibbon>
+					<mr:MenuItem Header="Hello 1 :)" >
+						<TextBlock Style="{StaticResource HeaderStyle}">Stuff</TextBlock>
+						<mr:MenuItem Header="Ahloha?">
+							<mr:MenuItem Header="1"/>
+							<mr:MenuItem Header="12"/>
+							<mr:MenuItem Header="13"/>
+							<mr:MenuItem Header="14"/>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<TextBlock Style="{StaticResource HeaderStyle}">More Stuff</TextBlock>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+						<TextBlock Style="{StaticResource HeaderStyle}">And Color</TextBlock>
+						<a:ColorPalette
+							KeyboardNavigation.ControlTabNavigation="Continue"
+							/>
+					</mr:MenuItem>
+				</mr:MenuRibbon>
 			</StackPanel>
 
-				<mr:RibbonBar GroupSizeReductionOrder="_gr1,_gr2,_gr3">
-					<mr:RibbonGroup x:Name="_gr2" Header="Edit 1">
-						<mr:RibbonGroup.GroupSizeDefinitions>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition IsCollapsed="True"/>
-						</mr:RibbonGroup.GroupSizeDefinitions>
-						<mr:ItemsButton Header="Hello 1 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+			<mr:RibbonBar GroupSizeReductionOrder="_gr1,_gr2,_gr3">
+				<mr:RibbonGroup x:Name="_gr2" Header="Edit 1">
+					<mr:RibbonGroup.GroupSizeDefinitions>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition IsCollapsed="True"/>
+					</mr:RibbonGroup.GroupSizeDefinitions>
+					<mr:ItemsButton Header="Hello 1 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 2 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 3 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 2 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 3 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 4 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 5 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 4 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 5 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 6 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 7 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 6 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 7 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-					</mr:RibbonGroup>
-					<mr:RibbonGroup x:Name="_gr1" Header="Edit 2">
-						<mr:RibbonGroup.GroupSizeDefinitions>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition IsCollapsed="True"/>
-						</mr:RibbonGroup.GroupSizeDefinitions>
-						<mr:ItemsButton Header="Hello 1 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+				</mr:RibbonGroup>
+				<mr:RibbonGroup x:Name="_gr1" Header="Edit 2">
+					<mr:RibbonGroup.GroupSizeDefinitions>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition IsCollapsed="True"/>
+					</mr:RibbonGroup.GroupSizeDefinitions>
+					<mr:ItemsButton Header="Hello 1 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 2 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 3 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 2 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 3 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 4 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 5 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 4 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 5 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 6 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 7 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 6 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 7 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-					</mr:RibbonGroup>
-					<mr:RibbonGroup x:Name="_gr3" Header="Edit 3">
-						<mr:RibbonGroup.GroupSizeDefinitions>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition>
-								<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-								<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
-							</mr:RibbonGroupSizeDefinition>
-							<mr:RibbonGroupSizeDefinition IsCollapsed="True"/>
-						</mr:RibbonGroup.GroupSizeDefinitions>
-						<mr:ItemsButton Header="Hello 1 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+				</mr:RibbonGroup>
+				<mr:RibbonGroup x:Name="_gr3" Header="Edit 3">
+					<mr:RibbonGroup.GroupSizeDefinitions>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="True"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition>
+							<mr:RibbonControlSizeDefinition IconSize="Large" IsHeaderVisible="True"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+							<mr:RibbonControlSizeDefinition IconSize="Small" IsHeaderVisible="False"/>
+						</mr:RibbonGroupSizeDefinition>
+						<mr:RibbonGroupSizeDefinition IsCollapsed="True"/>
+					</mr:RibbonGroup.GroupSizeDefinitions>
+					<mr:ItemsButton Header="Hello 1 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 2 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 3 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 2 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 3 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 4 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 5 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 4 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 5 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 6 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-						</mr:ItemsButton>
-						<mr:ItemsButton Header="Hello 7 :)" 
-										 LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
-										 SmallIcon="{mr:Image connected_48.png}"
-										 >
-							<mr:MenuItem Header="Ahloha?">
-								<mr:MenuItem Header="1"/>
-								<mr:MenuItem Header="12"/>
-								<mr:MenuItem Header="13"/>
-								<mr:MenuItem Header="14"/>
-							</mr:MenuItem>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 6 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+					</mr:ItemsButton>
+					<mr:ItemsButton Header="Hello 7 :)" 
+										LargeIcon="{mr:Image connected_48.png, Width=32, Height=32}"
+										SmallIcon="{mr:Image connected_48.png}"
+										>
+						<mr:MenuItem Header="Ahloha?">
 							<mr:MenuItem Header="1"/>
 							<mr:MenuItem Header="12"/>
-							<Button Content="zapatap" MinWidth="75" Height="28"/>
 							<mr:MenuItem Header="13"/>
 							<mr:MenuItem Header="14"/>
-						</mr:ItemsButton>
-					</mr:RibbonGroup>
-				</mr:RibbonBar>
+						</mr:MenuItem>
+						<mr:MenuItem Header="1"/>
+						<mr:MenuItem Header="12"/>
+						<Button Content="zapatap" MinWidth="75" Height="28"/>
+						<mr:MenuItem Header="13"/>
+						<mr:MenuItem Header="14"/>
+					</mr:ItemsButton>
+				</mr:RibbonGroup>
+			</mr:RibbonBar>
 		</StackPanel>
 
 	</Grid>

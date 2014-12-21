@@ -16,6 +16,15 @@ using System.Windows.Shapes;
 
 namespace TestApp
 {
+	public class AAA
+	{
+		public string Image { get; set; }
+		public string Header { get; set; }
+		public string KeyTip { get; set; }
+		public string Shortcut { get; set; }
+		public List<AAA> Children { get; set; }
+	}
+
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
@@ -23,16 +32,24 @@ namespace TestApp
 	{
 		public MainWindow()
 		{
-			RandomList = new List<string>
+			RandomList = new List<AAA>
 			{
-				"One",
-				"Two",
-				"Three",
+				new AAA { Header = "One", Shortcut = "F2" },
+				new AAA { Header = "Two", Children = new List<AAA> {
+						new AAA { Header = "Ahaha" },
+						new AAA { Header = "Ahaha" },
+					}
+				},
+				new AAA { Header = "Two", Shortcut = "Ctrl+F1", Children = new List<AAA> {
+						new AAA { Header = "Ahaha" },
+						new AAA { Header = "Ahaha" },
+					}
+				},
 			};
 
 			InitializeComponent();
 		}
-		public List<string> RandomList { get; set; }
+		public List<AAA> RandomList { get; set; }
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{

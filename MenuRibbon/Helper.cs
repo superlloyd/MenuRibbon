@@ -131,11 +131,7 @@ namespace MenuRibbon.WPF
 			return val != DependencyProperty.UnsetValue && val != null;
 		}
 
-		public static bool HasDefaultValue(this DependencyObject d, DependencyProperty dp)
-		{
-			object value = d.ReadLocalValue(dp);
-			return value == DependencyProperty.UnsetValue || value == null;
-		}
+		public static bool HasDefaultValue(this DependencyObject d, DependencyProperty dp) { return !IsDefined(d, dp); }
 
 		public static bool Contains(this DependencyObject parent, DependencyObject child)
 		{

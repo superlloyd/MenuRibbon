@@ -31,5 +31,46 @@ namespace MenuRibbon.WPF.Controls.Menu
 		public MenuItem()
 		{
 		}
+
+
+		public string InputGestureText
+		{
+			get { return (string)GetValue(InputGestureTextProperty); }
+			set { SetValue(InputGestureTextProperty, value); }
+		}
+
+		public static readonly DependencyProperty InputGestureTextProperty = DependencyProperty.Register(
+			"InputGestureText", typeof(string), typeof(MenuItem)
+			, new PropertyMetadata(
+				string.Empty,
+				(o, e) => ((MenuItem)o).OnInputGestureTextChanged((string)e.OldValue, (string)e.NewValue),
+				new CoerceValueCallback((o, val) => ((MenuItem)o).OnCoerceInputGestureText((string)val))
+			));
+
+		void OnInputGestureTextChanged(string OldValue, string NewValue)
+		{
+		}
+
+		string OnCoerceInputGestureText(string value)
+		{
+			RoutedCommand c;
+			if (string.IsNullOrEmpty(value) && (c = Command as RoutedCommand) != null)
+			{
+				var col = c.InputGestures;
+				if ((col != null) && (col.Count >= 1))
+				{
+					for (int i = 0; i < col.Count; i++)
+					{
+						var kg = ((System.Collections.IList)col)[i] as KeyGesture;
+						if (kg != null)
+						{
+							return kg.GetDisplayStringForCulture(CultureInfo.CurrentCulture);
+						}
+					}
+				}
+			}
+
+			return value;
+		}
 	}
 }

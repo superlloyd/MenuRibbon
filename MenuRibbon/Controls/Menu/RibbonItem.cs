@@ -213,9 +213,9 @@ namespace MenuRibbon.WPF.Controls.Menu
 		}
 		protected void OnMainUI_LeftMouseDown(MouseButtonEventArgs e)
 		{
+			Focus();
 			var item = MenuRibbon.ItemContainerGenerator.ItemFromContainer(this);
 			MenuRibbon.PinnedItem = item;
-			Focus();
 			MenuRibbon.PopupManager.Enter(this, true);
 		}
 
