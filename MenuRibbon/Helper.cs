@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace MenuRibbon.WPF
@@ -62,7 +63,7 @@ namespace MenuRibbon.WPF
 	}
 
 	/// <summary>
-	/// Utility class to allocate and dispose of a bunch of IDisposable
+	/// Utility class to update and dispose of a bunch of IDisposable
 	/// </summary>
 	public class DisposableBag : IDisposable
 	{
@@ -118,6 +119,11 @@ namespace MenuRibbon.WPF
 				.Select(x => (UIElement)x)
 				.FirstOrDefault();
 		}
+		public static bool IsInMainFocusScope(this DependencyObject element)
+		{
+				var focusScope = FocusManager.GetFocusScope(element) as Visual;
+				return focusScope == null || VisualTreeHelper.GetParent(focusScope) == null;
+		}
 
 		public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
 		{
@@ -130,7 +136,6 @@ namespace MenuRibbon.WPF
 			object val = d.ReadLocalValue(property);
 			return val != DependencyProperty.UnsetValue && val != null;
 		}
-
 		public static bool HasDefaultValue(this DependencyObject d, DependencyProperty dp) { return !IsDefined(d, dp); }
 
 		public static bool Contains(this DependencyObject parent, DependencyObject child)
@@ -155,7 +160,14 @@ namespace MenuRibbon.WPF
 					yield return subitem;
 			}
 		}
-
+		public static IEnumerable<DependencyObject> LogicalHierarchy(this DependencyObject obj, bool includeVisual = true)
+		{
+			while (obj != null)
+			{
+				yield return obj;
+				obj = obj.LogicalParent(includeVisual);
+			}
+		}
 		public static DependencyObject LogicalParent(this DependencyObject obj, bool includeVisual = true)
 		{
 			var p = LogicalTreeHelper.GetParent(obj);
@@ -165,14 +177,6 @@ namespace MenuRibbon.WPF
 			if (p != null)
 				return p;
 			return VisualParent(obj, false);
-		}
-		public static IEnumerable<DependencyObject> LogicalHierarchy(this DependencyObject obj, bool includeVisual = true)
-		{
-			while (obj != null)
-			{
-				yield return obj;
-				obj = obj.LogicalParent(includeVisual);
-			}
 		}
 
 		public static IEnumerable<DependencyObject> VisualChildren(this DependencyObject obj)
@@ -210,15 +214,6 @@ namespace MenuRibbon.WPF
 			return p;
 		}
 
-		public static void CheckTemplateAndTemplateSelector(this DependencyObject d, DependencyProperty templateProperty, DependencyProperty templateSelectorProperty)
-		{
-#if DEBUG
-			if (d.IsDefined(templateSelectorProperty) && d.IsDefined(templateProperty))
-			{
-				Debug.WriteLine("Can't have both Template and TemplateSelector");
-			}
-#endif
-		}
 		public static Visual GetRootVisual(this Visual v)
 		{
 			var source = PresentationSource.FromVisual(v);

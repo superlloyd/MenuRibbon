@@ -45,19 +45,19 @@ namespace MenuRibbon.WPF
 				CanExecuteChangedEventManager.AddHandler(newCommand, canExecuteChanged);
 		}
 
-		public static void ExecuteCommand(this ICommandSource commandSource)
+		public static bool ExecuteCommand(this ICommandSource commandSource)
 		{
 			ICommand command = commandSource.Command;
 			if (command == null)
-				return;
+				return false;
 			object parameter = commandSource.CommandParameter;
 			IInputElement target = commandSource.GetTarget();
-			ExecuteCommand(command, parameter, target);
+			return ExecuteCommand(command, parameter, target);
 		}
-		public static void ExecuteCommand(ICommand command, object parameter, IInputElement target)
+		public static bool ExecuteCommand(ICommand command, object parameter, IInputElement target)
 		{
 			if (command == null)
-				return;
+				return false;
 
 			RoutedCommand routed = command as RoutedCommand;
 			if (routed != null)
@@ -65,12 +65,15 @@ namespace MenuRibbon.WPF
 				if (routed.CanExecute(parameter, target))
 				{
 					routed.Execute(parameter, target);
+					return true;
 				}
 			}
 			else if (command.CanExecute(parameter))
 			{
 				command.Execute(parameter);
+				return true;
 			}
+			return false;
 		}
 	}
 }

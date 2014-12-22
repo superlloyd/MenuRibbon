@@ -231,7 +231,10 @@ namespace MenuRibbon.WPF
 		}
 		public static IEnumerable<IPopupItem> PopupChildren(this IPopupItem parent)
 		{
-			var ic = parent as ItemsControl;
+			return PopupChildren(parent as ItemsControl);
+		}
+		public static IEnumerable<IPopupItem> PopupChildren(this ItemsControl ic)
+		{
 			if (ic == null)
 				return new IPopupItem[0];
 
@@ -254,6 +257,15 @@ namespace MenuRibbon.WPF
 		{
 			if (item == null)
 				return null;
+			if (item is IPopupRoot)
+			{
+				((IPopupRoot)item).PopupManager.Tracking = false;
+				if (!((DependencyObject)item).IsInMainFocusScope())
+				{
+					Keyboard.Focus(null);
+				}
+				return null;
+			}
 			var c = item.FirstFocusableElement();
 			if (c == null)
 				return null;

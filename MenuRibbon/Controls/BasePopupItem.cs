@@ -197,45 +197,51 @@ namespace MenuRibbon.WPF.Controls
 		}
 
 		static readonly DependencyPropertyKey IsPressedPropertyKey = DependencyProperty.RegisterReadOnly(
-			"IsPressed", typeof(bool), typeof(BasePopupItem), new PropertyMetadata(BooleanBoxes.FalseBox));
+			"IsPressed", typeof(bool), typeof(BasePopupItem), 
+			new PropertyMetadata(BooleanBoxes.FalseBox, (o,e) => ((BasePopupItem)o).OnIsPressedChanged((bool)e.OldValue, (bool)e.NewValue)));
+
+		protected virtual void OnIsPressedChanged(bool OldValue, bool NewValue)
+		{
+		}
 
 		public static readonly DependencyProperty IsPressedProperty = IsPressedPropertyKey.DependencyProperty;
 
 		public bool IsHovering
 		{
 			get { return (bool)GetValue(IsHoveringProperty); }
-			private set 
-			{
-				SetValue(IsHoveringPropertyKey, BooleanBoxes.Box(value));
-
-				if (PopupRoot != null && PopupRoot.PopupManager.Tracking)
-				{
-					if (value)
-					{
-						Focus();
-						PopupRoot.PopupManager.OpenLater(this);
-					}
-					else
-					{
-						PopupRoot.PopupManager.Exit(this);
-					}
-				}
-				else
-				{
-					IsHighlighted = value;
-				}
-			}
+			protected set { SetValue(IsHoveringPropertyKey, BooleanBoxes.Box(value)); }
 		}
 
 		static readonly DependencyPropertyKey IsHoveringPropertyKey = DependencyProperty.RegisterReadOnly(
-			"IsHovering", typeof(bool), typeof(BasePopupItem), new PropertyMetadata(BooleanBoxes.FalseBox));
+			"IsHovering", typeof(bool), typeof(BasePopupItem), 
+			new PropertyMetadata(BooleanBoxes.FalseBox, (o,e) => ((BasePopupItem)o).OnIsHoveringChanged((bool)e.OldValue, (bool)e.NewValue)));
 
 		public static readonly DependencyProperty IsHoveringProperty = IsHoveringPropertyKey.DependencyProperty;
+
+		protected virtual void OnIsHoveringChanged(bool OldValue, bool NewValue)
+		{
+			if (PopupRoot != null && PopupRoot.PopupManager.Tracking)
+			{
+				if (NewValue)
+				{
+					Focus();
+					PopupRoot.PopupManager.OpenLater(this);
+				}
+				else
+				{
+					PopupRoot.PopupManager.Exit(this);
+				}
+			}
+			else
+			{
+				IsHighlighted = NewValue;
+			}
+		}
 
 		public bool IsHighlighted
 		{
 			get { return (bool)GetValue(IsHighlightedProperty); }
-			private set { SetValue(IsHighlightedPropertyKey, BooleanBoxes.Box(value)); }
+			protected set { SetValue(IsHighlightedPropertyKey, BooleanBoxes.Box(value)); }
 		}
 		bool IPopupItem.IsHighlighted
 		{
@@ -252,6 +258,10 @@ namespace MenuRibbon.WPF.Controls
 		{
 		}
 
+		#endregion	
+
+		#region input override
+
 		protected override void OnGotFocus(RoutedEventArgs e)
 		{
 			base.OnGotFocus(e);
@@ -266,6 +276,7 @@ namespace MenuRibbon.WPF.Controls
 				IsHighlighted = true;
 			}
 		}
+
 		protected override void OnLostFocus(RoutedEventArgs e)
 		{
 			base.OnLostFocus(e);
@@ -281,7 +292,23 @@ namespace MenuRibbon.WPF.Controls
 			}
 		}
 
-		#endregion		
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			this.OnKeyNavigate(e);
+			base.OnKeyDown(e);
+		}
+
+		protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+		{
+			base.OnPreviewGotKeyboardFocus(e);
+			var r = PopupRoot;
+			if (r != null)
+			{
+				r.PopupManager.Tracking = true;
+			}
+		}
+	
+		#endregion
 
 		#region ItemsControl override
 
@@ -428,80 +455,6 @@ namespace MenuRibbon.WPF.Controls
 			if (item is ICommand)
 			{
 				element.Command = (ICommand)item;
-			}
-		}
-
-		#endregion
-
-		#region FrameworkElement override + InputHandling
-
-		public override void OnApplyTemplate()
-		{
-			base.OnApplyTemplate();
-			events.Clear();
-
-			var main = GetTemplateChild("PART_Header");
-			if (main != null)
-			{
-				events["H"] = main.MouseHovering().Subscribe(x => IsHovering = x);
-				events["L"] = main.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => OnMainUI_LeftMouseDown(x));
-				events["D"] = main.MouseClicks().Subscribe(x => OnClick());
-				events["P"] = main.MousePressed().Subscribe(x => IsPressed = x);
-			}
-		}
-		DisposableBag events = new DisposableBag();
-
-		protected override void OnClick(RoutedEventArgs e)
-		{
-			switch (Role)
-			{
-				case MenuItemRole.TopLevelItem:
-				case MenuItemRole.SubmenuItem:
-					Keyboard.Focus(null);
-					break;
-			}
-			base.OnClick(e);
-		}
-
-		protected void OnMainUI_LeftMouseDown(MouseButtonEventArgs e)
-		{
-			switch (Role)
-			{
-				case MenuItemRole.TopLevelHeader:
-					if (PopupRoot != null && PopupRoot.PopupManager.Tracking)
-					{
-						Keyboard.Focus(null);
-					}
-					else
-					{
-						Focus();
-						if (PopupRoot != null)
-							PopupRoot.PopupManager.Enter(this, true);
-					}
-					break;
-				case MenuItemRole.TopLevelItem:
-				case MenuItemRole.SubmenuItem:
-					break;
-				case MenuItemRole.SubmenuHeader:
-				default:
-					PopupRoot.PopupManager.OpenedItem = this;
-					break;
-			}
-		}
-
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			this.OnKeyNavigate(e);
-			base.OnKeyDown(e);
-		}
-
-		protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
-		{
-			base.OnPreviewGotKeyboardFocus(e);
-			var r = PopupRoot;
-			if (r != null)
-			{
-				r.PopupManager.Tracking = true;
 			}
 		}
 

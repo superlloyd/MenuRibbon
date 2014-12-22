@@ -424,9 +424,10 @@
 	</Style>
 
 	<Style TargetType="c:ItemsButton">
-		<Setter Property="FocusManager.IsFocusScope" Value="True"/>
 		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+		<Setter Property="FocusManager.IsFocusScope" Value="True"/>
 		<Setter Property="Focusable" Value="True"/>
+		<Setter Property="IsTabStop" Value="False"/>
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="Padding" Value="1"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
@@ -435,7 +436,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="c:ItemsButton">
-					<Grid>
+					<Grid Background="{TemplateBinding Background}" TextBlock.Foreground="{TemplateBinding Foreground}">
 						<StackPanel x:Name="PART_BUTTON" Orientation="Horizontal">
 							<!-- main content -->
 							<Border x:Name="PART_Header" Background="{TemplateBinding Background}" BorderThickness="1" BorderBrush="Transparent">
@@ -458,7 +459,7 @@
 									</Border>
 								</StackPanel>
 							</Border>
-							<Border x:Name="PART_Splitter" Padding="2" BorderThickness="0,1,1,1" Visibility="Collapsed" BorderBrush="Transparent">
+							<Border x:Name="PART_Splitter" Padding="3" BorderThickness="0,1,1,1" Visibility="Collapsed" BorderBrush="Transparent">
 								<Path
 									HorizontalAlignment="Center" VerticalAlignment="Center"
 									Fill="{TemplateBinding Foreground}"
@@ -467,11 +468,11 @@
 							</Border>
 						</StackPanel>
 						<Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsOpen}" 
-								PlacementTarget="{x:Reference PART_BUTTON}" Placement="Bottom"
-								Focusable="false"
-								PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
-								AllowsTransparency="True"
-								>
+							   PlacementTarget="{x:Reference PART_BUTTON}" Placement="Bottom"
+							   Focusable="false"
+							   PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+							   AllowsTransparency="True"
+							   >
 							<Border Background="{TemplateBinding Background}"
 									BorderBrush="{TemplateBinding BorderBrush}"
 									BorderThickness="1"
@@ -529,6 +530,25 @@
 							</MultiTrigger.Conditions>
 							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MenuItemSelectionFill}"/>
 						</MultiTrigger>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsSplitButton" Value="True"/>
+								<Condition Property="IsHighlighted" Value="True"/>
+								<Condition Property="IsHoveringSplitter" Value="False"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MenuItemSelectionFill}"/>
+						</MultiTrigger>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsSplitButton" Value="True"/>
+								<Condition Property="IsHighlighted" Value="True"/>
+								<Condition Property="IsHoveringSplitter" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="PART_Splitter" Property="Background" Value="{DynamicResource MenuItemSelectionFill}"/>
+						</MultiTrigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter TargetName="PART_BUTTON" Property="Opacity" Value="0.4" />
+						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>

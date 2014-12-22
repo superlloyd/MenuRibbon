@@ -6,6 +6,12 @@ Source on GitHub: http://github.com/superlloyd/MenuRibbon
 All the `MenuRibbon.WPF` classes can be referenced in XAML by the following namespace declaration:
 `http://schemas.menuribbon.net/xaml`
 
+
+### Gotchas
+Just realized Menu and Ribbon have incompatible focus handling / behavior, such that they can't be mixed, as I was originally intending!
+Currently adjusting library controls and goals. I might keep developing it, but the RibbonBar would become more like a toolbar.
+
+
 ### Dependencies
 - [MahApps.Metro](http://mahapps.com) 
 - [Rx-Linq](https://www.nuget.org/packages/Rx-Linq) 
@@ -26,6 +32,7 @@ This control has been tested and developed to provide the distraction free look 
 
 ### Examples
 Let's show some small but common use case to get the code started with `MenuRibbon.WPF`.
+
 
 #### Setup a simple MenuRibbon
 Below is the source code for a very minimalistic ribbon. Note that the window is of type `MetroWindow`.
@@ -76,7 +83,7 @@ If the Ribbon is expanded and the menu open you will get that:
 
 
 #### Using custom control inside a Menu
-Let's add a Word like header in the menu!
+Those `MenuItem` can display any content as is (unlike SDK `MenuItem`), so let's add a Word like header in the menu!
 First let's define an header style:
 ```XML
 <Style x:Key="HeaderStyle"  TargetType="TextBlock">
@@ -176,11 +183,9 @@ All the way down to collapsed group:
 ![](./docs/simple5.jpg)
 
 
-
 ### TODO
-- More work on keyboard - mouse - focus interaction
-- Better support for split buttons (`ItemsButton.IsSplitButton = true`).
 - KeyTips.
+- AutomationPeer
 - NuGet package.
 - Galleries.
 

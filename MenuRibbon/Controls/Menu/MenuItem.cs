@@ -32,6 +32,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 		{
 		}
 
+		#region InputGestureText
 
 		public string InputGestureText
 		{
@@ -71,6 +72,67 @@ namespace MenuRibbon.WPF.Controls.Menu
 			}
 
 			return value;
+		} 
+
+		#endregion
+
+		#region IsPressed, IsHovering, IsHighlighted
+
+
+		#endregion
+
+		#region FrameworkElement override + InputHandling
+
+		public override void OnApplyTemplate()
+		{
+			base.OnApplyTemplate();
+			events.Clear();
+
+			var main = GetTemplateChild("PART_Header");
+			if (main != null)
+			{
+				events["H"] = main.MouseHovering().Subscribe(x => IsHovering = x);
+				events["L"] = main.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => OnMainUI_LeftMouseDown(x));
+				events["D"] = main.MouseClicks().Subscribe(x => OnClick());
+				events["P"] = main.MousePressed().Subscribe(x => IsPressed = x);
+			}
+			else
+			{
+				events.Clear();
+			}
 		}
+		DisposableBag events = new DisposableBag();
+
+		protected override void OnClick(RoutedEventArgs e)
+		{
+			switch (Role)
+			{
+				case MenuItemRole.TopLevelItem:
+				case MenuItemRole.SubmenuItem:
+					base.OnClick(e);
+					break;
+			}
+		}
+
+		protected void OnMainUI_LeftMouseDown(MouseButtonEventArgs e)
+		{
+			switch (Role)
+			{
+				case MenuItemRole.TopLevelHeader:
+					Focus();
+					if (PopupRoot != null)
+						PopupRoot.PopupManager.Enter(this, true);
+					break;
+				case MenuItemRole.TopLevelItem:
+				case MenuItemRole.SubmenuItem:
+					break;
+				case MenuItemRole.SubmenuHeader:
+				default:
+					PopupRoot.PopupManager.OpenedItem = this;
+					break;
+			}
+		}
+
+		#endregion
 	}
 }

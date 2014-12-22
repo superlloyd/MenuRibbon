@@ -53,6 +53,11 @@ namespace MenuRibbon.WPF.Controls
 			{
 				he.Invoke(this, e);
 			}
+
+			if (Keyboard.FocusedElement == this && !this.IsInMainFocusScope())
+			{
+				Keyboard.Focus(null);
+			}
 		}
 
 		#endregion

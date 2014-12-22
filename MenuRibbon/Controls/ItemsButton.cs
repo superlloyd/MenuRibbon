@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-
+using System.Windows.Input;
 using MM = MenuRibbon.WPF.Controls.Menu;
 
 namespace MenuRibbon.WPF.Controls
@@ -16,6 +17,9 @@ namespace MenuRibbon.WPF.Controls
 		RibbonControlSizeDefinition ControlSizeDefinition { get; set; }
 	}
 
+	[TemplatePart(Name = "PART_Header", Type = typeof(FrameworkElement))]
+	[TemplatePart(Name = "PART_Splitter", Type = typeof(FrameworkElement))]
+	[TemplatePart(Name = "PART_BUTTON", Type = typeof(FrameworkElement))]
 	public partial class ItemsButton : BasePopupItem, IPopupRoot, IRibbonGroupControl
 	{
 		static ItemsButton()
@@ -134,5 +138,59 @@ namespace MenuRibbon.WPF.Controls
 		PopupManager mPopupManager;
 
 		#endregion		
+
+		#region IsHoveringSplitter
+
+		public bool IsHoveringSplitter
+		{
+			get { return (bool)GetValue(IsHoveringSplitterProperty); }
+			private set { SetValue(IsHoveringSplitterPropertyKey, BooleanBoxes.Box(value)); }
+		}
+
+		private static readonly DependencyPropertyKey IsHoveringSplitterPropertyKey = DependencyProperty.RegisterReadOnly(
+			"IsHoveringSplitter", typeof(bool), typeof(ItemsButton)
+			, new PropertyMetadata(BooleanBoxes.FalseBox, (o, e) => ((ItemsButton)o).OnIsHoveringSplitterChanged((bool)e.OldValue, (bool)e.NewValue)));
+
+		public static readonly DependencyProperty IsHoveringSplitterProperty = IsHoveringSplitterPropertyKey.DependencyProperty;
+
+		void OnIsHoveringSplitterChanged(bool OldValue, bool NewValue)
+		{
+		}
+
+		#endregion
+
+		#region FrameworkElement override + InputHandling
+
+		public override void OnApplyTemplate()
+		{
+			base.OnApplyTemplate();
+			events.Clear();
+
+			var header = GetTemplateChild("PART_Header");
+			var splitter = GetTemplateChild("PART_Splitter");
+			var all = GetTemplateChild("PART_BUTTON");
+
+			events["1"] = all != null ? all.MouseHovering().Subscribe(x => IsHovering = x) : null;
+			events["HLBD"] = header != null ? header.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => 
+			{
+				if (HasItems && !IsSplitButton) PopupManager.Enter(this, true);
+			}) : null;
+			events["2"] = header != null ? header.MouseClicks().Subscribe(x => OnClick()) : null;
+			events["3"] = header != null ? header.MousePressed().Subscribe(x => IsPressed = x) : null;
+			events["5"] = splitter != null ? splitter.MouseHovering().Subscribe(x => IsHoveringSplitter = x) : null;
+			events["4"] = splitter != null ? splitter.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => PopupManager.OpenedItem = this) : null;
+		}
+		DisposableBag events = new DisposableBag();
+
+		protected override void OnClick(RoutedEventArgs e)
+		{
+			if (!HasItems || IsSplitButton)
+			{
+				base.OnClick(e);
+				PopupManager.Tracking = false;
+			}
+		}
+
+		#endregion
 	}
 }

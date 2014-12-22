@@ -138,6 +138,9 @@ namespace MenuRibbon.WPF
 					FocusTracker.Current.FocusedElementChanged -= onFocusChanged;
 					if (root != null) Mouse.RemovePreviewMouseDownHandler(root, onPreviewMouseDown);
 					if (root is Window) ((Window)root).Deactivated -= onWindowDeactivated;
+
+					OpenedItem = null;
+					HighlightedItem = null;
 				}
 				PopupRoot.UpdatePopupRoot();
 				OnPropertyChanged();
@@ -223,6 +226,12 @@ namespace MenuRibbon.WPF
 				openedItem = value;
 
 				OnPropertyChanged();
+
+				if (value != null && !Tracking)
+				{
+					Keyboard.Focus(value as IInputElement);
+					Tracking = true;
+				}
 			}
 		}
 		IPopupItem openedItem;

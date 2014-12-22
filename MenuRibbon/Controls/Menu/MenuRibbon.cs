@@ -309,10 +309,20 @@ namespace MenuRibbon.WPF.Controls.Menu
 						selected = IsItemItsOwnContainer(item) ? (IPopupItem)item : (IPopupItem)ItemContainerGenerator.ContainerFromItem(item);
 					}
 
-					var next = selected
-						.PopupSiblings(forward, false)
-						.Where(x => PopupManager.Tracking || x is RibbonItem)
-						.FirstOrDefault();
+					IPopupItem next = null;
+					if (selected != null)
+					{
+						next = selected
+							.PopupSiblings(forward, false)
+							.Where(x => PopupManager.Tracking || x is RibbonItem)
+							.FirstOrDefault();
+					}
+					else
+					{
+						next = this.PopupChildren()
+							.Where(x => PopupManager.Tracking || x is RibbonItem)
+							.FirstOrDefault();
+					}
 
 					if (next != null && next != selected)
 					{
