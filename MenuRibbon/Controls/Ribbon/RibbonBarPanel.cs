@@ -50,6 +50,48 @@ namespace MenuRibbon.WPF.Controls.Ribbon
 
 		#endregion
 
+		#region CachedGroupSizes...
+
+		/// <summary>
+		/// Whether the group size in this panel is calculated only once. And use a cache value for next resize.
+		/// </summary>
+		public bool UseCachedGroupSize
+		{
+			get { return (bool)GetValue(UseCachedGroupSizeProperty); }
+			set { SetValue(UseCachedGroupSizeProperty, BooleanBoxes.Box(value)); }
+		}
+
+		public static readonly DependencyProperty UseCachedGroupSizeProperty = DependencyProperty.Register(
+			"UseCachedGroupSize", typeof(bool), typeof(RibbonBarPanel), new PropertyMetadata(BooleanBoxes.TrueBox));
+
+		public void ClearCachedGroupSize()
+		{
+			foreach (UIElement uic in this.Children)
+			{
+				var ls = GetCachedSizes(uic);
+				if (ls != null)
+					ls.Clear();
+			}
+		}
+
+		public static List<double> GetCachedSizes(DependencyObject obj)
+		{
+			return (List<double>)obj.GetValue(CachedSizesProperty);
+		}
+
+		public static void SetCachedSizes(DependencyObject obj, List<double> value)
+		{
+			obj.SetValue(CachedSizesProperty, value);
+		}
+
+		/// <summary>
+		/// Cached group size for each size level. Use the value in this array is using cache.
+		/// </summary>
+		public static readonly DependencyProperty CachedSizesProperty =
+			DependencyProperty.RegisterAttached("CachedSizes", typeof(List<double>), typeof(RibbonBarPanel), new PropertyMetadata(null));
+
+		#endregion
+
 		protected override Size ArrangeOverride(Size finalSize)
 		{
 			double pos = 0;
@@ -61,6 +103,10 @@ namespace MenuRibbon.WPF.Controls.Ribbon
 			}
 			return new Size(pos, finalSize.Height);
 		}
+
+		// reuse the same arrays to minimize memory allocation
+		List<double> previousSizes = new List<double>();
+		List<int> selectedGroupSizes = new List<int>();
 
 		protected override Size MeasureOverride(Size availableSize)
 		{
@@ -88,32 +134,58 @@ namespace MenuRibbon.WPF.Controls.Ribbon
 				children.Sort((x1, x2) => getSO(x1) - getSO(x2));
 			}
 
+			var hInf = new Size(double.MaxValue, H);
+			Func<UIElement, int, double> getWidth = (ui, i) =>
+			{
+				var rg = ui as RibbonGroup;
+				if (UseCachedGroupSize && rg != null)
+				{
+					var l = GetCachedSizes(ui);
+					if (l == null) SetCachedSizes(ui, l = new List<double>());
+					while (l.Count <= i) l.Add(-1);
+					var w = l[i];
+					if (w < 0)
+					{
+						SetGroupSizeIndex(rg, i);
+						ui.Measure(hInf);
+						l[i] = w = ui.DesiredSize.Width;
+					}
+					return w;
+				}
+				else
+				{
+					ui.Measure(hInf);
+					return ui.DesiredSize.Width;
+				}
+			};
+
 			// calculate original size
 			double total = 0;
-			var hInf = new Size(double.MaxValue, H);
 			int MaxSR = 0;
 			int N = 0;
+			previousSizes.Clear();
+			selectedGroupSizes.Clear();
 			foreach (var uic in children)
 			{
 				var rg = uic as RibbonGroup;
 				if (rg != null && rg.GroupSizeDefinitions != null && rg.GroupSizeDefinitions.Count > 0)
 				{
 					N++;
-					SetGroupSizeIndex(rg, 0);
 					if (rg.GroupSizeDefinitions.Count > MaxSR)
 						MaxSR = rg.GroupSizeDefinitions.Count;
 				}
 
-				uic.Measure(hInf);
-				var s = uic.DesiredSize;
-				total += s.Width;
+				var w = getWidth(uic, 0);
+				total += w;
+				selectedGroupSizes.Add(0);
+				previousSizes.Add(w);
 			}
 
 			for (int SR = 1; SR < MaxSR; SR++)
 			{
-				//var diff = (availableSize.Width - total) / N;
 				if (total <= availableSize.Width)
 					break;
+				int iC = 0;
 				foreach (var uic in children)
 				{
 					if (total <= availableSize.Width)
@@ -121,12 +193,28 @@ namespace MenuRibbon.WPF.Controls.Ribbon
 					var rg = uic as RibbonGroup;
 					if (rg != null && rg.GroupSizeDefinitions != null && rg.GroupSizeDefinitions.Count > SR)
 					{
-						var prev = uic.DesiredSize;
-						SetGroupSizeIndex(rg, SR);
-						uic.Measure(hInf);
-						var next = uic.DesiredSize;
-						total += next.Width - prev.Width;
+						selectedGroupSizes[iC] = SR;
+						var prev = previousSizes[iC];
+						var w = getWidth(uic, SR);
+						previousSizes[iC] = w;
+						total += w - prev;
 					}
+					iC++;
+				}
+			}
+
+			// Measure() need be called on final setting, otherwise "sometimes" there are artifacts ...
+			if (UseCachedGroupSize)
+			{
+				var iC = 0;
+				foreach (var uic in children)
+				{
+					if (uic is RibbonGroup)
+					{
+						SetGroupSizeIndex((RibbonGroup)uic, selectedGroupSizes[iC]);
+						uic.Measure(hInf);
+					}
+					iC++;
 				}
 			}
 
