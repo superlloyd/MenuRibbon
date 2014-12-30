@@ -63,6 +63,23 @@ namespace MenuRibbon.WPF
 			);
 		}
 
+		public static IObservable<KeyEventArgs> KeyDown(this DependencyObject that)
+		{
+			UIElement ui = (UIElement)that;
+			return Observable.FromEvent<KeyEventArgs>(
+				on => ui.KeyDown += (o, e) => on(e),
+				on => ui.KeyDown -= (o, e) => on(e)
+			);
+		}
+		public static IObservable<KeyEventArgs> KeyUp(this DependencyObject that)
+		{
+			UIElement ui = (UIElement)that;
+			return Observable.FromEvent<KeyEventArgs>(
+				on => ui.KeyUp += (o, e) => on(e),
+				on => ui.KeyUp -= (o, e) => on(e)
+			);
+		}
+
 		#endregion
 
 		#region Mouse events

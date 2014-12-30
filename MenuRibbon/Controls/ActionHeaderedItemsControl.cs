@@ -54,7 +54,7 @@ namespace MenuRibbon.WPF.Controls
 				he.Invoke(this, e);
 			}
 
-			if (Keyboard.FocusedElement == this && !this.IsInMainFocusScope())
+			//if (!this.IsInMainFocusScope() && FocusManager.GetFocusScope((DependencyObject)Keyboard.FocusedElement) == FocusManager.GetFocusScope(this))
 			{
 				Keyboard.Focus(null);
 			}

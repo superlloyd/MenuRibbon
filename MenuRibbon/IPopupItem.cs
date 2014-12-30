@@ -22,20 +22,10 @@ namespace MenuRibbon.WPF
 
 	public static class IPopupItemEx
 	{
-		public static void OnKeyNavigate(this IPopupItem item, KeyEventArgs e)
+		public static void OnKeyDownNavigate(this IPopupItem item, KeyEventArgs e)
 		{
-			if (e.Handled)
+			if (!item.Handle(e))
 				return;
-			if (item.PopupRoot == null)
-				return;
-			if (e.OriginalSource is DependencyObject)
-			{
-				var dp = (DependencyObject)e.OriginalSource;
-				if (!dp.VisualHierarchy()
-					.TakeWhile(x => !(x is Window || x is Popup))
-					.Contains((DependencyObject)item))
-					return;
-			}
 
 			var key = e.Key;
 
@@ -159,10 +149,44 @@ namespace MenuRibbon.WPF
 					break;
 				case Key.Enter:
 				case Key.Space:
+					e.Handled = true;
+					break;
+			}
+		}
+		public static void OnKeyUpNavigate(this IPopupItem item, KeyEventArgs e)
+		{
+			if (!item.Handle(e))
+				return;
+			switch (e.Key)
+			{
+				case Key.Enter:
+				case Key.Space:
 					item.Action();
 					e.Handled = true;
 					break;
 			}
+		}
+		static bool Handle(this IPopupItem item, KeyEventArgs e)
+		{
+			if (e.Handled)
+				return false;
+			if (item.PopupRoot == null)
+				return false;
+			if (e.OriginalSource is DependencyObject)
+			{
+				var dp = (DependencyObject)e.OriginalSource;
+				if (!dp.VisualHierarchy()
+					.TakeWhile(x => !(x is Window || x is Popup))
+					.Contains((DependencyObject)item))
+					return false;
+			}
+			//if (e.OriginalSource is IInputElement)
+			//{
+			//	var iui = (IInputElement)e.OriginalSource;
+			//	if (!iui.IsKeyboardFocusWithin)
+			//		return false;
+			//}
+			return true;
 		}
 
 		public static IEnumerable<IPopupItem> SelectableItem(this IEnumerable<IPopupItem> list)
@@ -285,6 +309,5 @@ namespace MenuRibbon.WPF
 		{
 			KeyTipService.Current.RestoreFocusScope();
 		}
-
 	}
 }

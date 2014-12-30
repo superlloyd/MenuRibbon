@@ -125,6 +125,7 @@ namespace MenuRibbon.WPF.Controls
 		#region IPopupRoot
 
 		void IPopupRoot.UpdatePopupRoot() {}
+		void IPopupRoot.OnLostFocus() { PopupManager.OpenedItem = null; }
 
 		public PopupManager PopupManager
 		{

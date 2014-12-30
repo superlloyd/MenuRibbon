@@ -12,5 +12,7 @@ http://msdn.microsoft.com/EN-US/library/hh140095(v=VS.110,d=hv.2).aspx
 
 Keytips
 Better looking top-level menu item & itemsbutton
-Keyboard navigation => on KeyUp do ESC/SPACE/RETURN
-Tracking => InputManager.PostFocus to close event and do not focus when clicking on RibbonMenu
+
+click on ribbon item => no focus!
+
+App: Maps first, then text, then grid / character sheet

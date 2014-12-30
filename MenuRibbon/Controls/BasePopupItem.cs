@@ -294,8 +294,13 @@ namespace MenuRibbon.WPF.Controls
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			this.OnKeyNavigate(e);
+			this.OnKeyDownNavigate(e);
 			base.OnKeyDown(e);
+		}
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			this.OnKeyUpNavigate(e);
+			base.OnKeyUp(e);
 		}
 
 		protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)

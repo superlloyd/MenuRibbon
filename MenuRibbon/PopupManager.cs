@@ -21,6 +21,7 @@ namespace MenuRibbon.WPF
 	public interface IPopupRoot
 	{
 		void UpdatePopupRoot();
+		void OnLostFocus();
 		PopupManager PopupManager { get; }
 	}
 
@@ -129,13 +130,15 @@ namespace MenuRibbon.WPF
 				mTracking = value;
 				if (value)
 				{
-					FocusTracker.Current.FocusedElementChanged += onFocusChanged;
+					InputManager.Current.PushMenuMode(pTrackingSource = PresentationSource.FromDependencyObject(root));
+					InputManager.Current.PostProcessInput += onPostProcessInput;
 					if (root != null) Mouse.AddPreviewMouseDownHandler(root, onPreviewMouseDown);
 					if (root is Window) ((Window)root).Deactivated += onWindowDeactivated;
 				}
 				else
 				{
-					FocusTracker.Current.FocusedElementChanged -= onFocusChanged;
+					InputManager.Current.PopMenuMode(pTrackingSource);
+					InputManager.Current.PostProcessInput -= onPostProcessInput;
 					if (root != null) Mouse.RemovePreviewMouseDownHandler(root, onPreviewMouseDown);
 					if (root is Window) ((Window)root).Deactivated -= onWindowDeactivated;
 
@@ -147,6 +150,7 @@ namespace MenuRibbon.WPF
 			}
 		}
 		bool mTracking;
+		PresentationSource pTrackingSource;
 
 		void PrepareTrackHandlers()
 		{
@@ -157,11 +161,31 @@ namespace MenuRibbon.WPF
 				HighlightedItem = null;
 			};
 
-			onFocusChanged = (o, e) => 
+			onPostProcessInput = (o, e) =>
 			{
-				if (FocusTracker.Current.FocusedElement == null)
+				if (feElement.IsKeyboardFocusWithin)
 					return;
-				if (feElement == null || !feElement.IsKeyboardFocusWithin)
+				var target = e.StagingItem.Input.OriginalSource as DependencyObject;
+				if (target == null || target.VisualHierarchy().Contains(feElement))
+					return;
+
+				var ev = e.StagingItem.Input.RoutedEvent;
+				if (ev == Keyboard.GotKeyboardFocusEvent)
+				{
+					PopupRoot.OnLostFocus();
+				}
+
+				if (!e.StagingItem.Input.Handled)
+					return;
+
+				if (ev == Keyboard.KeyDownEvent
+					|| ev == Keyboard.KeyUpEvent
+					|| ev == Mouse.MouseDownEvent
+					|| ev == Mouse.MouseUpEvent
+					|| ev == TextCompositionManager.TextInputEvent
+					|| ev == TextCompositionManager.TextInputStartEvent
+					|| ev == Stylus.StylusDownEvent
+					|| ev == Stylus.StylusUpEvent)
 				{
 					leave();
 				}
@@ -190,8 +214,9 @@ namespace MenuRibbon.WPF
 				}
 			};
 		}
-		EventHandler onFocusChanged, onWindowDeactivated;
+		EventHandler onWindowDeactivated;
 		MouseButtonEventHandler onPreviewMouseDown;
+		ProcessInputEventHandler onPostProcessInput;
 
 		#endregion
 

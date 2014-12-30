@@ -194,8 +194,6 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		public static readonly DependencyProperty PinnedRibbonItemProperty = PinnedRibbonItemPropertyKey.DependencyProperty;
 
-		void IPopupRoot.UpdatePopupRoot() { UpdateRibbonAppearance(); }
-
 		void UpdateRibbonAppearance()
 		{
 			RibbonItem h = DroppedRibbonItem;
@@ -351,6 +349,9 @@ namespace MenuRibbon.WPF.Controls.Menu
 		}
 
 		#endregion
+
+		void IPopupRoot.UpdatePopupRoot() { UpdateRibbonAppearance(); }
+		void IPopupRoot.OnLostFocus() { }
 
 		public PopupManager PopupManager
 		{
