@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace MenuRibbon.WPF
@@ -97,8 +96,138 @@ namespace MenuRibbon.WPF
 		}
 	}
 
-	public static class Helper
+	public static class UIHelper
 	{
+		public static CultureInfo GetCultureInfo(this DependencyObject element)
+		{
+			XmlLanguage language = (XmlLanguage)element.GetValue(FrameworkElement.LanguageProperty);
+			try
+			{
+				if (language == null) return InvariantEnglishUS;
+				return language.GetSpecificCulture();
+			}
+			catch (InvalidOperationException)
+			{
+				// We default to en-US if no part of the language tag is recognized.
+				return InvariantEnglishUS;
+			}
+		}
+		private static CultureInfo invariantEnglishUS;
+		public static CultureInfo InvariantEnglishUS
+		{
+			get
+			{
+				if (invariantEnglishUS == null)
+				{
+					invariantEnglishUS = CultureInfo.ReadOnly(new CultureInfo("en-us", false));
+				}
+				return invariantEnglishUS;
+			}
+		}
+
+		public static void AddHandler(this DependencyObject element, RoutedEvent routedEvent, Delegate handler)
+		{
+			Debug.Assert(element != null, "Element must not be null");
+			Debug.Assert(routedEvent != null, "RoutedEvent must not be null");
+
+			UIElement uiElement = element as UIElement;
+			if (uiElement != null)
+			{
+				uiElement.AddHandler(routedEvent, handler);
+			}
+			else
+			{
+				ContentElement contentElement = element as ContentElement;
+				if (contentElement != null)
+				{
+					contentElement.AddHandler(routedEvent, handler);
+				}
+				else
+				{
+					UIElement3D uiElement3D = element as UIElement3D;
+					if (uiElement3D != null)
+					{
+						uiElement3D.AddHandler(routedEvent, handler);
+					}
+				}
+			}
+		}
+		public static void RemoveHandler(this DependencyObject element, RoutedEvent routedEvent, Delegate handler)
+		{
+			Debug.Assert(element != null, "Element must not be null");
+			Debug.Assert(routedEvent != null, "RoutedEvent must not be null");
+
+			UIElement uiElement = element as UIElement;
+			if (uiElement != null)
+			{
+				uiElement.RemoveHandler(routedEvent, handler);
+			}
+			else
+			{
+				ContentElement contentElement = element as ContentElement;
+				if (contentElement != null)
+				{
+					contentElement.RemoveHandler(routedEvent, handler);
+				}
+				else
+				{
+					UIElement3D uiElement3D = element as UIElement3D;
+					if (uiElement3D != null)
+					{
+						uiElement3D.RemoveHandler(routedEvent, handler);
+					}
+				}
+			}
+		}
+
+		public static void AddLoadedHandler(this DependencyObject element, RoutedEventHandler loaded, RoutedEventHandler unloaded)
+		{
+			var fe = element as FrameworkElement;
+			if (fe != null)
+			{
+				if (loaded != null) fe.Loaded += loaded;
+				if (unloaded != null) fe.Unloaded += unloaded;
+				return;
+			}
+			var fce = element as FrameworkContentElement;
+			if (fce != null)
+			{
+				if (loaded != null) fce.Loaded += loaded;
+				if (unloaded != null) fce.Unloaded += unloaded;
+				return;
+			}
+		}
+		public static void RemoveLoadedHandler(this DependencyObject element, RoutedEventHandler loaded, RoutedEventHandler unloaded)
+		{
+			var fe = element as FrameworkElement;
+			if (fe != null)
+			{
+				if (loaded != null) fe.Loaded -= loaded;
+				if (unloaded != null) fe.Unloaded -= unloaded;
+				return;
+			}
+			var fce = element as FrameworkContentElement;
+			if (fce != null)
+			{
+				if (loaded != null) fce.Loaded -= loaded;
+				if (unloaded != null) fce.Unloaded -= unloaded;
+				return;
+			}
+		}
+		public static bool IsLoaded(this DependencyObject element)
+		{
+			var fe = element as FrameworkElement;
+			if (fe != null)
+				return fe.IsLoaded;
+
+			var fce = element as FrameworkContentElement;
+			if (fce != null)
+				return fce.IsLoaded;
+
+			return false;
+		}
+
+
 		public static UIElement FirstFocusableElement(this object o)
 		{
 			Predicate<DependencyObject> where = x =>
@@ -125,12 +254,6 @@ namespace MenuRibbon.WPF
 				return focusScope == null || VisualTreeHelper.GetParent(focusScope) == null;
 		}
 
-		public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
-		{
-			foreach (var item in source)
-				action(item);
-		}
-
 		public static bool IsDefined(this DependencyObject d, DependencyProperty property)
 		{
 			object val = d.ReadLocalValue(property);
@@ -146,12 +269,9 @@ namespace MenuRibbon.WPF
 		public static IEnumerable<DependencyObject> LogicalChildren(this DependencyObject obj)
 		{
 			System.Collections.IEnumerable children = null;
-			if (obj is FrameworkContentElement)
-				children = LogicalTreeHelper.GetChildren((FrameworkContentElement)obj);
-			if (obj is FrameworkElement)
-				children = LogicalTreeHelper.GetChildren((FrameworkElement)obj);
-			else 
-				children = LogicalTreeHelper.GetChildren(obj);
+			if (obj is FrameworkContentElement) children = LogicalTreeHelper.GetChildren((FrameworkContentElement)obj);
+			else if (obj is FrameworkElement) children = LogicalTreeHelper.GetChildren((FrameworkElement)obj);
+			else children = LogicalTreeHelper.GetChildren(obj);
 
 			foreach (var item in children.Cast<object>().Where(x => x is DependencyObject).Cast<DependencyObject>())
 			{
@@ -170,7 +290,14 @@ namespace MenuRibbon.WPF
 		}
 		public static DependencyObject LogicalParent(this DependencyObject obj, bool includeVisual = true)
 		{
-			var p = LogicalTreeHelper.GetParent(obj);
+			DependencyObject p;
+			if (obj is ContentElement)
+			{
+				p = ContentOperations.GetParent((ContentElement)obj);
+				if (p != null)
+					return p;
+			}
+			p = LogicalTreeHelper.GetParent(obj);
 			if (p != null)
 				return p;
 			p = ItemsControl.ItemsControlFromItemContainer(obj);
@@ -205,7 +332,11 @@ namespace MenuRibbon.WPF
 			{
 				p = ((FrameworkContentElement)obj).Parent;
 			}
-			if (obj is Visual || obj is System.Windows.Media.Media3D.Visual3D)
+			else if (obj is ContentElement)
+			{
+				p = ContentOperations.GetParent((ContentElement)obj);
+			}
+			else if (obj is Visual || obj is System.Windows.Media.Media3D.Visual3D)
 			{
 				p = VisualTreeHelper.GetParent(obj);
 			}

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using MenuRibbon.WPF.Utils;
 
 namespace MenuRibbon.WPF
 {
@@ -80,11 +81,11 @@ namespace MenuRibbon.WPF
 			add { mFocusChangedHandlers.Add(value); }
 			remove { mFocusChangedHandlers.Remove(value); }
 		}
-		WeakSet<EventHandler> mFocusChangedHandlers = new WeakSet<EventHandler>();
+		WeakList<EventHandler> mFocusChangedHandlers = new WeakList<EventHandler>();
 
 		void RaiseFocusedElementChanged()
 		{
-			var hList = mFocusChangedHandlers.ToArray();
+			var hList = mFocusChangedHandlers.ToList();
 			foreach (var h in hList)
 				h(this, EventArgs.Empty);
 		}

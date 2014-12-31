@@ -98,6 +98,8 @@ namespace MenuRibbon.WPF.Controls.Menu
 		#region IPopupItem: IsOpen, ParentItem, PopupRoot
 
 		void IPopupItem.Action() { MenuRibbon.TogglePin(); }
+		bool IPopupItem.IsPressed { get { return IsPressed; } set { IsPressed = value; } }
+
 		IPopupRoot IPopupItem.PopupRoot { get { return MenuRibbon; } }
 		IPopupItem IPopupItem.ParentItem { get { return null; } }
 		bool IPopupItem.Contains(DependencyObject target)
@@ -113,16 +115,15 @@ namespace MenuRibbon.WPF.Controls.Menu
 			}
 			return res;
 		}
-
-		public bool IsOpen
-		{
-			get { return (bool)GetValue(IsOpenProperty); }
-		}
-
 		bool IPopupItem.IsOpen
 		{
 			get { return IsOpen; }
 			set { SetValue(IsOpenPropertyKey, BooleanBoxes.Box(value)); }
+		}
+
+		public bool IsOpen
+		{
+			get { return (bool)GetValue(IsOpenProperty); }
 		}
 
 		static readonly DependencyPropertyKey IsOpenPropertyKey = DependencyProperty.RegisterReadOnly(
@@ -132,7 +133,18 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		#endregion		
 
-		#region IsHovering, IsHighlighted
+		#region IsHovering, IsHighlighted, IsPressed
+
+		public bool IsPressed
+		{
+			get { return (bool)GetValue(IsPressedProperty); }
+			protected set { SetValue(IsPressedPropertyKey, value); }
+		}
+
+		static readonly DependencyPropertyKey IsPressedPropertyKey =
+			DependencyProperty.RegisterReadOnly("IsPressed", typeof(bool), typeof(RibbonItem), new PropertyMetadata(BooleanBoxes.FalseBox));
+
+		public static readonly DependencyProperty IsPressedProperty = IsPressedPropertyKey.DependencyProperty;
 
 		public bool IsHovering
 		{
@@ -200,6 +212,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 				events["H"] = main.MouseHovering().Subscribe(x => IsHovering = x);
 				events["L"] = main.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => OnMainUI_LeftMouseDown(x));
 				events["D"] = main.MouseClicks().Subscribe(x => OnClicks(x));
+				events["P"] = main.MousePressed().Subscribe(x => IsPressed = this.IsPressed());
 			}
 		}
 		DisposableBag events = new DisposableBag();

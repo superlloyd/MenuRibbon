@@ -35,7 +35,6 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		public MenuRibbon()
 		{
-			KeyTipService.Current.MenuRibbon = this;
 		}
 
 		#region RibbonHeight

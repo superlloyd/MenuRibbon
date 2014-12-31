@@ -91,7 +91,18 @@
     <Compile Include="KeyTipService.cs" />
     <Compile Include="Markup\ImageExtension.cs" />
     <Compile Include="Markup\TextToUIConverter.cs" />
-    <Compile Include="WeakSet.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="RibbonEvents.cs" />
+    <Compile Include="Utils\CollectionUtils.cs" />
+    <Compile Include="Utils\IWeakCollection.cs" />
+    <Compile Include="Utils\WeakDictionary.cs" />
+    <Compile Include="Utils\WeakHashtable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\WeakList.cs" />
+    <Compile Include="Utils\WeakSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="WPFx.cs" />
   </ItemGroup>
   <ItemGroup>

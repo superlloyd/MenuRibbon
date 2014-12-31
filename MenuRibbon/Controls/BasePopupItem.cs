@@ -151,6 +151,8 @@ namespace MenuRibbon.WPF.Controls
 		#region IPopupItem: IsOpen, ParentItem, PopupRoot
 
 		void IPopupItem.Action() { OnClick(); }
+		bool IPopupItem.IsPressed { get { return IsPressed; } set { IsPressed = value; } }
+
 		bool IPopupItem.Contains(DependencyObject target)
 		{
 			return target.VisualHierarchy().Contains(this);
@@ -330,7 +332,8 @@ namespace MenuRibbon.WPF.Controls
 				set { }
 			}
 			public bool IsHighlighted { get; set; }
-			void IPopupItem.Action() {}
+			void IPopupItem.Action() { }
+			bool IPopupItem.IsPressed { get; set; }
 			public IPopupItem ParentItem { get { return this.LogicalParent() as IPopupItem; } }
 			public IPopupRoot PopupRoot { get { return (IPopupRoot)this.LogicalHierarchy().FirstOrDefault(x => x is IPopupRoot); } }
 			bool IPopupItem.Contains(DependencyObject target)

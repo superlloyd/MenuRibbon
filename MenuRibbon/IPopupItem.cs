@@ -17,7 +17,9 @@ namespace MenuRibbon.WPF
 		IPopupItem ParentItem { get; }
 		IPopupRoot PopupRoot { get; }
 		bool Contains(DependencyObject target);
+
 		void Action();
+		bool IsPressed { get; set; }
 	}
 
 	public static class IPopupItemEx
@@ -71,7 +73,7 @@ namespace MenuRibbon.WPF
 				case Key.Escape:
 					if (isRoot)
 					{
-						item.Quit();
+						Keyboard.Focus(null);
 						e.Handled = true;
 					}
 					else
@@ -150,6 +152,7 @@ namespace MenuRibbon.WPF
 				case Key.Enter:
 				case Key.Space:
 					e.Handled = true;
+					item.IsPressed = true;
 					break;
 			}
 		}
@@ -161,10 +164,22 @@ namespace MenuRibbon.WPF
 			{
 				case Key.Enter:
 				case Key.Space:
-					item.Action();
-					e.Handled = true;
+					item.IsPressed = item.IsPressed();
+					if (!item.IsPressed)
+					{
+						item.Action();
+						e.Handled = true;
+					}
 					break;
 			}
+		}
+		public static bool IsPressed(this IPopupItem item)
+		{
+			if (Keyboard.IsKeyDown(Key.Enter) || Keyboard.IsKeyDown(Key.Space))
+				return true;
+			if (Mouse.LeftButton == MouseButtonState.Pressed && Mouse.PrimaryDevice.Captured == item as IInputElement)
+				return true;
+			return false;
 		}
 		static bool Handle(this IPopupItem item, KeyEventArgs e)
 		{
@@ -303,11 +318,6 @@ namespace MenuRibbon.WPF
 		{
 			var ic = item as ItemsControl;
 			return ic != null && ic.Items.Count > 0;
-		}
-
-		public static void Quit(this IPopupItem item)
-		{
-			KeyTipService.Current.RestoreFocusScope();
 		}
 	}
 }

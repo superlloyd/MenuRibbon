@@ -177,7 +177,7 @@ namespace MenuRibbon.WPF.Controls
 				if (HasItems && !IsSplitButton) PopupManager.Enter(this, true);
 			}) : null;
 			events["2"] = header != null ? header.MouseClicks().Subscribe(x => OnClick()) : null;
-			events["3"] = header != null ? header.MousePressed().Subscribe(x => IsPressed = x) : null;
+			events["3"] = header != null ? header.MousePressed().Subscribe(x => IsPressed = this.IsPressed()) : null;
 			events["5"] = splitter != null ? splitter.MouseHovering().Subscribe(x => IsHoveringSplitter = x) : null;
 			events["4"] = splitter != null ? splitter.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => PopupManager.OpenedItem = this) : null;
 		}

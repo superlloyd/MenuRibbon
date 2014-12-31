@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using MenuRibbon.WPF.Utils;
 
 namespace MenuRibbon.WPF.Controls.Menu
 {
@@ -71,8 +72,6 @@ namespace MenuRibbon.WPF.Controls.Menu
 			return result;
 		}
 	}
-
-	// TODO support mixed controls!
 
 	public class MenuItemsPanel : Panel
 	{

@@ -8,8 +8,8 @@ All the `MenuRibbon.WPF` classes can be referenced in XAML by the following name
 
 
 ### Gotchas
-Just realized Menu and Ribbon have incompatible focus handling / behavior, such that they can't be mixed, as I was originally intending!
-Currently adjusting library controls and goals. I might keep developing it, but the RibbonBar would become more like a toolbar.
+Menu and Ribbon have incompatible focus handling / behavior. Hence if one click on the MenuItem that focuses the MenuRibbon bar, not so if one click on a RibbonItem.
+Also ItemsButton don't capture focus on click (unless the have a popup) so that they can be used anywhere without stealing focus from main content.
 
 
 ### Dependencies
@@ -184,8 +184,7 @@ All the way down to collapsed group:
 
 
 ### TODO
-- KeyTips.
-- AutomationPeer
+- AutomationPeer.
 - NuGet package.
 - Galleries.
 

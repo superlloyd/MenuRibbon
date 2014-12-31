@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using MenuRibbon.WPF.Utils;
 
 namespace MenuRibbon.WPF
 {
@@ -173,21 +174,28 @@ namespace MenuRibbon.WPF
 				if (ev == Keyboard.GotKeyboardFocusEvent)
 				{
 					PopupRoot.OnLostFocus();
+					return;
 				}
 
-				if (!e.StagingItem.Input.Handled)
+				if (e.StagingItem.Input.Handled)
 					return;
 
 				if (ev == Keyboard.KeyDownEvent
-					|| ev == Keyboard.KeyUpEvent
+					//|| ev == Keyboard.KeyUpEvent
 					|| ev == Mouse.MouseDownEvent
 					|| ev == Mouse.MouseUpEvent
-					|| ev == TextCompositionManager.TextInputEvent
-					|| ev == TextCompositionManager.TextInputStartEvent
+					//|| ev == TextCompositionManager.TextInputEvent
 					|| ev == Stylus.StylusDownEvent
 					|| ev == Stylus.StylusUpEvent)
 				{
 					leave();
+					return;
+				}
+				if (ev == Keyboard.KeyDownEvent)
+				{
+					var args = (KeyEventArgs)e.StagingItem.Input;
+					if (args.Key == Key.Escape)
+						leave();
 				}
 			};
 			onWindowDeactivated = (o, e) => 
@@ -201,10 +209,12 @@ namespace MenuRibbon.WPF
 					return;
 				if (!feElement.Contains(target))
 				{
+					//e.Handled = true;
 					leave();
 				}
 				else if (OpenedItem != null)
 				{
+					//e.Handled = true;
 					var op = OpenedItem;
 					while (op != null && !op.Contains(target))
 					{
