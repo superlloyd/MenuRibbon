@@ -47,7 +47,7 @@ namespace MenuRibbon.WPF.Utils
 				}
 				finally 
 				{
- 					var d = e as IDisposable;
+					var d = e as IDisposable;
 					if (d != null)
 						d.Dispose();
 				}

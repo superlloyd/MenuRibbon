@@ -31,7 +31,7 @@ namespace MenuRibbon.WPF.Controls
 		{
 		}
 
-		#region ControlSizeDefinition
+		#region ControlSizeDefinition, LargeIcon, SmallIcon
 
 		public RibbonControlSizeDefinition ControlSizeDefinition
 		{
@@ -51,10 +51,6 @@ namespace MenuRibbon.WPF.Controls
 		protected virtual void OnControlSizeDefinitionChanged(RibbonControlSizeDefinition OldValue, RibbonControlSizeDefinition NewValue)
 		{
 		}
-
-		#endregion		
-
-		#region LargeIcon, SmallIcon
 
 		public object LargeIcon
 		{
@@ -84,7 +80,7 @@ namespace MenuRibbon.WPF.Controls
 		{
 		}
 
-		#endregion		
+		#endregion
 
 		#region IsSplitButton
 
@@ -103,24 +99,6 @@ namespace MenuRibbon.WPF.Controls
 		}
 
 		#endregion		
-
-		#region ShowHeader
-
-		public bool ShowHeader
-		{
-			get { return (bool)GetValue(ShowHeaderProperty); }
-			set { SetValue(ShowHeaderProperty, BooleanBoxes.Box(value)); }
-		}
-
-		public static readonly DependencyProperty ShowHeaderProperty = DependencyProperty.Register(
-			"ShowHeader", typeof(bool), typeof(ItemsButton)
-			, new PropertyMetadata(BooleanBoxes.TrueBox, (o, e) => ((ItemsButton)o).OnShowHeaderChanged((bool)e.OldValue, (bool)e.NewValue)));
-
-		void OnShowHeaderChanged(bool OldValue, bool NewValue)
-		{
-		}
-
-		#endregion
 
 		#region IPopupRoot
 

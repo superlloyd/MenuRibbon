@@ -126,24 +126,6 @@ namespace MenuRibbon.WPF.Controls.Ribbon
 
 		#endregion
 
-		#region IsDropDownOpen
-
-		public bool IsDropDownOpen
-		{
-			get { return (bool)GetValue(IsDropDownOpenProperty); }
-			set { SetValue(IsDropDownOpenProperty, BooleanBoxes.Box(value)); }
-		}
-
-		public static readonly DependencyProperty IsDropDownOpenProperty = DependencyProperty.Register(
-			"IsDropDownOpen", typeof(bool), typeof(RibbonGroup)
-			, new PropertyMetadata(BooleanBoxes.FalseBox, (o, e) => ((RibbonGroup)o).OnIsDropDownOpenChanged((bool)e.OldValue, (bool)e.NewValue)));
-
-		void OnIsDropDownOpenChanged(bool OldValue, bool NewValue)
-		{
-		}
-
-		#endregion
-
 		public object LargeIcon
 		{
 			get

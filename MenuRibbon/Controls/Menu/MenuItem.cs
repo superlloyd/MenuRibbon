@@ -76,11 +76,6 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		#endregion
 
-		#region IsPressed, IsHovering, IsHighlighted
-
-
-		#endregion
-
 		#region FrameworkElement override + InputHandling
 
 		public override void OnApplyTemplate()

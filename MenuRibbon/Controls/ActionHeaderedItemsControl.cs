@@ -33,26 +33,28 @@ namespace MenuRibbon.WPF.Controls
 		#region Click event
 
 		public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ActionHeaderedItemsControl));
-		public event RoutedEventHandler Click;
+
+		public event RoutedEventHandler Click
+		{
+			add { base.AddHandler(ClickEvent, value); }
+			remove { base.RemoveHandler(ClickEvent, value); }
+		}
+
+		/// <summary>
+		/// Trigger the Click event.
+		/// </summary>
+		public void OnClick() { OnClick(new RoutedEventArgs(ClickEvent, this)); }
 
 		/// <summary>
 		/// Remark: this should be called by subclass. It will update checkable and call command
 		/// </summary>
-		public void OnClick() { OnClick(new RoutedEventArgs(ClickEvent, this)); }
 		protected virtual void OnClick(RoutedEventArgs e)
 		{
-			if (IsCheckable)
-			{
-				IsChecked = !IsChecked;
-			}
+			if (IsCheckable) IsChecked = !IsChecked;
+
+			base.RaiseEvent(e);
 
 			this.ExecuteCommand();
-
-			var he = Click;
-			if (he != null)
-			{
-				he.Invoke(this, e);
-			}
 
 			//if (!this.IsInMainFocusScope() && FocusManager.GetFocusScope((DependencyObject)Keyboard.FocusedElement) == FocusManager.GetFocusScope(this))
 			{

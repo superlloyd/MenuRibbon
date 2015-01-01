@@ -29,7 +29,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(RibbonItem), new FrameworkPropertyMetadata(typeof(RibbonItem)));
 		}
 
-		#region MenuRibbon, IsPinning
+		#region MenuRibbon, IsPinned
 
 		[Bindable(true), Browsable(false)]
 		public MenuRibbon MenuRibbon

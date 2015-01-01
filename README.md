@@ -1,5 +1,6 @@
 ## MenuRibbon.WPF
 A WPF control library providing a single control that can act as a Menu bar, a Ribbon bar, or even both at the same time.
+In fact it is the only control library available mixing both Ribbon and Menu together, as it is against Microsoft UX guidelines so far.
 
 Source on GitHub: http://github.com/superlloyd/MenuRibbon
 
@@ -9,7 +10,7 @@ All the `MenuRibbon.WPF` classes can be referenced in XAML by the following name
 
 ### Gotchas
 Menu and Ribbon have incompatible focus handling / behavior. Hence if one click on the MenuItem that focuses the MenuRibbon bar, not so if one click on a RibbonItem.
-Also ItemsButton don't capture focus on click (unless the have a popup) so that they can be used anywhere without stealing focus from main content.
+Also ItemsButton don't capture focus on click (unless they have a popup) so that they can be used anywhere without stealing focus from main content.
 
 
 ### Dependencies
@@ -23,11 +24,54 @@ This control has been tested and developed to provide the distraction free look 
 
 ### Main Classes
 - **MenuRibbon** Top level container for either `RibbonItem` or `MenuItem`.
-- **RibbonItem** An `HeaderedContentControl` subclass which can contain a `RibbonBar`.
-  - **RibbonBar** An `ItemsControl` for `RibbonGroup`.
+- **RibbonItem** An `HeaderedContentControl` subclass which Content can be any Control, but preferably a `RibbonBar`.
+  - **RibbonBar** An `ItemsControl` for `RibbonGroup`, and the main `Content` for `RibbonItem`.
   - **RibbonGroup** An `HeaderedItemsControl` for any control, preferable `ItemsButton` though.
-- **MenuItem** An `HeaderedItemsControl` that show its children in a popup. Should be shown either in a `MenuRibbon` or `ItemsButton` to popup its children successfully. Also can contain any kind of child control, not just other `MenuItem`.
+- **MenuItem** An `HeaderedItemsControl` that show its children in a popup. 
 - **ItemsButton** Another top level container for `MenuItem`, can be used anywhere.
+
+
+#### Menu Classes
+`BasePopupItem` (the base class of both `ItemsButton` and `MenuItem`) is an `HeaderedItemsControl` which can have any Control for its Item. Use `MenuItem` to give it a Menu appearance. 
+Its properties are:
+- `IsCheckable`, `IsChecked`, `Icon`
+- ICommandSource: `Command`, `CommandParameter`, `CommandTarget`
+- `ClickEvent`, `Click` handler, `override OnClick()`
+- `IsPressed`, `IsHovering`, `IsHighlighted`
+
+`MenuItem` is a `BasePopupItem` that should be part of an Item hierarchy under an `IPopupRoot` such as `ItemsButton` or `MenuRibbon`, otherwise they won't show their popup. 
+Its properties are:
+- `InputGestureText`
+
+`ItemsButton` can be used anywhere a `Button` is.
+Its properties are:
+- `ControlSizeDefinition`, `LargeIcon`, `SmallIcon`
+- `IsSplitButton`, if true the button can both have an action and children Items.
+- `IsHoveringSplitter`
+
+
+#### Ribbon Classes
+`RibbonItem` is a `HeaderedContentControl` and must be an Item of a `MenuRibbon`, it can have any content, preferably a `RibbonBar`. 
+Its properties are:
+- `IsPinned`
+- `IsOpen`
+- `IsPressed`, `IsHovering`, `IsHighlighted`
+
+`RibbonBar` is an `ItemsControl` which items must be `RibbonGroup`. 
+Its properties are:
+- `GroupSizeReductionOrder` which specify the order in which to reduce `RibbonGroup` when resizing.
+
+`RibbonGroup` is an `HeaderedItemsControl` which could have any Item, but to implement [MS-Ribbon Layout and Resizing](http://msdn.microsoft.com/en-us/library/ff701790(v=vs.110).aspx) Items must implement `IRibbonGroupControl` such as `ItemsButton`.
+Its properties are:
+- `GroupSizeDefinitions`
+
+
+#### KeyTipService
+`KeyTipService` handle KeyTip which enable keyboard access to any UI element. Particularly useful as `ItemsButton` don't capture focus.
+It has the following *attached* properties:
+- `KeyTip`
+- `IsKeyTipScope`
+- `KeyTipStyle`
 
 
 ### Examples
