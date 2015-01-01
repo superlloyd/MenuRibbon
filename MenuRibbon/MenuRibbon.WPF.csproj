@@ -72,6 +72,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="CommandTool.cs" />
     <Compile Include="Controls\ActionHeaderedItemsControl.cs" />
     <Compile Include="Controls\BasePopupItem.cs" />

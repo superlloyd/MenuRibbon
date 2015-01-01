@@ -8,8 +8,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8894CA16-71A0-4766-9FF9-C2B6734F5692}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		MenuRibbon\MenuRibbon.WPF.nuspec = MenuRibbon\MenuRibbon.WPF.nuspec
 		README.md = README.md
 		README.txt = README.txt
+		Version.cs = Version.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{83E03C74-50B6-495D-9313-C9EC0C57CDA7}"
@@ -24,6 +26,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{C36ABC70-0
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MenuRibbon.WPF.Tests", "MenuRibbon.WPF.Tests\MenuRibbon.WPF.Tests.csproj", "{9AFAC790-A131-4749-AD40-4B8B5A912FF0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{73592C01-4A9E-4271-B174-A2506AB201E0}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,5 +58,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C36ABC70-0575-49DA-8244-463C7594B345} = {8894CA16-71A0-4766-9FF9-C2B6734F5692}
+		{73592C01-4A9E-4271-B174-A2506AB201E0} = {8894CA16-71A0-4766-9FF9-C2B6734F5692}
 	EndGlobalSection
 EndGlobal
