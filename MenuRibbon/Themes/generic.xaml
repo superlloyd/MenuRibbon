@@ -67,6 +67,7 @@
 	</Style>
 
 	<Style TargetType="cm:MenuItem">
+		<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
 		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="Focusable" Value="True"/>
 		<Setter Property="BorderThickness" Value="1"/>
@@ -189,6 +190,7 @@
 	</Style>
 
 	<Style TargetType="cm:RibbonItem">
+		<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
 		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="Focusable" Value="True"/>
 		<Setter Property="BorderThickness" Value="1"/>
@@ -241,6 +243,7 @@
 
 	<Style TargetType="cm:MenuRibbon">
 		<Setter Property="FocusManager.IsFocusScope" Value="True"/>
+		<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalContentAlignment" Value="Left"/>
 		<Setter Property="VerticalAlignment" Value="Top"/>
@@ -424,8 +427,9 @@
 	</Style>
 
 	<Style TargetType="c:ItemsButton">
-		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+		<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
 		<Setter Property="FocusManager.IsFocusScope" Value="True"/>
+		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="Focusable" Value="True"/>
 		<Setter Property="IsTabStop" Value="False"/>
 		<Setter Property="BorderThickness" Value="1"/>
@@ -564,6 +568,28 @@
 				<Setter Property="Icon" Value="{Binding Source=a, Converter={StaticResource Text2UICvt}, ConverterParameter=Webdings}"/>
 			</Trigger>
 		</Style.Triggers>	
+	</Style>
+	
+	<Style TargetType="c:KeyTipControl">
+		<Setter Property="Background" Value="Black"/>
+		<Setter Property="BorderBrush" Value="Black"/>
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="Margin" Value="0"/>
+		<Setter Property="Padding" Value="3"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="c:KeyTipControl">
+					<Border Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+						<TextBlock Text="{TemplateBinding Text}" 
+								   Margin="{TemplateBinding Padding}"
+								   Foreground="{TemplateBinding Foreground}"
+								   />
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
 	</Style>
 	
 </ResourceDictionary>

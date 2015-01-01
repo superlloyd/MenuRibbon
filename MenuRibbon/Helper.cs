@@ -227,7 +227,6 @@ namespace MenuRibbon.WPF
 			return false;
 		}
 
-
 		public static UIElement FirstFocusableElement(this object o)
 		{
 			Predicate<DependencyObject> where = x =>

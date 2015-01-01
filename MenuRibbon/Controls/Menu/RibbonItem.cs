@@ -27,6 +27,10 @@ namespace MenuRibbon.WPF.Controls.Menu
 		static RibbonItem()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(RibbonItem), new FrameworkPropertyMetadata(typeof(RibbonItem)));
+
+			Type ownerType = typeof(RibbonItem);
+			//EventManager.RegisterClassHandler(ownerType, KeyTipService.ActivatingKeyTipEvent, new ActivatingKeyTipEventHandler(OnActivatingKeyTipThunk));
+			//EventManager.RegisterClassHandler(ownerType, KeyTipService.KeyTipAccessedEvent, new KeyTipAccessedEventHandler(OnKeyTipAccessedThunk));
 		}
 
 		#region MenuRibbon, IsPinned

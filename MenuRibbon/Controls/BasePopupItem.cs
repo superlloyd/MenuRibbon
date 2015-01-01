@@ -26,6 +26,10 @@ namespace MenuRibbon.WPF.Controls
 		static BasePopupItem()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(BasePopupItem), new FrameworkPropertyMetadata(typeof(BasePopupItem)));
+
+			Type ownerType = typeof(BasePopupItem);
+			//EventManager.RegisterClassHandler(ownerType, KeyTipService.ActivatingKeyTipEvent, new ActivatingKeyTipEventHandler(OnActivatingKeyTipThunk));
+			//EventManager.RegisterClassHandler(ownerType, KeyTipService.KeyTipAccessedEvent, new KeyTipAccessedEventHandler(OnKeyTipAccessedThunk));
 		}
 		public BasePopupItem()
 		{
