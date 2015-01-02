@@ -64,20 +64,30 @@ namespace TestApp
 
 		public void AutoGenerateKeyTips()
 		{
+			int total = AutoGenerateKeyTips(this);
+			Console.WriteLine("{0} IPopupItem(s)", total);
+		}
+		int AutoGenerateKeyTips(DependencyObject dp)
+		{
+			int res = 0;
 			int i = 0;
-			Action<object> setKP = item =>
+			Action<DependencyObject> setKP = dp2 =>
 			{
-				var dp = (DependencyObject)item;
-				if (dp.HasDefaultValue(KeyTipService.KeyTipProperty))
-					KeyTipService.SetKeyTip(dp, string.Format("{0:00}", i++)); ;
+				if (dp2.HasDefaultValue(KeyTipService.KeyTipProperty))
+				{
+					KeyTipService.SetKeyTip(dp2, string.Format("{0:00}", i++));
+					res++;
+				}
 			};
 
-			((DependencyObject)this).LogicalChildren()
-				.Where(item => item is IPopupItem && item is DependencyObject)
-				.ForEach(x => setKP(x));
-			((DependencyObject)this).VisualChildren()
-				.Where(item => item is IPopupItem && item is DependencyObject)
-				.ForEach(x => setKP(x));
+			dp.LogicalChildren(x => !(x is IPopupItem))
+				.Where(x => x is IPopupItem)
+				.ForEach(x => {
+					setKP(x);
+					res += AutoGenerateKeyTips(x);
+				});
+
+			return res;
 		}
 	}
 }

@@ -52,7 +52,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 			{
 				pr.PopupManager.HighlightedItem = this;
 				pr.PopupManager.OpenedItem = this;
-				e.TargetKeyTipScope = this;
+				e.TargetKeyTipScope = pr.KeyTipScope;
 			}
 			else
 			{

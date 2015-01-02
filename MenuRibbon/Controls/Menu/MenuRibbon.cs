@@ -26,11 +26,17 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 	[TemplatePart(Name = "PART_PopupContent", Type = typeof(FrameworkElement))]
 	[TemplatePart(Name = "PART_PinnedContent", Type = typeof(FrameworkElement))]
+	[TemplatePart(Name = "PART_KeyTipScope", Type = typeof(DependencyObject))]
 	public class MenuRibbon : ItemsControl, IPopupRoot
 	{
 		static MenuRibbon()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(MenuRibbon), new FrameworkPropertyMetadata(typeof(MenuRibbon)));
+		}
+
+		internal static void Beep()
+		{
+			NativeMethods.MessageBeep(NativeMethods.BeepType.OK);
 		}
 
 		public MenuRibbon()
@@ -346,6 +352,18 @@ namespace MenuRibbon.WPF.Controls.Menu
 			base.OnPreviewGotKeyboardFocus(e);
 			PopupManager.Tracking = true;
 		}
+
+		#endregion
+
+		#region OnApplyTemplate(), KeyTipScope
+
+		public override void OnApplyTemplate()
+		{
+			base.OnApplyTemplate();
+			KeyTipScope = GetTemplateChild("PART_KeyTipScope");
+		}
+
+		public DependencyObject KeyTipScope { get; private set; }
 
 		#endregion
 

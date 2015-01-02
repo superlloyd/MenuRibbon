@@ -11,8 +11,9 @@ namespace MenuRibbon.WPF.Utils
 		public static IEnumerable<T> ForEach<T>(this IEnumerable<T> source, Action<T> action)
 		{
 			// REMARK: Do NOT use "yield" it will only enumerate what the callee explicitly enumerates
-			foreach (var item in source)
-				action(item);
+			if (source != null)
+				foreach (var item in source)
+					action(item);
 			return source;
 		}
 	}

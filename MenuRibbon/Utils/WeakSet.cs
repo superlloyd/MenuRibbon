@@ -15,6 +15,9 @@ namespace MenuRibbon.WPF.Utils
 		{
 		}
 
+		public void AddRange(params T[] items) { AddRange((IEnumerable<T>)items); }
+		public void AddRange(IEnumerable<T> items) { items.ForEach(x => Add(x)); }
+
 		public void Add(T item) { container.Add(item, null); }
 		public void Clear() { container.Clear(); }
 		public bool Contains(T item) { return container.Contains(item); }

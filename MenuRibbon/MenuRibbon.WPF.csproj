@@ -102,6 +102,7 @@
     <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Utils\IWeakCollection.cs" />
     <Compile Include="Utils\ObjectRecycler.cs" />
+    <Compile Include="Utils\ScopeTree.cs" />
     <Compile Include="Utils\WeakDictionary.cs" />
     <Compile Include="Utils\WeakHashtable.cs">
       <SubType>Code</SubType>

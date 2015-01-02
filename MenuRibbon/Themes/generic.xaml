@@ -274,58 +274,60 @@
 								>
 							<ItemsPresenter />
 						</Border>
-						<Popup x:Name="PART_Popup" IsOpen="False" 
-							   PlacementTarget="{x:Reference PART_RibbonHeader}" Width="{TemplateBinding ActualWidth}" 
-							   Height="{TemplateBinding RibbonHeight}"
-								Focusable="false"
-								PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
-								AllowsTransparency="True"
-							   >
-							<Border Background="{TemplateBinding Background}"
-								BorderBrush="{TemplateBinding BorderBrush}"
-								BorderThickness="0,1,0,1"
-								>
+						<Grid x:Name="PART_KeyTipScope" Grid.Row="1" c:KeyTipService.IsKeyTipScope="True">
+							<Popup x:Name="PART_Popup" IsOpen="False" 
+								   PlacementTarget="{x:Reference PART_RibbonHeader}" Width="{TemplateBinding ActualWidth}" 
+								   Height="{TemplateBinding RibbonHeight}"
+									Focusable="false"
+									PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+									AllowsTransparency="True"
+								   >
+								<Border Background="{TemplateBinding Background}"
+									BorderBrush="{TemplateBinding BorderBrush}"
+									BorderThickness="0,1,0,1"
+									>
+									<Grid>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="*"/>
+											<ColumnDefinition Width="36"/>
+										</Grid.ColumnDefinitions>
+										<ContentPresenter  
+											Content="{Binding DroppedRibbonItem.Content, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+											ContentTemplate="{Binding DroppedRibbonItem.ContentTemplate, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+											ContentTemplateSelector="{Binding DroppedRibbonItem.ContentTemplateSelector, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
+											ContentStringFormat="{Binding DroppedRibbonItem.ContentStringFormat, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+											/>
+										<Button Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+												Style="{StaticResource IconButtonStyle}"
+												Command="{Binding TogglePinCommand, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
+												Content="{Binding Source='&#xE141;', Converter={StaticResource Text2UICvt}, ConverterParameter='Segoe UI Symbol'}"></Button>
+									</Grid>
+								</Border>
+							</Popup>
+							<Border x:Name="PART_Pinned" Visibility="Collapsed" 
+									Background="Transparent"
+									BorderBrush="{TemplateBinding BorderBrush}"
+									BorderThickness="0,1,0,1"
+									>
 								<Grid>
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="*"/>
 										<ColumnDefinition Width="36"/>
 									</Grid.ColumnDefinitions>
-									<ContentPresenter  
-										Content="{Binding DroppedRibbonItem.Content, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
-										ContentTemplate="{Binding DroppedRibbonItem.ContentTemplate, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
-										ContentTemplateSelector="{Binding DroppedRibbonItem.ContentTemplateSelector, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
-										ContentStringFormat="{Binding DroppedRibbonItem.ContentStringFormat, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+									<ContentPresenter 
+										Height="{TemplateBinding RibbonHeight}"
+										Content="{Binding PinnedRibbonItem.Content, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+										ContentTemplate="{Binding PinnedRibbonItem.ContentTemplate, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
+										ContentTemplateSelector="{Binding PinnedRibbonItem.ContentTemplateSelector, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
+										ContentStringFormat="{Binding PinnedRibbonItem.ContentStringFormat, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
 										/>
 									<Button Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
 											Style="{StaticResource IconButtonStyle}"
 											Command="{Binding TogglePinCommand, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
-											Content="{Binding Source='&#xE141;', Converter={StaticResource Text2UICvt}, ConverterParameter='Segoe UI Symbol'}"></Button>
+											Content="{Binding Source='&#xE0A0;', Converter={StaticResource Text2UICvt}, ConverterParameter='Segoe UI Symbol'}"></Button>
 								</Grid>
 							</Border>
-						</Popup>
-						<Border Grid.Row="1" x:Name="PART_Pinned" Visibility="Collapsed" 
-								Background="Transparent"
-								BorderBrush="{TemplateBinding BorderBrush}"
-								BorderThickness="0,1,0,1"
-								>
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*"/>
-									<ColumnDefinition Width="36"/>
-								</Grid.ColumnDefinitions>
-								<ContentPresenter 
-									Height="{TemplateBinding RibbonHeight}"
-									Content="{Binding PinnedRibbonItem.Content, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
-									ContentTemplate="{Binding PinnedRibbonItem.ContentTemplate, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
-									ContentTemplateSelector="{Binding PinnedRibbonItem.ContentTemplateSelector, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
-									ContentStringFormat="{Binding PinnedRibbonItem.ContentStringFormat, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}" 
-									/>
-								<Button Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
-										Style="{StaticResource IconButtonStyle}"
-										Command="{Binding TogglePinCommand, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"
-										Content="{Binding Source='&#xE0A0;', Converter={StaticResource Text2UICvt}, ConverterParameter='Segoe UI Symbol'}"></Button>
-							</Grid>
-						</Border>
+						</Grid>
 					</Grid>
 					<ControlTemplate.Triggers>
 						<Trigger Property="RibbonDisplay" Value="Drop">

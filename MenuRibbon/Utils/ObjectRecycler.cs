@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MenuRibbon.WPF.Utils
 {
 	/// <summary>
-	/// Help recycle expensive object to create.
+	/// Help recycle and reuse object that are expensive to create.
 	/// </summary>
 	class ObjectRecycler<T>
 		where T: class

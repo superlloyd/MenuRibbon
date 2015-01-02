@@ -56,6 +56,9 @@ namespace MenuRibbon.WPF.Utils
 			}
 		}
 
+		public void AddRange(params T[] items) { AddRange((IEnumerable<T>)items); }
+		public void AddRange(IEnumerable<T> items) { items.ForEach(x => Add(x)); }
+
 		public void Add(T item)
 		{
 			if (item == null)

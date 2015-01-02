@@ -101,6 +101,10 @@ namespace MenuRibbon.WPF
 		public static CultureInfo GetCultureInfo(this DependencyObject element)
 		{
 			XmlLanguage language = (XmlLanguage)element.GetValue(FrameworkElement.LanguageProperty);
+			return language.GetCultureInfo();
+		}
+		public static CultureInfo GetCultureInfo(this XmlLanguage language)
+		{
 			try
 			{
 				if (language == null) return InvariantEnglishUS;
@@ -265,7 +269,7 @@ namespace MenuRibbon.WPF
 			return child != null && (child.LogicalHierarchy().Contains(parent) || child.VisualHierarchy().Contains(parent));
 		}
 
-		public static IEnumerable<DependencyObject> LogicalChildren(this DependencyObject obj)
+		public static IEnumerable<DependencyObject> LogicalChildren(this DependencyObject obj, Predicate<DependencyObject> descend = null)
 		{
 			System.Collections.IEnumerable children = null;
 			if (obj is FrameworkContentElement) children = LogicalTreeHelper.GetChildren((FrameworkContentElement)obj);
@@ -275,8 +279,9 @@ namespace MenuRibbon.WPF
 			foreach (var item in children.Cast<object>().Where(x => x is DependencyObject).Cast<DependencyObject>())
 			{
 				yield return item;
-				foreach (var subitem in item.LogicalChildren())
-					yield return subitem;
+				if (descend == null || descend(item))
+					foreach (var subitem in item.LogicalChildren(descend))
+						yield return subitem;
 			}
 		}
 		public static IEnumerable<DependencyObject> LogicalHierarchy(this DependencyObject obj, bool includeVisual = true)
@@ -305,15 +310,16 @@ namespace MenuRibbon.WPF
 			return VisualParent(obj, false);
 		}
 
-		public static IEnumerable<DependencyObject> VisualChildren(this DependencyObject obj)
+		public static IEnumerable<DependencyObject> VisualChildren(this DependencyObject obj, Predicate<DependencyObject> descend = null)
 		{
 			int N = VisualTreeHelper.GetChildrenCount(obj);
 			for (int i = 0; i < N; i++)
 			{
 				var child = VisualTreeHelper.GetChild(obj, i);
 				yield return child;
-				foreach (var subitem in child.VisualChildren())
-					yield return subitem;
+				if (descend == null || descend(child))
+					foreach (var subitem in child.VisualChildren(descend))
+						yield return subitem;
 			}
 		}
 		public static IEnumerable<DependencyObject> VisualHierarchy(this DependencyObject element, bool includeLogical = true)

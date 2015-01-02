@@ -185,8 +185,7 @@ namespace MenuRibbon.WPF.Controls
 		{
 			if (scope == null) return false;
 
-			ProcessScoping();
-			if (!scopeToElementMap.ContainsKey(scope))
+			if (!scopeToElementMap.HasScope(scope))
 				return false;
 
 			CurrentWindow = Window.GetWindow(scope);
@@ -261,7 +260,7 @@ namespace MenuRibbon.WPF.Controls
 			}
 
 			var currentScope = _scopeStack.Pop();
-			var parentScope = FindScope(currentScope, false);
+			var parentScope = scopeToElementMap.FindScope(currentScope, false);
 			var stackParentScope = (_scopeStack.Count > 0 ? _scopeStack.Peek() : null);
 			if (stackParentScope != null &&
 				parentScope != null &&
@@ -296,12 +295,11 @@ namespace MenuRibbon.WPF.Controls
 		}
 		private bool ShowScope(DependencyObject scope)
 		{
-			ProcessScoping();
 			HideCurrentShowingKeyTips();
 			_prefixText = string.Empty;
 
 			bool returnValue = false;
-			if (scopeToElementMap.ContainsKey(scope))
+			if (scopeToElementMap.HasScope(scope))
 			{
 				var elementSet = scopeToElementMap[scope];
 				// TODO add a method or some code to auto generate KeyTips for ItemsControl
@@ -405,45 +403,28 @@ namespace MenuRibbon.WPF.Controls
 		Dictionary<XmlLanguage, CultureInfo> _cultureCache = null;
 		internal static CultureInfo GetCultureForElement(DependencyObject element)
 		{
-			CultureInfo culture = CultureInfo.CurrentCulture;
-			if (DependencyPropertyHelper.GetValueSource(element, FrameworkElement.LanguageProperty).BaseValueSource != BaseValueSource.Default)
-			{
-				XmlLanguage language = (XmlLanguage)element.GetValue(FrameworkElement.LanguageProperty);
-				if (language != null && language != XmlLanguage.Empty)
-				{
-					Dictionary<XmlLanguage, CultureInfo> cultureCache = Current._cultureCache;
-					if (cultureCache != null && cultureCache.ContainsKey(language))
-					{
-						culture = cultureCache[language];
-					}
-					else
-					{
-						CultureInfo computedCulture = element.GetCultureInfo();
-						if (computedCulture != null)
-						{
-							culture = computedCulture;
-							if (cultureCache == null)
-							{
-								Current._cultureCache = cultureCache = new Dictionary<XmlLanguage, CultureInfo>();
-							}
-							cultureCache[language] = culture;
-						}
-					}
-				}
-			}
-			return culture;
-		}
+			if (DependencyPropertyHelper.GetValueSource(element, FrameworkElement.LanguageProperty).BaseValueSource == BaseValueSource.Default)
+				return CultureInfo.CurrentCulture;
 
-		static void Beep()
-		{
-			NativeMethods.MessageBeep(NativeMethods.BeepType.OK);
+			XmlLanguage language = (XmlLanguage)element.GetValue(FrameworkElement.LanguageProperty);
+			if (language == null || language == XmlLanguage.Empty)
+				return CultureInfo.CurrentCulture;
+
+			if (Current._cultureCache == null)
+				Current._cultureCache = new Dictionary<XmlLanguage, CultureInfo>();
+
+			CultureInfo result;
+			if (!Current._cultureCache.TryGetValue(language, out result))
+				Current._cultureCache[language] = result = language.GetCultureInfo() ?? CultureInfo.CurrentCulture;
+
+			return result;
 		}
 
 		private void OnKeyTipExactMatch(DependencyObject exactMatchElement)
 		{
 			if (!((bool)(exactMatchElement.GetValue(UIElement.IsEnabledProperty))))
 			{
-				Beep();
+				Menu.MenuRibbon.Beep();
 				return;
 			}
 
@@ -490,7 +471,7 @@ namespace MenuRibbon.WPF.Controls
 		{
 			if (activeKeyTipElements == null || activeKeyTipElements.Count == 0)
 			{
-				Beep();
+				Menu.MenuRibbon.Beep();
 				return;
 			}
 
@@ -788,24 +769,27 @@ namespace MenuRibbon.WPF.Controls
 
 		private static void OnKeyTipChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			string newKeyTip = (string)e.NewValue;
-			string oldKeyTip = (string)e.OldValue;
-
-			bool isNewEmpty = string.IsNullOrEmpty(newKeyTip);
-			if (isNewEmpty != string.IsNullOrEmpty(oldKeyTip))
+			bool newHasValue = !string.IsNullOrEmpty((string)e.NewValue);
+			bool oldHasValue = !string.IsNullOrEmpty((string)e.OldValue);
+			if (newHasValue != oldHasValue)
 			{
-				// TODO scope update with less calculation
-				RoutedEventHandler onLoadedChanged = (o, ev) => Current.scopeToElementMap.Clear();
-
-				if (isNewEmpty)
+				RoutedEventHandler onLoadedChanged = (o, ev) =>
 				{
-					Current.mTargets.Remove(d);
-					d.RemoveLoadedHandler(onLoadedChanged, onLoadedChanged);
-				}
-				else
+					if (newHasValue && d.IsLoaded())
+						Current.scopeToElementMap.AddItem(d);
+					else
+						Current.scopeToElementMap.RemoveItem(d);
+				};
+
+				if (newHasValue)
 				{
 					Current.mTargets.Add(d);
 					d.AddLoadedHandler(onLoadedChanged, onLoadedChanged);
+				}
+				else
+				{
+					Current.mTargets.Remove(d);
+					d.RemoveLoadedHandler(onLoadedChanged, onLoadedChanged);
 				}
 				onLoadedChanged(null, null);
 			}
@@ -835,10 +819,8 @@ namespace MenuRibbon.WPF.Controls
 
 		private static void OnIsKeyTipScopeChanged(DependencyObject scopeElement, DependencyPropertyChangedEventArgs e)
 		{
-			bool newIsScope = (bool)e.NewValue;
 			KeyTipService current = Current;
-			// TODO scope update with less calculation
-			Current.scopeToElementMap.Clear();
+			Current.scopeToElementMap.UpdateScope(scopeElement);
 		}
 
 		public static Style GetKeyTipStyle(DependencyObject element)
@@ -863,38 +845,7 @@ namespace MenuRibbon.WPF.Controls
 		public static readonly DependencyProperty KeyTipStyleProperty =
 			DependencyProperty.RegisterAttached("KeyTipStyle", typeof(Style), typeof(KeyTipService), new FrameworkPropertyMetadata(null));
 
-		WeakDictionary<DependencyObject, WeakSet<DependencyObject>> scopeToElementMap = new WeakDictionary<DependencyObject, WeakSet<DependencyObject>>();
-
-		static DependencyObject FindScope(DependencyObject obj, bool searchVisualTree = true)
-		{
-			var getNext = searchVisualTree ? (Func<DependencyObject, DependencyObject>)(x => x.VisualParent()) : (x => x.LogicalParent());
-			var o = obj;
-			while (true)
-			{
-				if (o != obj && GetIsKeyTipScope(o))
-					return o;
-				var n = getNext(o);
-				if (n == null)
-					return o;
-				o = n;
-			}
-		}
-
-		void ProcessScoping()
-		{
-			// TODO scope update with less calculation
-			if (scopeToElementMap.Count != 0)
-				return;
-			foreach (var t in mTargets)
-			{
-				if (!t.IsLoaded())
-					continue;
-				var s = FindScope(t);
-				var ws = scopeToElementMap[s];
-				if (ws == null) scopeToElementMap[s] = ws = new WeakSet<DependencyObject>();
-				ws.Add(t);
-			}
-		}
+		ScopeTree scopeToElementMap = new ScopeTree();
 
 		#endregion
 	}
