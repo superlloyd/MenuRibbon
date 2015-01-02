@@ -106,6 +106,13 @@ namespace MenuRibbon.WPF.Controls.Menu
 				case MenuItemRole.SubmenuItem:
 					base.OnClick(e);
 					break;
+				case MenuItemRole.TopLevelHeader:
+					Focus();
+					goto case MenuItemRole.SubmenuHeader;
+				case MenuItemRole.SubmenuHeader:
+					PopupRoot.PopupManager.HighlightedItem = this;
+					PopupRoot.PopupManager.OpenedItem = this;
+					break;
 			}
 		}
 

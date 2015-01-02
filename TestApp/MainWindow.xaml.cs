@@ -14,6 +14,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using MenuRibbon.WPF;
+using MenuRibbon.WPF.Controls;
+using MenuRibbon.WPF.Utils;
+
 namespace TestApp
 {
 	public class AAA
@@ -48,12 +52,32 @@ namespace TestApp
 			};
 
 			InitializeComponent();
+
+			AutoGenerateKeyTips();
 		}
 		public List<AAA> RandomList { get; set; }
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
 
+		}
+
+		public void AutoGenerateKeyTips()
+		{
+			int i = 0;
+			Action<object> setKP = item =>
+			{
+				var dp = (DependencyObject)item;
+				if (dp.HasDefaultValue(KeyTipService.KeyTipProperty))
+					KeyTipService.SetKeyTip(dp, string.Format("{0:00}", i++)); ;
+			};
+
+			((DependencyObject)this).LogicalChildren()
+				.Where(item => item is IPopupItem && item is DependencyObject)
+				.ForEach(x => setKP(x));
+			((DependencyObject)this).VisualChildren()
+				.Where(item => item is IPopupItem && item is DependencyObject)
+				.ForEach(x => setKP(x));
 		}
 	}
 }

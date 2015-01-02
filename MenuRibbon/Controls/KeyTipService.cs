@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Markup;
 using System.Windows.Documents;
+using System.Windows.Controls;
 
 namespace MenuRibbon.WPF.Controls
 {
@@ -241,40 +242,16 @@ namespace MenuRibbon.WPF.Controls
 
 		private bool PushKeyTipsScope(DependencyObject scopeElement, bool pushOnEmpty = false)
 		{
-			ProcessScoping();
-			HideCurrentShowingKeyTips();
-			_prefixText = string.Empty;
-
 			if (State == KeyTipState.None)
 				return false;
 
-			bool returnValue = false;
-			if (scopeToElementMap.ContainsKey(scopeElement))
+			bool result = ShowScope(scopeElement);
+			if (result || pushOnEmpty)
 			{
-				var elementSet = scopeToElementMap[scopeElement];
-				// TODO add a method or some code to auto generate KeyTips for ItemsControl
-				//AutoGenerateKeyTips(elementSet);
-				if (elementSet != null && elementSet.Count > 0)
-				{
-					foreach (DependencyObject element in elementSet)
-					{
-						returnValue |= ShowKeyTipForElement(element);
-					}
-				}
+				_scopeStack.Push(scopeElement);
 			}
-
-			if (returnValue || pushOnEmpty)
-			{
-				// Push the scope even if it is empty.
-				// Used for any non-global scope.
-				if (_scopeStack.Count == 0 || _scopeStack.Peek() != scopeElement)
-				{
-					_scopeStack.Push(scopeElement);
-				}
-			}
-			return returnValue;
+			return result;
 		}
-
 		private void PopKeyTipScope()
 		{
 			if (_scopeStack.Count == 0)
@@ -307,7 +284,7 @@ namespace MenuRibbon.WPF.Controls
 					{
 						if (_scopeStack.Count > 0)
 						{
-							PushKeyTipsScope(_scopeStack.Peek(), true);
+							ShowScope(_scopeStack.Peek());
 						}
 					},
 					DispatcherPriority.Loaded);
@@ -316,6 +293,28 @@ namespace MenuRibbon.WPF.Controls
 			{
 				LeaveKeyTipMode();
 			}
+		}
+		private bool ShowScope(DependencyObject scope)
+		{
+			ProcessScoping();
+			HideCurrentShowingKeyTips();
+			_prefixText = string.Empty;
+
+			bool returnValue = false;
+			if (scopeToElementMap.ContainsKey(scope))
+			{
+				var elementSet = scopeToElementMap[scope];
+				// TODO add a method or some code to auto generate KeyTips for ItemsControl
+				//AutoGenerateKeyTips(elementSet);
+				if (elementSet != null && elementSet.Count > 0)
+				{
+					foreach (DependencyObject element in elementSet)
+					{
+						returnValue |= ShowKeyTipForElement(element);
+					}
+				}
+			}
+			return returnValue;
 		}
 
 		private void LeaveKeyTipMode(bool restoreFocus = true)
@@ -341,6 +340,7 @@ namespace MenuRibbon.WPF.Controls
 			_prefixText = string.Empty;
 			_currentActiveKeyTipElements.Clear();
 			_scopeStack.Clear();
+			mKeyTipControlRecycler.Clear();
 		}
 
 		#endregion
@@ -589,10 +589,10 @@ namespace MenuRibbon.WPF.Controls
 				// Create the KeyTip and add it as the adorner.
 				AdornerLayer adornerLayer = null;
 				var adornedElement = (UIElement)(activatingEventArgs.PlacementTarget ?? element).VisualHierarchy().FirstOrDefault(x => x is UIElement);
-				if (adornedElement != null && adornedElement.IsVisible)
+				if (adornedElement != null)
 				{
 					adornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
-					if (adornerLayer == null)
+					if (adornerLayer == null || !adornedElement.IsVisible)
 					{
 						element.ClearValue(ShowingKeyTipProperty);
 						return;
@@ -606,12 +606,14 @@ namespace MenuRibbon.WPF.Controls
 					activatingEventArgs.KeyTipHorizontalOffset,
 					activatingEventArgs.KeyTipVerticalOffset,
 					activatingEventArgs.Handled ? null : activatingEventArgs.OwnerRibbonGroup);
+				adorner.KeyTipControl = current.mKeyTipControlRecycler.Get();
 				adorner.Element = element;
 				adornerLayer.Add(adorner);
 				element.SetValue(KeyTipAdornerProperty, adorner);
 				element.SetValue(KeyTipAdornerHolderProperty, adornedElement);
 
-				current.EnqueueAdornerLayerForPlacementProcessing(adornerLayer);
+				if (adorner.VisualHierarchy().FirstOrDefault(x => x is ScrollViewer) == null)
+					current.EnqueueAdornerLayerForPlacementProcessing(adornerLayer);
 
 				// add the element to currentActiveKeyTipElement list.
 				current._currentActiveKeyTipElements.Add(element);
@@ -620,6 +622,12 @@ namespace MenuRibbon.WPF.Controls
 			{
 				// Remove keytip from adorner.
 				KeyTipAdorner adorner = (KeyTipAdorner)element.GetValue(KeyTipAdornerProperty);
+				if (adorner != null)
+				{
+					Current.mKeyTipControlRecycler.Recycle(adorner.KeyTipControl);
+					adorner.KeyTipControl = null;
+				}
+
 				UIElement adornedElement = (UIElement)element.GetValue(KeyTipAdornerHolderProperty);
 				if (adornedElement != null && adorner != null)
 				{
@@ -631,6 +639,7 @@ namespace MenuRibbon.WPF.Controls
 				element.ClearValue(KeyTipAdornerHolderProperty);
 			}
 		}
+		ObjectRecycler<KeyTipControl> mKeyTipControlRecycler = new ObjectRecycler<KeyTipControl>(() => new KeyTipControl());
 
 		Dictionary<AdornerLayer, bool> toBePlacementProcessed = new Dictionary<AdornerLayer, bool>();
 		private void EnqueueAdornerLayerForPlacementProcessing(AdornerLayer adornerLayer)
@@ -661,6 +670,10 @@ namespace MenuRibbon.WPF.Controls
 
 		#region Events
 
+
+		/// <summary>
+		/// Event triggered when the KeyTip is shown. Targets should handle it by filling its argument with placement information required for the KeyTip.
+		/// </summary>
 		public static readonly RoutedEvent ActivatingKeyTipEvent = EventManager.RegisterRoutedEvent("ActivatingKeyTip", RoutingStrategy.Bubble, typeof(ActivatingKeyTipEventHandler), typeof(KeyTipService));
 
 		public static void AddActivatingKeyTipHandler(DependencyObject element, ActivatingKeyTipEventHandler handler)
@@ -673,6 +686,9 @@ namespace MenuRibbon.WPF.Controls
 			element.RemoveHandler(ActivatingKeyTipEvent, handler);
 		}
 
+		/// <summary>
+		/// Preview event for <see cref="KeyTipAccessedEvent"/>.
+		/// </summary>
 		public static readonly RoutedEvent PreviewKeyTipAccessedEvent = EventManager.RegisterRoutedEvent("PreviewKeyTipAccessed", RoutingStrategy.Tunnel, typeof(KeyTipAccessedEventHandler), typeof(KeyTipService));
 
 		public static void AddPreviewKeyTipAccessedHandler(DependencyObject element, KeyTipAccessedEventHandler handler)
@@ -685,6 +701,10 @@ namespace MenuRibbon.WPF.Controls
 			element.RemoveHandler(PreviewKeyTipAccessedEvent, handler);
 		}
 
+		/// <summary>
+		/// Event triggered the KeyTip is fired / selected / matched by the user. Target should handle it, if a new (sub) scope is desired 
+		/// the target should show it and set the <see cref="KeyTipAccessedEventArgs.TargetKeyTipScope"/> property.
+		/// </summary>
 		public static readonly RoutedEvent KeyTipAccessedEvent = EventManager.RegisterRoutedEvent("KeyTipAccessed", RoutingStrategy.Bubble, typeof(KeyTipAccessedEventHandler), typeof(KeyTipService));
 
 		public static void AddKeyTipAccessedHandler(DependencyObject element, KeyTipAccessedEventHandler handler)

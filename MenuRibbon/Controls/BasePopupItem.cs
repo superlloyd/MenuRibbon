@@ -28,17 +28,38 @@ namespace MenuRibbon.WPF.Controls
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(BasePopupItem), new FrameworkPropertyMetadata(typeof(BasePopupItem)));
 
 			Type ownerType = typeof(BasePopupItem);
-			//EventManager.RegisterClassHandler(ownerType, KeyTipService.ActivatingKeyTipEvent, new ActivatingKeyTipEventHandler(OnActivatingKeyTipThunk));
-			//EventManager.RegisterClassHandler(ownerType, KeyTipService.KeyTipAccessedEvent, new KeyTipAccessedEventHandler(OnKeyTipAccessedThunk));
+			EventManager.RegisterClassHandler(ownerType, KeyTipService.ActivatingKeyTipEvent, new ActivatingKeyTipEventHandler((o, e) => ((BasePopupItem)o).OnActivatingKeyTip(e)));
+			EventManager.RegisterClassHandler(ownerType, KeyTipService.KeyTipAccessedEvent, new KeyTipAccessedEventHandler((o, e) => ((BasePopupItem)o).OnKeyTipAccessed(e)));
 		}
+
 		public BasePopupItem()
 		{
-			DataContextChanged += MenuTabItem_DataContextChanged;
+			DataContextChanged += (o, e) => UpdateRole();
 		}
-		void MenuTabItem_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+
+		#region OnActivatingKeyTip(), OnKeyTipAccessed()
+
+		protected virtual void OnActivatingKeyTip(ActivatingKeyTipEventArgs e)
 		{
-			UpdateRole();
+			if (e.OriginalSource != this)
+				return;
+			e.KeyTipVerticalPlacement = KeyTipVerticalPlacement.KeyTipCenterAtTargetBottom;
 		}
+
+		protected virtual void OnKeyTipAccessed(KeyTipAccessedEventArgs e)
+		{
+			if (e.OriginalSource != this)
+				return;
+
+			OnClick();
+			e.Handled = true;
+
+			if (IsOpen && KeyTipService.GetIsKeyTipScope(this))
+			{
+				e.TargetKeyTipScope = this;
+			}
+		}
+		#endregion
 
 		#region Role, Root, IsTopLevel
 

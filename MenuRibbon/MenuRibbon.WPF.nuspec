@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
 	<metadata>
 		<id>MenuRibbon.WPF</id>
-		<version>0.5.0.0</version>
+		<version>0.5.1.0</version>
 		<title>MenuRibbon.WPF</title>
 		<authors>Lloyd Dupont</authors>
 		<owners>Lloyd Dupont</owners>
@@ -14,17 +14,15 @@
 		<summary>A single WPF control suite acting as both a Menu and a Ribbon at the same time. Also come with Button item that can split and drop any other control, including MenuItems.</summary>
 		<releaseNotes />
 		<tags>WPF UI Menu Ribbon</tags>
+		<dependencies>
+			<dependency id="MahApps.Metro" version="1.0.0.0"  />
+			<dependency id="Rx-Core" version="2.2.4" />
+			<dependency id="Rx-Interfaces" version="2.2.4"  />
+			<dependency id="Rx-Linq" version="2.2.4" />
+		</dependencies>
 		</metadata>
 		<files>
 			<file src="bin\Release\MenuRibbon.WPF.dll" target="lib\net40\MenuRibbon.WPF.dll" />
 			<file src="bin\Release\MenuRibbon.WPF.XML" target="lib\net40\MenuRibbon.WPF.XML" />
 		</files>
-	<dependencies>
-		<group targetFramework="net45">
-			<dependency id="MahApps.Metro" version="1.0.0.0"  />
-			<dependency id="Rx-Core" version="2.2.4" />
-			<dependency id="Rx-Interfaces" version="2.2.4"  />
-			<dependency id="Rx-Linq" version="2.2.4" />
-		</group>
-	</dependencies>
 </package>

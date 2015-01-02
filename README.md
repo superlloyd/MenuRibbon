@@ -2,7 +2,8 @@
 A WPF control library providing a single control that can act as a Menu bar, a Ribbon bar, or even both at the same time.
 In fact it is the only control library available mixing both Ribbon and Menu together, as it is against Microsoft UX guidelines so far.
 
-Source on GitHub: http://github.com/superlloyd/MenuRibbon
+- Source on GitHub: http://github.com/superlloyd/MenuRibbon
+- Install From NuGet: `Install-Package MenuRibbon.WPF`
 
 All the `MenuRibbon.WPF` classes can be referenced in XAML by the following namespace declaration:
 `http://schemas.menuribbon.net/xaml`
@@ -229,9 +230,9 @@ All the way down to collapsed group:
 
 ### TODO
 - AutomationPeer.
-- NuGet package.
 - Galleries.
-
+- ComboBoxes.
+- Animations / VisualStates.
 
 ### Contributions
 

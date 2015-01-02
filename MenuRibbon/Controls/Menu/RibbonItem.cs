@@ -29,9 +29,38 @@ namespace MenuRibbon.WPF.Controls.Menu
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(RibbonItem), new FrameworkPropertyMetadata(typeof(RibbonItem)));
 
 			Type ownerType = typeof(RibbonItem);
-			//EventManager.RegisterClassHandler(ownerType, KeyTipService.ActivatingKeyTipEvent, new ActivatingKeyTipEventHandler(OnActivatingKeyTipThunk));
-			//EventManager.RegisterClassHandler(ownerType, KeyTipService.KeyTipAccessedEvent, new KeyTipAccessedEventHandler(OnKeyTipAccessedThunk));
+			EventManager.RegisterClassHandler(ownerType, KeyTipService.ActivatingKeyTipEvent, new ActivatingKeyTipEventHandler((o, e) => ((RibbonItem)o).OnActivatingKeyTip(e)));
+			EventManager.RegisterClassHandler(ownerType, KeyTipService.KeyTipAccessedEvent, new KeyTipAccessedEventHandler((o, e) => ((RibbonItem)o).OnKeyTipAccessed(e)));
 		}
+
+		#region OnActivatingKeyTip(), OnKeyTipAccessed()
+
+		protected virtual void OnActivatingKeyTip(ActivatingKeyTipEventArgs e)
+		{
+			if (e.OriginalSource != this)
+				return;
+			e.KeyTipHorizontalPlacement = KeyTipHorizontalPlacement.KeyTipLeftAtTargetCenter;
+			e.KeyTipVerticalPlacement = KeyTipVerticalPlacement.KeyTipTopAtTargetCenter;
+		}
+		protected virtual void OnKeyTipAccessed(KeyTipAccessedEventArgs e)
+		{
+			if (e.OriginalSource != this)
+				return;
+
+			var pr = MenuRibbon;
+			if (pr != null)
+			{
+				pr.PopupManager.HighlightedItem = this;
+				pr.PopupManager.OpenedItem = this;
+				e.TargetKeyTipScope = this;
+			}
+			else
+			{
+				IsHighlighted = true;
+			}
+		}
+
+		#endregion
 
 		#region MenuRibbon, IsPinned
 

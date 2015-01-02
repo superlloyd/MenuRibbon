@@ -9,7 +9,7 @@ using System.Windows;
 namespace MenuRibbon.WPF.Controls
 {
 	/// <summary>
-	///     Enumeration for horizontal placement of keytip
+	///     Enumeration for horizontal placement of KeyTip
 	///     with respect to its placement target.
 	/// </summary>
 	public enum KeyTipHorizontalPlacement
@@ -26,7 +26,7 @@ namespace MenuRibbon.WPF.Controls
 	}
 
 	/// <summary>
-	///     Enumeration for vertical placement of the keytip
+	///     Enumeration for vertical placement of the KeyTip
 	///     with respect to its placement target.
 	/// </summary>
 	public enum KeyTipVerticalPlacement
@@ -43,7 +43,7 @@ namespace MenuRibbon.WPF.Controls
 	}
 
 	/// <summary>
-	///     Event args for KeyTipService.ActivatingKeyTipEvent
+	/// Event argument for <see cref="KeyTipService.ActivatingKeyTipEvent"/> 
 	/// </summary>
 	public class ActivatingKeyTipEventArgs : RoutedEventArgs
 	{
@@ -54,7 +54,7 @@ namespace MenuRibbon.WPF.Controls
 			RoutedEvent = KeyTipService.ActivatingKeyTipEvent;
 
 			KeyTipHorizontalPlacement = KeyTipHorizontalPlacement.KeyTipCenterAtTargetCenter;
-			KeyTipVerticalPlacement = KeyTipVerticalPlacement.KeyTipCenterAtTargetCenter;
+			KeyTipVerticalPlacement = KeyTipVerticalPlacement.KeyTipBottomAtTargetBottom;
 			PlacementTarget = null;
 			KeyTipHorizontalOffset = 0;
 			KeyTipVerticalOffset = 0;
@@ -66,31 +66,19 @@ namespace MenuRibbon.WPF.Controls
 		#region Properties
 
 		/// <summary>
-		///     Horizontal placement for keytip
+		///     Horizontal placement for KeyTip
 		/// </summary>
-		public KeyTipHorizontalPlacement KeyTipHorizontalPlacement
-		{
-			get;
-			set;
-		}
+		public KeyTipHorizontalPlacement KeyTipHorizontalPlacement { get; set; }
 
 		/// <summary>
-		///     Vertical placement for keytip
+		///     Vertical placement for KeyTip
 		/// </summary>
-		public KeyTipVerticalPlacement KeyTipVerticalPlacement
-		{
-			get;
-			set;
-		}
+		public KeyTipVerticalPlacement KeyTipVerticalPlacement { get; set; }
 
 		/// <summary>
-		///     Placement target for keytip
+		///     Placement target for KeyTip
 		/// </summary>
-		public UIElement PlacementTarget
-		{
-			get;
-			set;
-		}
+		public UIElement PlacementTarget { get; set; }
 
 		/// <summary>
 		///     Horizontal offset from the defined horizontal placement.
@@ -110,6 +98,7 @@ namespace MenuRibbon.WPF.Controls
 				_horizontalOffset = value;
 			}
 		}
+		private double _horizontalOffset = 0;
 
 		/// <summary>
 		///     Vertical offset from the defined vertical placement.
@@ -129,27 +118,20 @@ namespace MenuRibbon.WPF.Controls
 				_verticalOffset = value;
 			}
 		}
+		private double _verticalOffset = 0;
 
 		/// <summary>
-		///     Visibility for the keytip.
+		///     Visibility for the KeyTip.
 		///     Visible: KeyTip will be visible (if it can) and functional / accessible.
 		///     Hidden: KeyTip will be hidden but will be accessible.
 		///     Collapsed: KeyTip will not be visible and will not be accessible.
 		/// </summary>
-		public Visibility KeyTipVisibility
-		{
-			get;
-			set;
-		}
+		public Visibility KeyTipVisibility { get; set; }
 
 		/// <summary>
 		///     Used for nudging vertical position to RibbonGroup's top/bottom axis
 		/// </summary>
-		internal RibbonGroup OwnerRibbonGroup
-		{
-			get;
-			set;
-		}
+		internal RibbonGroup OwnerRibbonGroup { get; set; }
 
 		#endregion
 
@@ -162,22 +144,15 @@ namespace MenuRibbon.WPF.Controls
 		}
 
 		#endregion
-
-		#region Private Data
-
-		private double _horizontalOffset = 0;
-		private double _verticalOffset = 0;
-
-		#endregion
 	}
 
 	/// <summary>
-	///     Event handler type for KeyTipService.ActivatingKeyTipEvent
+	///     Event handler type for <see cref="KeyTipService.ActivatingKeyTipEvent"/> 
 	/// </summary>
 	public delegate void ActivatingKeyTipEventHandler(object sender, ActivatingKeyTipEventArgs e);
 
 	/// <summary>
-	///     Event args for KeyTipService.KeyTipAccessedEvent
+	///     Event argument for <see cref="KeyTipService.KeyTipAccessedEvent"/> 
 	/// </summary>
 	public class KeyTipAccessedEventArgs : RoutedEventArgs
 	{
@@ -187,7 +162,7 @@ namespace MenuRibbon.WPF.Controls
 
 		/// <summary>
 		///     This property determines what will be the
-		///     next keytip scope after routing this event.
+		///     next KeyTip scope after routing this event.
 		/// </summary>
 		public DependencyObject TargetKeyTipScope { get; set; }
 
@@ -199,7 +174,7 @@ namespace MenuRibbon.WPF.Controls
 	}
 
 	/// <summary>
-	///     Event handler type for KeyTipService.KeyTipAccessedEvent.
+	///     Event handler type for <see cref="KeyTipService.KeyTipAccessedEvent"/>.
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>

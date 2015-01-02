@@ -67,7 +67,6 @@
 	</Style>
 
 	<Style TargetType="cm:MenuItem">
-		<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
 		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="Focusable" Value="True"/>
 		<Setter Property="BorderThickness" Value="1"/>
@@ -186,6 +185,9 @@
 			<Trigger Property="IsChecked" Value="True">
 				<Setter Property="Icon" Value="{Binding Source=a, Converter={StaticResource Text2UICvt}, ConverterParameter=Webdings}"/>
 			</Trigger>
+			<Trigger Property="HasItems" Value="True">
+				<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
+			</Trigger>
 		</Style.Triggers>
 	</Style>
 
@@ -243,7 +245,6 @@
 
 	<Style TargetType="cm:MenuRibbon">
 		<Setter Property="FocusManager.IsFocusScope" Value="True"/>
-		<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalContentAlignment" Value="Left"/>
 		<Setter Property="VerticalAlignment" Value="Top"/>
@@ -427,7 +428,6 @@
 	</Style>
 
 	<Style TargetType="c:ItemsButton">
-		<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
 		<Setter Property="FocusManager.IsFocusScope" Value="True"/>
 		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="Focusable" Value="True"/>
@@ -567,12 +567,16 @@
 			<Trigger Property="IsChecked" Value="True">
 				<Setter Property="Icon" Value="{Binding Source=a, Converter={StaticResource Text2UICvt}, ConverterParameter=Webdings}"/>
 			</Trigger>
+			<Trigger Property="HasItems" Value="True">
+				<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
+			</Trigger>
 		</Style.Triggers>	
 	</Style>
 	
 	<Style TargetType="c:KeyTipControl">
 		<Setter Property="Background" Value="Black"/>
 		<Setter Property="BorderBrush" Value="Black"/>
+		<Setter Property="Foreground" Value="White"/>
 		<Setter Property="BorderThickness" Value="0"/>
 		<Setter Property="Margin" Value="0"/>
 		<Setter Property="Padding" Value="3"/>

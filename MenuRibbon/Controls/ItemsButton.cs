@@ -31,6 +31,63 @@ namespace MenuRibbon.WPF.Controls
 		{
 		}
 
+		#region OnActivatingKeyTip(), OnKeyTipAccessed()
+
+		protected override void OnActivatingKeyTip(ActivatingKeyTipEventArgs e)
+		{
+			base.OnActivatingKeyTip(e);
+
+			if (e.OriginalSource != this)
+				return;
+			var csd = ControlSizeDefinition;
+			if (csd == null)
+				return;
+
+			if(csd.IsHeaderVisible)
+			{
+				if (csd.IconSize == RibbonIconSize.Large)
+				{
+					e.KeyTipVerticalPlacement = KeyTipVerticalPlacement.KeyTipCenterAtTargetBottom;
+				}
+				else if (csd.IconSize == RibbonIconSize.Small)
+				{
+					e.KeyTipHorizontalPlacement = KeyTipHorizontalPlacement.KeyTipLeftAtTargetCenter;
+					e.PlacementTarget = Icon as UIElement;
+				}
+			}
+			else
+			{
+				if(csd.IconSize == RibbonIconSize.Small)
+				{
+					e.KeyTipHorizontalPlacement = KeyTipHorizontalPlacement.KeyTipLeftAtTargetCenter;
+				}
+			}
+		}
+
+		protected override void OnKeyTipAccessed(KeyTipAccessedEventArgs e)
+		{
+			if (e.OriginalSource != this)
+				return;
+
+			if (IsSplitButton || HasItems)
+			{
+				PopupManager.OpenedItem = this;
+				((IPopupItem)this).PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
+			}
+			else
+			{
+				OnClick();
+			}
+
+			e.Handled = true;
+			if (IsOpen && KeyTipService.GetIsKeyTipScope(this))
+			{
+				e.TargetKeyTipScope = this;
+			}
+		}
+
+		#endregion
+
 		#region ControlSizeDefinition, LargeIcon, SmallIcon
 
 		public RibbonControlSizeDefinition ControlSizeDefinition

@@ -93,6 +93,7 @@ namespace MenuRibbon.WPF.Controls
 					_keyTipControl.KeyTipAdorner = this;
 					AddVisualChild(_keyTipControl);
 				}
+				LinkKeyTipControl();
 			}
 		}
 		KeyTipControl _keyTipControl;
@@ -104,35 +105,30 @@ namespace MenuRibbon.WPF.Controls
 			{
 				if (value == element)
 					return;
-				if (value != null)
-				{
-					if (KeyTipControl == null)
-						KeyTipControl = new KeyTipControl();
-					LinkKeyTipControl(value);
-				}
-				else
-				{
-					KeyTipControl = null;
-				}
 				element = value;
+
+				LinkKeyTipControl();
 			}
 		}
 		DependencyObject element;
 
 
-		void LinkKeyTipControl(DependencyObject keyTipElement)
+		void LinkKeyTipControl()
 		{
-			KeyTipControl.Text = KeyTipService.GetKeyTip(keyTipElement).ToUpper(KeyTipService.GetCultureForElement(keyTipElement));
-			KeyTipControl.IsEnabled = (bool)keyTipElement.GetValue(UIElement.IsEnabledProperty);
+			if (Element == null || KeyTipControl == null)
+				return;
 
-			var keyTipStyle = KeyTipService.GetKeyTipStyle(keyTipElement);
+			KeyTipControl.Text = KeyTipService.GetKeyTip(Element).ToUpper(KeyTipService.GetCultureForElement(Element));
+			KeyTipControl.IsEnabled = (bool)Element.GetValue(UIElement.IsEnabledProperty);
+
+			var keyTipStyle = KeyTipService.GetKeyTipStyle(Element);
 			KeyTipControl.Style = keyTipStyle;
 			KeyTipControl.RenderTransform = _keyTipTransform;
 
 			bool clearCustomProperties = true;
 			if (keyTipStyle == null)
 			{
-				var ribbon = (Menu.MenuRibbon)(PlacementTarget ?? keyTipElement).VisualHierarchy().FirstOrDefault(x => x is Menu.MenuRibbon);
+				var ribbon = (Menu.MenuRibbon)(PlacementTarget ?? Element).VisualHierarchy().FirstOrDefault(x => x is Menu.MenuRibbon);
 				if (ribbon != null)
 				{
 					// Use Ribbon properties if the owner element belongs to a Ribbon.

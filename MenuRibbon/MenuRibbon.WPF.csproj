@@ -32,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\MenuRibbon.WPF.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -100,6 +101,7 @@
     <Compile Include="Controls\RibbonEvents.cs" />
     <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Utils\IWeakCollection.cs" />
+    <Compile Include="Utils\ObjectRecycler.cs" />
     <Compile Include="Utils\WeakDictionary.cs" />
     <Compile Include="Utils\WeakHashtable.cs">
       <SubType>Code</SubType>
