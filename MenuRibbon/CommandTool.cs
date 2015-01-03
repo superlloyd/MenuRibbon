@@ -37,14 +37,6 @@ namespace MenuRibbon.WPF
 			return command.CanExecute(parameter);
 		}
 
-		public static void HandleCommandChanged(this EventHandler<EventArgs> canExecuteChanged, ICommand oldCommand, ICommand newCommand)
-		{
-			if (oldCommand != null)
-				CanExecuteChangedEventManager.RemoveHandler(oldCommand, canExecuteChanged);
-			if (newCommand != null)
-				CanExecuteChangedEventManager.AddHandler(newCommand, canExecuteChanged);
-		}
-
 		public static bool ExecuteCommand(this ICommandSource commandSource)
 		{
 			ICommand command = commandSource.Command;

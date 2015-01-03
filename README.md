@@ -75,6 +75,15 @@ It has the following *attached* properties:
 - `KeyTipStyle`
 
 
+#### Bonus Classes
+- `UIHelper`: static extension class with lost of extension method for UIElement or DependencyObject.
+- `CommandTool`: static extension method to properly call either RoutedCommand or normal ICommand. 
+- `WeakDictionary`, `WeakHastable`: `IDictionary` with weak keys (i.e. `WeakReference`).
+- `WeakSet`, `WeakList`: `ICollection`s with weak items.
+- `ImageExtension`: markup extension to convert Uri to an `Image`.
+- `BoolToValueConverter`: `IValueConverter` from boolean to given values.
+
+
 ### Examples
 Let's show some small but common use case to get the code started with `MenuRibbon.WPF`.
 

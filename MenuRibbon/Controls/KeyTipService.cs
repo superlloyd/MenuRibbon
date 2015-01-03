@@ -15,6 +15,11 @@ using System.Windows.Controls;
 
 namespace MenuRibbon.WPF.Controls
 {
+	/// <summary>
+	/// Handler for event fired when KeyTip mode starts or end.
+	/// </summary>
+	public delegate void KeyTipFocusEventHandler(object sender, EventArgs e);
+
 	public class KeyTipService
 	{
 		#region ctor(), Current
@@ -168,9 +173,11 @@ namespace MenuRibbon.WPF.Controls
 					mCurrentWindow.LocationChanged -= eh;
 					mCurrentWindow.SizeChanged -= sh;
 				}
+				mCurrentPresentationSource = null;
 				mCurrentWindow = value;
 				if (mCurrentWindow != null)
 				{
+					mCurrentPresentationSource = PresentationSource.FromVisual(mCurrentWindow);
 					mCurrentWindow.Deactivated += eh;
 					mCurrentWindow.LocationChanged += eh;
 					mCurrentWindow.SizeChanged += sh;
@@ -178,6 +185,7 @@ namespace MenuRibbon.WPF.Controls
 			}
 		}
 		Window mCurrentWindow;
+		PresentationSource mCurrentPresentationSource;
 
 		#endregion
 
@@ -194,7 +202,7 @@ namespace MenuRibbon.WPF.Controls
 
 			globalScope = scope;
 			State = KeyTipState.Pending;
-			InputManager.Current.PushMenuMode(PresentationSource.FromVisual(CurrentWindow));
+			InputManager.Current.PushMenuMode(mCurrentPresentationSource);
 
 			if (showAsync)
 			{
@@ -226,6 +234,9 @@ namespace MenuRibbon.WPF.Controls
 			if (State == KeyTipState.Pending)
 			{
 				Debug.Assert(globalScope != null);
+
+				PopupManager.CloseAll();
+
 				if (PushKeyTipsScope(globalScope))
 				{
 					State = KeyTipState.Enabled;
@@ -326,9 +337,9 @@ namespace MenuRibbon.WPF.Controls
 			{
 				RaiseKeyTipExitRestoreFocus();
 			}
-			
-			
-			InputManager.Current.PopMenuMode(PresentationSource.FromVisual(CurrentWindow));
+
+
+			InputManager.Current.PopMenuMode(mCurrentPresentationSource);
 			CurrentWindow = null;
 			State = KeyTipState.None;
 
@@ -425,6 +436,7 @@ namespace MenuRibbon.WPF.Controls
 			if (!((bool)(exactMatchElement.GetValue(UIElement.IsEnabledProperty))))
 			{
 				Menu.MenuRibbon.Beep();
+				_prefixText = string.Empty;
 				return;
 			}
 
@@ -702,13 +714,11 @@ namespace MenuRibbon.WPF.Controls
 
 		#region Focus Events
 
-		internal delegate bool KeyTipFocusEventHandler(object sender, EventArgs e);
-
 		/// <summary>
 		///     Event used to notify ribbon to obtain focus
 		///     while entering KeyTip mode.
 		/// </summary>
-		internal event KeyTipFocusEventHandler KeyTipEnterFocus
+		public event KeyTipFocusEventHandler KeyTipEnterFocus
 		{
 			add { elKeyTipEnterFocus.Add(value); }
 			remove { elKeyTipEnterFocus.Remove(value); }
@@ -727,7 +737,7 @@ namespace MenuRibbon.WPF.Controls
 		///     Event used to notify ribbon to restore focus
 		///     while exiting KeyTip mode.
 		/// </summary>
-		internal event KeyTipFocusEventHandler KeyTipExitRestoreFocus
+		public event KeyTipFocusEventHandler KeyTipExitRestoreFocus
 		{
 			add { elKeyTipExitRestoreFocus.Add(value); }
 			remove { elKeyTipExitRestoreFocus.Remove(value); }

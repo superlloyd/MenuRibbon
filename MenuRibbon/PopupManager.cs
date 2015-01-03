@@ -135,9 +135,11 @@ namespace MenuRibbon.WPF
 					InputManager.Current.PostProcessInput += onPostProcessInput;
 					if (root != null) Mouse.AddPreviewMouseDownHandler(root, onPreviewMouseDown);
 					if (root is Window) ((Window)root).Deactivated += onWindowDeactivated;
+					sActive.Add(this.PopupRoot, true);
 				}
 				else
 				{
+					sActive.Remove(this.PopupRoot);
 					InputManager.Current.PopMenuMode(pTrackingSource);
 					InputManager.Current.PostProcessInput -= onPostProcessInput;
 					if (root != null) Mouse.RemovePreviewMouseDownHandler(root, onPreviewMouseDown);
@@ -152,6 +154,16 @@ namespace MenuRibbon.WPF
 		}
 		bool mTracking;
 		PresentationSource pTrackingSource;
+
+		public static IEnumerable<IPopupRoot> ActivePopups { get { return sActive.Keys; } }
+		[ThreadStatic]
+		static Dictionary<IPopupRoot, bool> sActive = new Dictionary<IPopupRoot, bool>();
+
+		public static void CloseAll()
+		{
+			foreach (var item in ActivePopups.ToList())
+				item.PopupManager.Tracking = false;
+		}
 
 		void PrepareTrackHandlers()
 		{

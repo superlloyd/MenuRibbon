@@ -555,27 +555,6 @@
 					<mr:MenuItem Header="13"/>
 					<mr:MenuItem Header="14"/>
 				</mr:ItemsButton>
-				<mr:MenuRibbon>
-					<mr:MenuItem Header="Hello 1 :)" >
-						<TextBlock Style="{StaticResource HeaderStyle}">Stuff</TextBlock>
-						<mr:MenuItem Header="Ahloha?">
-							<mr:MenuItem Header="1"/>
-							<mr:MenuItem Header="12"/>
-							<mr:MenuItem Header="13"/>
-							<mr:MenuItem Header="14"/>
-						</mr:MenuItem>
-						<mr:MenuItem Header="1"/>
-						<mr:MenuItem Header="12"/>
-						<TextBlock Style="{StaticResource HeaderStyle}">More Stuff</TextBlock>
-						<Button Content="zapatap" MinWidth="75" Height="28"/>
-						<mr:MenuItem Header="13"/>
-						<mr:MenuItem Header="14"/>
-						<TextBlock Style="{StaticResource HeaderStyle}">And Color</TextBlock>
-						<a:ColorPalette
-							KeyboardNavigation.ControlTabNavigation="Continue"
-							/>
-					</mr:MenuItem>
-				</mr:MenuRibbon>
 			</StackPanel>
 
 			<mr:RibbonBar GroupSizeReductionOrder="_gr1,_gr2,_gr3">

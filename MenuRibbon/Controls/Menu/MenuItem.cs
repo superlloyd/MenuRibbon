@@ -98,24 +98,6 @@ namespace MenuRibbon.WPF.Controls.Menu
 		}
 		DisposableBag events = new DisposableBag();
 
-		protected override void OnClick(RoutedEventArgs e)
-		{
-			switch (Role)
-			{
-				case MenuItemRole.TopLevelItem:
-				case MenuItemRole.SubmenuItem:
-					base.OnClick(e);
-					break;
-				case MenuItemRole.TopLevelHeader:
-					Focus();
-					goto case MenuItemRole.SubmenuHeader;
-				case MenuItemRole.SubmenuHeader:
-					PopupRoot.PopupManager.HighlightedItem = this;
-					PopupRoot.PopupManager.OpenedItem = this;
-					break;
-			}
-		}
-
 		protected void OnMainUI_LeftMouseDown(MouseButtonEventArgs e)
 		{
 			switch (Role)
@@ -132,6 +114,44 @@ namespace MenuRibbon.WPF.Controls.Menu
 				default:
 					PopupRoot.PopupManager.OpenedItem = this;
 					break;
+			}
+		}
+
+		protected override void OnClick(RoutedEventArgs e)
+		{
+			switch (Role)
+			{
+				case MenuItemRole.TopLevelItem:
+				case MenuItemRole.SubmenuItem:
+					base.OnClick(e);
+					if (PopupRoot != null)
+						PopupRoot.PopupManager.Tracking = false;
+					break;
+			}
+		}
+		#endregion
+
+		#region OnActivatingKeyTip(), OnKeyTipAccessed()
+
+		protected override void OnKeyTipAccessed(KeyTipAccessedEventArgs e)
+		{
+			if (e.OriginalSource != this)
+				return;
+
+			if (HasItems)
+			{
+				this.OnNavigateChildren();
+				e.TargetKeyTipScope = this;
+			}
+			else
+			{
+				OnClick();
+			}
+
+			e.Handled = true;
+			if (!IsOpen)
+			{
+				this.CloseAllPopups();
 			}
 		}
 

@@ -18,6 +18,29 @@
 	-->
 
 	<m:TextToUIConverter x:Key="Text2UICvt" Foreground="{x:Static SystemColors.ActiveCaptionTextBrush}"/>
+	
+	<Style TargetType="c:KeyTipControl">
+		<Setter Property="Background" Value="#525252"/>
+		<Setter Property="BorderBrush" Value="Black"/>
+		<Setter Property="Foreground" Value="White"/>
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="Margin" Value="0"/>
+		<Setter Property="Padding" Value="3"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="c:KeyTipControl">
+					<Border Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+						<TextBlock Text="{TemplateBinding Text}" 
+								   Margin="{TemplateBinding Padding}"
+								   Foreground="{TemplateBinding Foreground}"
+								   />
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 
 	<Style TargetType="{x:Type Button}" x:Key="IconButtonStyle">
 		<Setter Property="Template">
@@ -204,12 +227,6 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="cm:RibbonItem">
 					<Grid Background="Transparent">
-						<Border
-							x:Name="xxxBorderSelected"
-							Visibility="Hidden"
-							BorderThickness="0,0,0,3" Margin="0,0,0,-2" BorderBrush="{TemplateBinding Background}" 
-							/>
-						<!-- main content -->
 						<Border x:Name="PART_Header" Background="Transparent"
 								BorderThickness="1,1,1,0" BorderBrush="Transparent"
 								Padding="{TemplateBinding Padding}"
@@ -222,21 +239,16 @@
 						</Border>
 					</Grid>
 					<ControlTemplate.Triggers>
+						<Trigger Property="RibbonDisplay" Value="Drop">
+							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"/>
+						</Trigger>
+						<Trigger Property="RibbonDisplay" Value="Pin">
+							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"/>
+						</Trigger>
 						<Trigger Property="IsHighlighted" Value="True">
 							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MenuItemSelectionFill}"/>
 							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource HighlightBrush}"/>
-							<Setter TargetName="xxxBorderSelected" Property="Visibility" Value="Visible"/>
 						</Trigger>
-						<Trigger Property="IsPinned" Value="True">
-							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"/>
-							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource HighlightBrush}"/>
-							<Setter TargetName="xxxBorderSelected" Property="Visibility" Value="Visible"/>
-						</Trigger>
-						<!--<Trigger Property="IsOpen" Value="True">
-							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"/>
-							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource HighlightBrush}"/>
-							<Setter TargetName="xxxBorderSelected" Property="Visibility" Value="Visible"/>
-						</Trigger>-->
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>
@@ -341,9 +353,15 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
+		<Setter Property="c:KeyTipService.KeyTipStyle">
+			<Setter.Value>
+				<Style TargetType="c:KeyTipControl" BasedOn="{StaticResource {x:Type c:KeyTipControl}}"/>
+			</Setter.Value>
+		</Setter>
 	</Style>
 
 	<Style TargetType="cr:RibbonBar">
+		<Setter Property="FocusManager.IsFocusScope" Value="True"/>
 		<Setter Property="KeyboardNavigation.IsTabStop" Value="False"/>
 		<Setter Property="KeyboardNavigation.ControlTabNavigation" Value="Cycle"/>
 		<Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Cycle"/>
@@ -573,29 +591,6 @@
 				<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
 			</Trigger>
 		</Style.Triggers>	
-	</Style>
-	
-	<Style TargetType="c:KeyTipControl">
-		<Setter Property="Background" Value="Black"/>
-		<Setter Property="BorderBrush" Value="Black"/>
-		<Setter Property="Foreground" Value="White"/>
-		<Setter Property="BorderThickness" Value="0"/>
-		<Setter Property="Margin" Value="0"/>
-		<Setter Property="Padding" Value="3"/>
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="c:KeyTipControl">
-					<Border Background="{TemplateBinding Background}"
-							BorderBrush="{TemplateBinding BorderBrush}"
-							BorderThickness="{TemplateBinding BorderThickness}">
-						<TextBlock Text="{TemplateBinding Text}" 
-								   Margin="{TemplateBinding Padding}"
-								   Foreground="{TemplateBinding Foreground}"
-								   />
-					</Border>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
 	</Style>
 	
 </ResourceDictionary>

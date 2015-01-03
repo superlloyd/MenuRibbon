@@ -41,7 +41,46 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		public MenuRibbon()
 		{
+			FocusOnEnterKeyTip = true;
 		}
+
+
+		#region FocusOnEnterKeyTip
+
+		public bool FocusOnEnterKeyTip
+		{
+			get { return (bool)GetValue(FocusOnEnterKeyTipProperty); }
+			set { SetValue(FocusOnEnterKeyTipProperty, BooleanBoxes.Box(value)); }
+		}
+
+		// Using a DependencyProperty as the backing store for FocusOnEnterKeyTip.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty FocusOnEnterKeyTipProperty =
+			DependencyProperty.Register("FocusOnEnterKeyTip", typeof(bool), typeof(MenuRibbon)
+			, new PropertyMetadata(BooleanBoxes.FalseBox, OnFocusOnEnterKeyTipChanged));
+
+		private static void OnFocusOnEnterKeyTipChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var t = (MenuRibbon)d;
+			if (t.keyTipFocuHandler == null)
+				t.keyTipFocuHandler = (o, ev) =>
+				{
+					if (t.Items.Count == 0)
+						return;
+					var p = (IPopupItem)t.ItemContainerGenerator.ContainerFromItem(t.Items[0]);
+					Keyboard.Focus(p.FirstFocusableElement());
+				};
+			if ((bool)e.NewValue)
+			{
+				KeyTipService.Current.KeyTipEnterFocus += t.keyTipFocuHandler;
+			}
+			else
+			{
+				KeyTipService.Current.KeyTipEnterFocus -= t.keyTipFocuHandler;
+			}
+		}
+		KeyTipFocusEventHandler keyTipFocuHandler;
+
+		#endregion
 
 		#region RibbonHeight
 
@@ -184,9 +223,18 @@ namespace MenuRibbon.WPF.Controls.Menu
 		}
 
 		static readonly DependencyPropertyKey DroppedRibbonItemPropertyKey = DependencyProperty.RegisterReadOnly(
-			"DroppedRibbonItem", typeof(RibbonItem), typeof(MenuRibbon), new PropertyMetadata(null));
+			"DroppedRibbonItem", typeof(RibbonItem), typeof(MenuRibbon)
+			, new PropertyMetadata(null, (o, e) => ((MenuRibbon)o).OnDroppedRibbonItemChanged((RibbonItem)e.OldValue, (RibbonItem)e.NewValue)));
 
 		public static readonly DependencyProperty DroppedRibbonItemProperty = DroppedRibbonItemPropertyKey.DependencyProperty;
+
+		private void OnDroppedRibbonItemChanged(RibbonItem OldValue, RibbonItem NewValue)
+		{
+			if (OldValue != null)
+				OldValue.RibbonDisplay = RibbonDisplay.None;
+			if (NewValue != null)
+				NewValue.RibbonDisplay = RibbonDisplay.Drop;
+		}
 
 		public RibbonItem PinnedRibbonItem
 		{
@@ -195,9 +243,18 @@ namespace MenuRibbon.WPF.Controls.Menu
 		}
 
 		static readonly DependencyPropertyKey PinnedRibbonItemPropertyKey = DependencyProperty.RegisterReadOnly(
-			"PinnedRibbonItem", typeof(RibbonItem), typeof(MenuRibbon), new PropertyMetadata(null));
+			"PinnedRibbonItem", typeof(RibbonItem), typeof(MenuRibbon), 
+			new PropertyMetadata(null, (o,e) => ((MenuRibbon)o).OnPinnedRibbonItemChanged((RibbonItem)e.OldValue, (RibbonItem)e.NewValue)));
 
 		public static readonly DependencyProperty PinnedRibbonItemProperty = PinnedRibbonItemPropertyKey.DependencyProperty;
+
+		private void OnPinnedRibbonItemChanged(RibbonItem OldValue, RibbonItem NewValue)
+		{
+			if (OldValue != null)
+				OldValue.RibbonDisplay = RibbonDisplay.None;
+			if (NewValue != null)
+				NewValue.RibbonDisplay = RibbonDisplay.Pin;
+		}
 
 		void UpdateRibbonAppearance()
 		{

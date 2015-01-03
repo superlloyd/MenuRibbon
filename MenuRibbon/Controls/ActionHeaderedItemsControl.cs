@@ -145,8 +145,12 @@ namespace MenuRibbon.WPF.Controls
 		{
 			if (onCommandUpdated == null)
 				onCommandUpdated = (o, e) => UpdateFromCommand();
-			onCommandUpdated.HandleCommandChanged(OldValue, NewValue);
-			UpdateFromCommand();
+
+			if (OldValue != null)
+				CanExecuteChangedEventManager.RemoveHandler(OldValue, onCommandUpdated);
+			if (NewValue != null)
+				CanExecuteChangedEventManager.AddHandler(NewValue, onCommandUpdated);
+			onCommandUpdated(null, null);
 		}
 		EventHandler<EventArgs> onCommandUpdated;
 

@@ -33,35 +33,6 @@ namespace MenuRibbon.WPF.Controls.Menu
 			EventManager.RegisterClassHandler(ownerType, KeyTipService.KeyTipAccessedEvent, new KeyTipAccessedEventHandler((o, e) => ((RibbonItem)o).OnKeyTipAccessed(e)));
 		}
 
-		#region OnActivatingKeyTip(), OnKeyTipAccessed()
-
-		protected virtual void OnActivatingKeyTip(ActivatingKeyTipEventArgs e)
-		{
-			if (e.OriginalSource != this)
-				return;
-			e.KeyTipHorizontalPlacement = KeyTipHorizontalPlacement.KeyTipLeftAtTargetCenter;
-			e.KeyTipVerticalPlacement = KeyTipVerticalPlacement.KeyTipTopAtTargetCenter;
-		}
-		protected virtual void OnKeyTipAccessed(KeyTipAccessedEventArgs e)
-		{
-			if (e.OriginalSource != this)
-				return;
-
-			var pr = MenuRibbon;
-			if (pr != null)
-			{
-				pr.PopupManager.HighlightedItem = this;
-				pr.PopupManager.OpenedItem = this;
-				e.TargetKeyTipScope = pr.KeyTipScope;
-			}
-			else
-			{
-				IsHighlighted = true;
-			}
-		}
-
-		#endregion
-
 		#region MenuRibbon, IsPinned
 
 		[Bindable(true), Browsable(false)]
@@ -232,6 +203,41 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		#endregion		
 
+		#region RibbonDisplay
+
+		public RibbonDisplay RibbonDisplay
+		{
+			get { return (RibbonDisplay)GetValue(RibbonDisplayProperty); }
+			internal set { SetValue(RibbonDisplayPropertyKey, value); }
+		}
+
+		internal static readonly DependencyPropertyKey RibbonDisplayPropertyKey =
+			DependencyProperty.RegisterReadOnly("RibbonDisplay", typeof(RibbonDisplay), typeof(RibbonItem), new PropertyMetadata(EnumBox<RibbonDisplay>.Box((int)RibbonDisplay.None)));
+
+		public static readonly DependencyProperty RibbonDisplayProperty = RibbonDisplayPropertyKey.DependencyProperty;
+
+		#endregion
+
+		#region OnActivatingKeyTip(), OnKeyTipAccessed()
+
+		protected virtual void OnActivatingKeyTip(ActivatingKeyTipEventArgs e)
+		{
+			if (e.OriginalSource != this)
+				return;
+			e.KeyTipHorizontalPlacement = KeyTipHorizontalPlacement.KeyTipLeftAtTargetCenter;
+			e.KeyTipVerticalPlacement = KeyTipVerticalPlacement.KeyTipTopAtTargetCenter;
+		}
+		protected virtual void OnKeyTipAccessed(KeyTipAccessedEventArgs e)
+		{
+			if (e.OriginalSource != this)
+				return;
+			Activate();
+			if (MenuRibbon != null)
+				e.TargetKeyTipScope = MenuRibbon.KeyTipScope;
+		}
+
+		#endregion
+
 		#region FrameworkElement override + MouseHandling
 
 		public override void OnApplyTemplate()
@@ -259,10 +265,20 @@ namespace MenuRibbon.WPF.Controls.Menu
 		}
 		protected void OnMainUI_LeftMouseDown(MouseButtonEventArgs e)
 		{
-			Focus();
-			var item = MenuRibbon.ItemContainerGenerator.ItemFromContainer(this);
-			MenuRibbon.PinnedItem = item;
-			MenuRibbon.PopupManager.Enter(this, true);
+			Activate();
+		}
+		void Activate()
+		{
+			//Focus();
+			if (MenuRibbon != null)
+			{
+				MenuRibbon.PinnedItem = this;
+				MenuRibbon.PopupManager.Enter(this, true);
+			}
+			else
+			{
+				IsHighlighted = true;
+			}
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -299,30 +315,10 @@ namespace MenuRibbon.WPF.Controls.Menu
 			base.OnKeyUp(e);
 		}
 
-		protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
-		{
-			base.OnPreviewGotKeyboardFocus(e);
-			var r = MenuRibbon;
-			if (r != null)
-			{
-				r.PopupManager.Tracking = true;
-			}
-		}
-
-
 		protected override void OnGotFocus(RoutedEventArgs e)
 		{
 			base.OnGotFocus(e);
-
-			var pr = MenuRibbon;
-			if (pr != null)
-			{
-				pr.PopupManager.HighlightedItem = this;
-			}
-			else
-			{
-				IsHighlighted = true;
-			}
+			Activate();
 		}
 		protected override void OnLostFocus(RoutedEventArgs e)
 		{

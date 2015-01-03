@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using MenuRibbon.WPF.Utils;
 
 namespace MenuRibbon.WPF
 {
@@ -90,8 +91,7 @@ namespace MenuRibbon.WPF
 					{
 						if (item.HasItems())
 						{
-							item.PopupRoot.PopupManager.OpenedItem = item;
-							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
+							item.OnNavigateChildren();
 							e.Handled = true;
 						}
 						else
@@ -122,12 +122,7 @@ namespace MenuRibbon.WPF
 				case Key.Up:
 					if (isRoot)
 					{
-						if (item.HasItems())
-						{
-							item.PopupRoot.PopupManager.OpenedItem = item;
-							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
-							e.Handled = true;
-						}
+						e.Handled = item.OnNavigateChildren();
 					}
 					else
 					{
@@ -137,12 +132,7 @@ namespace MenuRibbon.WPF
 				case Key.Down:
 					if (isRoot)
 					{
-						if (item.HasItems())
-						{
-							item.PopupRoot.PopupManager.OpenedItem = item;
-							item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
-							e.Handled = true;
-						}
+						e.Handled = item.OnNavigateChildren();
 					}
 					else
 					{
@@ -173,17 +163,9 @@ namespace MenuRibbon.WPF
 					break;
 			}
 		}
-		public static bool IsPressed(this IPopupItem item)
-		{
-			if (Keyboard.IsKeyDown(Key.Enter) || Keyboard.IsKeyDown(Key.Space))
-				return true;
-			if (Mouse.LeftButton == MouseButtonState.Pressed && Mouse.PrimaryDevice.Captured == item as IInputElement)
-				return true;
-			return false;
-		}
 		static bool Handle(this IPopupItem item, KeyEventArgs e)
 		{
-			if (e.Handled)
+			if (e.Handled && e.Key != Key.Escape)
 				return false;
 			if (item.PopupRoot == null)
 				return false;
@@ -195,13 +177,27 @@ namespace MenuRibbon.WPF
 					.Contains((DependencyObject)item))
 					return false;
 			}
-			//if (e.OriginalSource is IInputElement)
-			//{
-			//	var iui = (IInputElement)e.OriginalSource;
-			//	if (!iui.IsKeyboardFocusWithin)
-			//		return false;
-			//}
 			return true;
+		}
+		public static bool OnNavigateChildren(this IPopupItem item)
+		{
+			if (!item.HasItems())
+				return false;
+			item.PopupRoot.PopupManager.OpenedItem = item;
+			item.PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
+			return true;
+		}
+
+		public static void CloseAllPopups(this IPopupItem item)
+		{
+			Action<DependencyObject> closeRoot = dp =>
+			{
+				var p = (IPopupRoot)dp;
+				p.PopupManager.Tracking = false;
+			};
+			var dpitem = (DependencyObject)item;
+			dpitem.VisualHierarchy().Where(x => x is IPopupRoot).ForEach(x => closeRoot(x));
+			dpitem.LogicalHierarchy().Where(x => x is IPopupRoot).ForEach(x => closeRoot(x));
 		}
 
 		public static IEnumerable<IPopupItem> SelectableItem(this IEnumerable<IPopupItem> list)
@@ -314,10 +310,19 @@ namespace MenuRibbon.WPF
 			c.Focus();
 			return item;
 		}
+
 		public static bool HasItems(this IPopupItem item)
 		{
 			var ic = item as ItemsControl;
 			return ic != null && ic.Items.Count > 0;
+		}
+		public static bool IsPressed(this IPopupItem item)
+		{
+			if (Keyboard.IsKeyDown(Key.Enter) || Keyboard.IsKeyDown(Key.Space))
+				return true;
+			if (Mouse.LeftButton == MouseButtonState.Pressed && Mouse.PrimaryDevice.Captured == item as IInputElement)
+				return true;
+			return false;
 		}
 	}
 }

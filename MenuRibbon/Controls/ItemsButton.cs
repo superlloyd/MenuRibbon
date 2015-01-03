@@ -71,8 +71,8 @@ namespace MenuRibbon.WPF.Controls
 
 			if (IsSplitButton || HasItems)
 			{
-				PopupManager.OpenedItem = this;
-				((IPopupItem)this).PopupChildren().SelectableItem().FirstOrDefault().NavigateItem();
+				this.OnNavigateChildren();
+				e.TargetKeyTipScope = this;
 			}
 			else
 			{
@@ -80,9 +80,9 @@ namespace MenuRibbon.WPF.Controls
 			}
 
 			e.Handled = true;
-			if (IsOpen && KeyTipService.GetIsKeyTipScope(this))
+			if (!IsOpen)
 			{
-				e.TargetKeyTipScope = this;
+				this.CloseAllPopups();
 			}
 		}
 

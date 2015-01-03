@@ -52,9 +52,9 @@ namespace TestApp
 			};
 
 			InitializeComponent();
-
 			AutoGenerateKeyTips();
 		}
+
 		public List<AAA> RandomList { get; set; }
 
 		private void Button_Click(object sender, RoutedEventArgs e)
