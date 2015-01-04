@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
 	<metadata>
 		<id>MenuRibbon.WPF</id>
-		<version>0.5.1.0</version>
+		<version>0.5.2.0</version>
 		<title>MenuRibbon.WPF</title>
 		<authors>Lloyd Dupont</authors>
 		<owners>Lloyd Dupont</owners>

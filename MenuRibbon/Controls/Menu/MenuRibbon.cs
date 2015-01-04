@@ -42,8 +42,8 @@ namespace MenuRibbon.WPF.Controls.Menu
 		public MenuRibbon()
 		{
 			FocusOnEnterKeyTip = true;
+			KeyTipService.Current.Register(this);
 		}
-
 
 		#region FocusOnEnterKeyTip
 
@@ -56,29 +56,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 		// Using a DependencyProperty as the backing store for FocusOnEnterKeyTip.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty FocusOnEnterKeyTipProperty =
 			DependencyProperty.Register("FocusOnEnterKeyTip", typeof(bool), typeof(MenuRibbon)
-			, new PropertyMetadata(BooleanBoxes.FalseBox, OnFocusOnEnterKeyTipChanged));
-
-		private static void OnFocusOnEnterKeyTipChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var t = (MenuRibbon)d;
-			if (t.keyTipFocuHandler == null)
-				t.keyTipFocuHandler = (o, ev) =>
-				{
-					if (t.Items.Count == 0)
-						return;
-					var p = (IPopupItem)t.ItemContainerGenerator.ContainerFromItem(t.Items[0]);
-					Keyboard.Focus(p.FirstFocusableElement());
-				};
-			if ((bool)e.NewValue)
-			{
-				KeyTipService.Current.KeyTipEnterFocus += t.keyTipFocuHandler;
-			}
-			else
-			{
-				KeyTipService.Current.KeyTipEnterFocus -= t.keyTipFocuHandler;
-			}
-		}
-		KeyTipFocusEventHandler keyTipFocuHandler;
+			, new PropertyMetadata(BooleanBoxes.FalseBox));
 
 		#endregion
 

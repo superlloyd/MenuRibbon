@@ -256,6 +256,7 @@
 	</Style>
 
 	<Style TargetType="cm:MenuRibbon">
+		<Setter Property="Focusable" Value="False"/>
 		<Setter Property="FocusManager.IsFocusScope" Value="True"/>
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalContentAlignment" Value="Left"/>
