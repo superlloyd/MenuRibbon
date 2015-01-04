@@ -88,8 +88,6 @@ namespace MenuRibbon.WPF.Controls
 
 				if (State == KeyTipState.None && IsKeyTipKey(args))
 				{
-					RaiseKeyTipEnterFocus();
-
 					var src = args.OriginalSource as DependencyObject;
 					if (EnterKeyTipMode(src.VisualHierarchy().Last(), args.Key != Key.F10))
 					{
