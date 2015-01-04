@@ -641,22 +641,27 @@ namespace MenuRibbon.WPF.Controls
 		private void EnqueueAdornerLayerForPlacementProcessing(AdornerLayer adornerLayer)
 		{
 			toBePlacementProcessed[adornerLayer] = true;
+			if (toBePlacementProcessed.Count > 1)
+				return;
 
 			adornerLayer.Dispatcher.BeginInvoke(
 				(Action)delegate()
 				{
-					foreach (var layer in toBePlacementProcessed.Keys)
+					try
 					{
-						foreach (var child in LogicalTreeHelper.GetChildren(layer))
+						foreach (var layer in toBePlacementProcessed.Keys)
 						{
-							var keyTipAdorner = child as KeyTipAdorner;
-							if (keyTipAdorner != null)
+							foreach (var child in LogicalTreeHelper.GetChildren(layer))
 							{
-								keyTipAdorner.NudgeIntoAdornerLayerBoundary(layer);
+								var keyTipAdorner = child as KeyTipAdorner;
+								if (keyTipAdorner != null)
+								{
+									keyTipAdorner.NudgeIntoAdornerLayerBoundary(layer);
+								}
 							}
 						}
 					}
-					toBePlacementProcessed.Clear();
+					finally { toBePlacementProcessed.Clear(); }
 				},
 				DispatcherPriority.Input,
 				null);
