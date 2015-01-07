@@ -344,127 +344,24 @@ namespace MenuRibbon.WPF.Controls
 
 		#region ItemsControl override
 
-		class MenuItemContainer : ContentControl, IPopupItem
-		{
-			public MenuItemContainer()
-			{
-				Focusable = false;
-			}
-
-			public bool IsOpen
-			{
-				get { return false; }
-				set { }
-			}
-			public bool IsHighlighted { get; set; }
-			void IPopupItem.Action() { }
-			bool IPopupItem.IsPressed { get; set; }
-			public IPopupItem ParentItem { get { return this.LogicalParent() as IPopupItem; } }
-			public IPopupRoot PopupRoot { get { return (IPopupRoot)this.LogicalHierarchy().FirstOrDefault(x => x is IPopupRoot); } }
-			bool IPopupItem.Contains(DependencyObject target)
-			{
-				return target.VisualHierarchy().Contains(this);
-			}
-
-			void RootAction(Action<IPopupRoot> a)
-			{
-				var r = (IPopupRoot)this.LogicalHierarchy().FirstOrDefault(x => x is IPopupRoot);
-				if (r != null)
-					a(r);
-			}
-			IPopupItem GetPopupTarget()
-			{
-				return Content as IPopupItem ?? this;
-			}
-			protected override void OnMouseEnter(MouseEventArgs e)
-			{
-				base.OnMouseEnter(e);
-				RootAction(r => 
-				{
-					var p = GetPopupTarget();
-					r.PopupManager.Enter(p); 
-					if (r.PopupManager.Tracking)
-					{
-						var t = p.FirstFocusableElement();
-						if (t != null)
-							t.Focus();
-					}
-				});
-			}
-			protected override void OnMouseLeave(MouseEventArgs e)
-			{
-				base.OnMouseLeave(e);
-				RootAction(r => 
-				{
-					r.PopupManager.Exit(this);
-				});
-			}
-
-			public void SetContent(object content, DataTemplate tpl, DataTemplateSelector sel)
-			{
-				if (sel != null)
-				{
-					tpl = sel.SelectTemplate(content, this);
-				}
-				if (tpl != null)
-				{
-					var dp = tpl.LoadContent();
-
-					var fe = dp as FrameworkElement;
-					if (fe != null)
-						fe.DataContext = content;
-
-					var ic = dp as ItemsControl;
-					if (ic != null && ic.HasDefaultValue(ItemsControl.ItemTemplateProperty))
-					{
-						ic.ItemTemplate = tpl;
-					}
-
-					content = dp;
-				}
-				Content = content as UIElement;
-			}
-
-			protected override void OnKeyDown(KeyEventArgs e)
-			{
-				base.OnKeyDown(e);
-				//this.OnKeyNavigate(e);
-			}
-		}
-
-		public ItemContainerTemplateSelector ItemContainerTemplateSelector
-		{
-			get { return (ItemContainerTemplateSelector)GetValue(ItemContainerTemplateSelectorProperty); }
-			set { SetValue(ItemContainerTemplateSelectorProperty, value); }
-		}
-
-		// Using a DependencyProperty as the backing store for ItemContainerTemplateSelector.  This enables animation, styling, binding, etc...
-		public static readonly DependencyProperty ItemContainerTemplateSelectorProperty =
-			DependencyProperty.Register("ItemContainerTemplateSelector", typeof(ItemContainerTemplateSelector), typeof(BasePopupItem), new PropertyMetadata(null));
-
 		protected override bool IsItemItsOwnContainerOverride(object item)
 		{
-			return item is BasePopupItem || item is Separator || item is MenuItemContainer;
+			return item is BasePopupItem || item is Separator;
 		}
 		protected override DependencyObject GetContainerForItemOverride()
 		{
-			var c = new MenuItemContainer();
+			var c = new Menu.MenuItem();
 			return c;
 		}
 		protected override void ClearContainerForItemOverride(DependencyObject element, object item)
 		{
 			base.ClearContainerForItemOverride(element, item);
-			if (element is MenuItemContainer)
-			{
-				var mic = (MenuItemContainer)element;
-				mic.Content = null;
-			}
 		}
 		protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
 		{
-			if (element is BasePopupItem)
+			if (element is Menu.MenuItem)
 			{
-				PrepareContainerForItemOverride((BasePopupItem)element, item);
+				PrepareContainerForItemOverride((Menu.MenuItem)element, item);
 			}
 			else if (element is Separator)
 			{
@@ -476,18 +373,26 @@ namespace MenuRibbon.WPF.Controls
 						sep.Style = st;
 				}
 			}
-			else if (element is MenuItemContainer)
-			{
-				var mic = (MenuItemContainer)element;
-				mic.SetContent(item, this.ItemTemplate, this.ItemTemplateSelector);
-			}
 		}
-		internal void PrepareContainerForItemOverride(BasePopupItem element, object item)
+		internal void PrepareContainerForItemOverride(Menu.MenuItem element, object item)
 		{
 			base.PrepareContainerForItemOverride(element, item);
 			if (item is ICommand)
 			{
 				element.Command = (ICommand)item;
+			}
+
+			if (item != element)
+			{
+				var dps = item as DependencyObject;
+				if (dps != null)
+				{
+					element.HasCustomItem = Menu.MenuItem.GetIsCustomItem(dps);
+				}
+				else
+				{
+					element.HasCustomItem = false;
+				}
 			}
 		}
 

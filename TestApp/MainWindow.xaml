@@ -94,13 +94,16 @@
 			</mr:MenuItem>
 			<mr:MenuItem Header="DataContextList" ItemsSource="{Binding RandomList, ElementName=root}">
 				<mr:MenuItem.ItemTemplate>
-					<DataTemplate>
-						<mr:MenuItem Header="{Binding Header}"
-									 InputGestureText="{Binding Shortcut}"
-									 ItemsSource="{Binding Children}">
-						</mr:MenuItem>
-					</DataTemplate>
+					<HierarchicalDataTemplate ItemsSource="{Binding Children}">
+						<TextBlock Text="{Binding Header}"/>
+					</HierarchicalDataTemplate>
 				</mr:MenuItem.ItemTemplate>
+				<mr:MenuItem.ItemContainerStyle>
+					<Style TargetType="mr:MenuItem">
+						<Setter Property="InputGestureText" Value="{Binding Shortcut}"/>
+						<Setter Property="mr:KeyTipService.KeyTip" Value="{Binding KeyTip}"/>
+					</Style>
+				</mr:MenuItem.ItemContainerStyle>
 			</mr:MenuItem>
 			<mr:MenuItem Header="bloo-x">
 				<TextBlock Style="{StaticResource HeaderStyle}">Header 1</TextBlock>
@@ -117,7 +120,7 @@
 					</StackPanel>
 				</mr:MenuItem>
 			</mr:MenuItem>
-			<TextBlock>fjwl</TextBlock>
+			<TextBlock mr:MenuItem.IsCustomItem="False">fjwl</TextBlock>
 			<mr:MenuItem IsCheckable="True" Header="Check"/>
 			<mr:MenuItem IsCheckable="True" Header="Check"/>
 			<mr:MenuItem Header="Image">

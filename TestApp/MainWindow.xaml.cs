@@ -38,15 +38,15 @@ namespace TestApp
 		{
 			RandomList = new List<AAA>
 			{
-				new AAA { Header = "One", Shortcut = "F2" },
-				new AAA { Header = "Two", Children = new List<AAA> {
-						new AAA { Header = "Ahaha" },
-						new AAA { Header = "Ahaha" },
+				new AAA { Header = "One", Shortcut = "F2", KeyTip = "A" },
+				new AAA { Header = "Two", KeyTip = "B", Children = new List<AAA> {
+						new AAA { Header = "Ahaha", KeyTip = "C" },
+						new AAA { Header = "Ahaha", KeyTip = "D" },
 					}
 				},
-				new AAA { Header = "Two", Shortcut = "Ctrl+F1", Children = new List<AAA> {
-						new AAA { Header = "Ahaha" },
-						new AAA { Header = "Ahaha" },
+				new AAA { Header = "Two", Shortcut = "Ctrl+F1", KeyTip = "E", Children = new List<AAA> {
+						new AAA { Header = "Ahaha", KeyTip = "F" },
+						new AAA { Header = "Ahaha", KeyTip = "G" },
 					}
 				},
 			};

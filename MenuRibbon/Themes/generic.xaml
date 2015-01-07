@@ -211,6 +211,18 @@
 			<Trigger Property="HasItems" Value="True">
 				<Setter Property="c:KeyTipService.IsKeyTipScope" Value="True"/>
 			</Trigger>
+			<Trigger Property="HasCustomItem" Value="True">
+				<Setter Property="KeyboardNavigation.IsTabStop" Value="False"/>
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="cm:MenuItem">
+							<Border x:Name="PART_Header" Background="Transparent" Padding="{TemplateBinding Padding}">
+								<ContentPresenter ContentSource="Header" />
+							</Border>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Trigger>
 		</Style.Triggers>
 	</Style>
 

@@ -76,6 +76,41 @@ namespace MenuRibbon.WPF.Controls.Menu
 
 		#endregion
 
+		#region IsContainer
+
+		/// <summary>
+		/// If the MenuItem hold a custom Item the default template will be replaced by another template filling the whole MenuItem.
+		/// </summary>
+		public bool HasCustomItem
+		{
+			get { return (bool)GetValue(HasCustomItemProperty); }
+			internal set { SetValue(HasCustomItemPropertyKey, BooleanBoxes.Box(value)); }
+		}
+
+		static readonly DependencyPropertyKey HasCustomItemPropertyKey =
+			DependencyProperty.RegisterReadOnly("HasCustomItem", typeof(bool), typeof(MenuItem), new PropertyMetadata(BooleanBoxes.FalseBox));
+
+		public static readonly DependencyProperty HasCustomItemProperty = HasCustomItemPropertyKey.DependencyProperty;
+
+		public static bool GetIsCustomItem(DependencyObject obj)
+		{
+			return (bool)obj.GetValue(IsCustomItemProperty);
+		}
+
+		public static void SetIsCustomItem(DependencyObject obj, bool value)
+		{
+			obj.SetValue(IsCustomItemProperty, BooleanBoxes.Box(value));
+		}
+
+		/// <summary>
+		/// If this DependencyObject is set to true (the default value) on a UIElement in a MenuItem, it will replace the default template
+		/// And expand to the full content (minus padding) of the MenuItem.
+		/// </summary>
+		public static readonly DependencyProperty IsCustomItemProperty =
+			DependencyProperty.RegisterAttached("IsCustomItem", typeof(bool), typeof(MenuItem), new PropertyMetadata(BooleanBoxes.TrueBox));
+
+		#endregion
+
 		#region FrameworkElement override + InputHandling
 
 		public override void OnApplyTemplate()
