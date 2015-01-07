@@ -1,7 +1,3 @@
-Dependencies
-Install-Package MahApps.Metro
-Install-Package Rx-Linq 
-
 Website
 http://github.com/superlloyd/MenuRibbon
 
@@ -10,8 +6,7 @@ http://msdn.microsoft.com/en-us/library/dn742393.aspx
 http://msdn.microsoft.com/en-us/library/ff701790(v=vs.110).aspx
 http://msdn.microsoft.com/EN-US/library/hh140095(v=VS.110,d=hv.2).aspx
 
-Keytips
-Better looking top-level menu item & itemsbutton
-Click on ribbon item => no focus!
-
-App: Maps first, then text, then grid / character sheet
+TODO
+Better looking top-level menu item  and KeyTip
+update doc about KeyTips and ItemTemplate
+Make sure KeyTip work on collapsed item
