@@ -381,19 +381,6 @@ namespace MenuRibbon.WPF.Controls
 			{
 				element.Command = (ICommand)item;
 			}
-
-			if (item != element)
-			{
-				var dps = item as DependencyObject;
-				if (dps != null)
-				{
-					element.HasCustomItem = Menu.MenuItem.GetIsCustomItem(dps);
-				}
-				else
-				{
-					element.HasCustomItem = false;
-				}
-			}
 		}
 
 		#endregion

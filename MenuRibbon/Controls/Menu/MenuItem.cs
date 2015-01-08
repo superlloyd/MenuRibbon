@@ -72,7 +72,54 @@ namespace MenuRibbon.WPF.Controls.Menu
 			}
 
 			return value;
-		} 
+		}
+
+		#endregion
+
+		#region OnCommandChanged() OnHeaderChanged()
+
+		protected override void OnCommandChanged(ICommand OldValue, ICommand NewValue)
+		{
+			base.OnCommandChanged(OldValue, NewValue);
+
+			Func<ICommand, string> getGesture = c =>
+			{
+				var rc = c as RoutedCommand;
+				if (rc == null)
+					return null;
+				var kc = (KeyGesture)rc.InputGestures.Cast<InputGesture>().FirstOrDefault(x => x is KeyGesture);
+				if (kc == null)
+					return null;
+				return kc.GetDisplayStringForCulture(CultureInfo.CurrentCulture);
+			};
+
+			var okc = getGesture(OldValue);
+			var nkc = getGesture(NewValue);
+			if (Equals(InputGestureText, okc))
+				this.ClearValue(InputGestureTextProperty);
+			if (nkc != null && this.HasDefaultValue(InputGestureTextProperty))
+				this.InputGestureText = nkc;
+		}
+
+		protected override void OnHeaderChanged(object oldHeader, object newHeader)
+		{
+			base.OnHeaderChanged(oldHeader, newHeader);
+
+			Func<object, bool> getCI = o =>
+			{
+				var dp = o as DependencyObject;
+				if (dp == null)
+					return false;
+				return GetIsCustomItem(dp);
+			};
+			var oci = getCI(oldHeader);
+			var nci = getCI(newHeader);
+
+			if (HasCustomItem == oci)
+				this.ClearValue(HasCustomItemPropertyKey);
+			if (this.HasDefaultValue(HasCustomItemProperty))
+				this.HasCustomItem = nci;
+		}
 
 		#endregion
 

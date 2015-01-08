@@ -141,7 +141,7 @@ namespace MenuRibbon.WPF.Controls
 			"Command", typeof(ICommand), typeof(ActionHeaderedItemsControl)
 			, new PropertyMetadata(default(ICommand), (o, e) => ((ActionHeaderedItemsControl)o).OnCommandChanged((ICommand)e.OldValue, (ICommand)e.NewValue)));
 
-		void OnCommandChanged(ICommand OldValue, ICommand NewValue)
+		protected virtual void OnCommandChanged(ICommand OldValue, ICommand NewValue)
 		{
 			if (onCommandUpdated == null)
 				onCommandUpdated = (o, e) => UpdateFromCommand();
@@ -151,6 +151,13 @@ namespace MenuRibbon.WPF.Controls
 			if (NewValue != null)
 				CanExecuteChangedEventManager.AddHandler(NewValue, onCommandUpdated);
 			onCommandUpdated(null, null);
+
+			var oruc = OldValue as RoutedUICommand;
+			var nruc = NewValue as RoutedUICommand;
+			if (oruc != null && Equals(Header, oruc.Text))
+				this.ClearValue(HeaderProperty);
+			if (nruc != null && this.HasDefaultValue(HeaderProperty))
+				Header = nruc.Text;
 		}
 		EventHandler<EventArgs> onCommandUpdated;
 
