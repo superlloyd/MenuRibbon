@@ -67,11 +67,5 @@ namespace MenuRibbon.WPF
 			}
 			return false;
 		}
-
-		public static string GetName(this ICommand cmd)
-		{
-			var rcmd = cmd as RoutedCommand;
-			return rcmd == null ? null : rcmd.Name;
-		}
 	}
 }
