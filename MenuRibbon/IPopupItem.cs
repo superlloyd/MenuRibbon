@@ -318,11 +318,23 @@ namespace MenuRibbon.WPF
 		}
 		public static bool IsPressed(this IPopupItem item)
 		{
-			if (Keyboard.IsKeyDown(Key.Enter) || Keyboard.IsKeyDown(Key.Space))
-				return true;
-			if (Mouse.LeftButton == MouseButtonState.Pressed && Mouse.PrimaryDevice.Captured == item as IInputElement)
-				return true;
-			return false;
+			var uip = item as UIElement;
+			if (uip == null)
+				return false;
+
+			Func<bool> keyPressed = () => {
+				if (!uip.IsFocused)
+					return false;
+				return Keyboard.IsKeyDown(Key.Enter) || Keyboard.IsKeyDown(Key.Space);
+			};
+			Func<bool> mousePressed = () =>
+			{
+				if (!uip.IsMouseOver)
+					return false;
+				return Mouse.PrimaryDevice.Captured == uip;
+			};
+
+			return keyPressed() || mousePressed();
 		}
 	}
 }

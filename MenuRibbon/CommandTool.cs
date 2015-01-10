@@ -13,7 +13,7 @@ namespace MenuRibbon.WPF
 		static IInputElement GetTarget(this ICommandSource commandSource)
 		{
 			var target = commandSource.CommandTarget;
-			if (target == null)
+			if (target == null && Keyboard.FocusedElement == null)
 				target = commandSource as IInputElement;
 			return target;
 		}
