@@ -7,36 +7,6 @@ namespace MenuRibbon.WPF.Utils
 	public class WeakHashtable : IDictionary, IWeakCollection
 	{
 		System.Collections.Hashtable container = new System.Collections.Hashtable();
-		class WeakRefHashed : WeakReference
-		{
-			public WeakRefHashed(object obj)
-				: base(obj)
-			{
-				HashCode = obj.GetHashCode();
-			}
-			public int HashCode { get; private set; }
-			public override int GetHashCode() { return HashCode; }
-			public override bool Equals(object obj)
-			{
-				if (ReferenceEquals(this, obj))
-					return true;
-				if (!IsAlive)
-					return false;
-				var other = obj as WeakRefHashed;
-				if (other == null)
-				{
-					return ReferenceEquals(Target, obj);
-				}
-				else
-				{
-					if (HashCode != other.HashCode)
-						return false;
-					if (!other.IsAlive)
-						return false;
-					return ReferenceEquals(Target, other.Target);
-				}
-			}
-		}
 
 		/// <summary>
 		/// Remove dead items from the collection now. This method is also called automatically on Add(), Remove() and Count.

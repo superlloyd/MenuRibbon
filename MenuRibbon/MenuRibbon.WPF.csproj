@@ -108,6 +108,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils\WeakList.cs" />
+    <Compile Include="Utils\WeakRefHashed.cs" />
     <Compile Include="Utils\WeakSet.cs">
       <SubType>Code</SubType>
     </Compile>

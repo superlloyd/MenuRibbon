@@ -10,3 +10,5 @@ TODO
 Better looking top-level menu item  and KeyTip
 update doc about KeyTips and ItemTemplate
 Make sure KeyTip work on collapsed item
+Replace Font by Path for Pin button, font not supported on system without Word
+Big Item Button => splitter below

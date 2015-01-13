@@ -110,7 +110,7 @@ namespace MenuRibbon.WPF.Utils
 
 		void UpdateScopeMap()
 		{
-			foreach (var t in pendingItems)
+			foreach (var t in pendingItems.ToList())
 			{
 				if (!t.IsLoaded())
 					continue;
