@@ -17,6 +17,7 @@ namespace MenuRibbon.WPF.Controls
 		RibbonControlSizeDefinition ControlSizeDefinition { get; set; }
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
 	[TemplatePart(Name = "PART_Header", Type = typeof(FrameworkElement))]
 	[TemplatePart(Name = "PART_Splitter", Type = typeof(FrameworkElement))]
 	[TemplatePart(Name = "PART_BUTTON", Type = typeof(FrameworkElement))]

@@ -24,6 +24,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 	// About Ribbon UI
 	// http://msdn.microsoft.com/en-us/library/dn742393.aspx
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
 	[TemplatePart(Name = "PART_PopupContent", Type = typeof(FrameworkElement))]
 	[TemplatePart(Name = "PART_PinnedContent", Type = typeof(FrameworkElement))]
 	[TemplatePart(Name = "PART_KeyTipScope", Type = typeof(DependencyObject))]

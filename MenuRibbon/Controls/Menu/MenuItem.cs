@@ -21,6 +21,7 @@ using MenuRibbon.WPF;
 
 namespace MenuRibbon.WPF.Controls.Menu
 {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
 	[TemplatePart(Name = "PART_Header", Type = typeof(FrameworkElement))]
 	public class MenuItem : BasePopupItem
 	{
