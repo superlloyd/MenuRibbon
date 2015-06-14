@@ -171,7 +171,7 @@ namespace MenuRibbon.WPF.Controls.Menu
 			{
 				events["H"] = main.MouseHovering().Subscribe(x => IsHovering = x);
 				events["L"] = main.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => OnMainUI_LeftMouseDown(x));
-				events["D"] = main.MouseClicks().Subscribe(x => OnClick());
+				events["D"] = main.MouseClicks().Subscribe(x => { if (!this.HasCustomItem) OnClick(); });
 				events["P"] = main.MousePressed().Subscribe(x => IsPressed = this.IsPressed());
 			}
 			else

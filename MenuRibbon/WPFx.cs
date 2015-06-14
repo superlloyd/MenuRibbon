@@ -154,7 +154,7 @@ namespace MenuRibbon.WPF
 					.Do(x => ui.ReleaseMouseCapture())
 					.Where(x => that.Contains(x.Source as DependencyObject))
 			)
-			// no transform mouse up events
+				// no transform mouse up events
 			.Select(x =>
 			{
 				var e = (MouseButtonEventArgs)x;
