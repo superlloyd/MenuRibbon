@@ -210,7 +210,8 @@ namespace MenuRibbon.WPF.Controls
 			events["1"] = all != null ? all.MouseHovering().Subscribe(x => IsHovering = x) : null;
 			events["HLBD"] = header != null ? header.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => 
 			{
-				if (HasItems && !IsSplitButton) PopupManager.Enter(this, true);
+				if (IsOpen) PopupManager.Tracking = false;
+				else if (HasItems && !IsSplitButton) PopupManager.Enter(this, true);
 			}) : null;
 			events["2"] = header != null ? header.MouseClicks().Subscribe(x => OnClick()) : null;
 			events["3"] = header != null ? header.MousePressed().Subscribe(x => IsPressed = this.IsPressed()) : null;

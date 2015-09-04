@@ -174,9 +174,19 @@ namespace MenuRibbon.WPF
 				HighlightedItem = null;
 			};
 
+			Func<object, DependencyObject, bool> isUIWithin = (inner, outer) =>
+			{
+				var innerui = inner as DependencyObject;
+				if (innerui == null)
+					return false;
+				return innerui.VisualHierarchy().Contains(outer) || innerui.LogicalHierarchy().Contains(outer);
+			};
+
 			onPostProcessInput = (o, e) =>
 			{
 				if (feElement.IsKeyboardFocusWithin)
+					return;
+				if (isUIWithin(e.StagingItem.Input.OriginalSource, feElement))
 					return;
 				var target = e.StagingItem.Input.OriginalSource as DependencyObject;
 				if (target == null || target.VisualHierarchy().Contains(feElement))
@@ -185,7 +195,7 @@ namespace MenuRibbon.WPF
 				var ev = e.StagingItem.Input.RoutedEvent;
 				if (ev == Keyboard.GotKeyboardFocusEvent)
 				{
-					PopupRoot.OnLostFocus();
+					//PopupRoot.OnLostFocus();
 					return;
 				}
 

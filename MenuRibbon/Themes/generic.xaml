@@ -216,7 +216,7 @@
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="cm:MenuItem">
-							<Border x:Name="PART_Header" Background="Transparent" Padding="{TemplateBinding Padding}">
+							<Border x:Name="PART_Header" Background="Transparent">
 								<ContentPresenter ContentSource="Header" />
 							</Border>
 						</ControlTemplate>
@@ -473,7 +473,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="c:ItemsButton">
-					<Grid Background="{TemplateBinding Background}" TextBlock.Foreground="{TemplateBinding Foreground}">
+					<Grid Background="Transparent" TextBlock.Foreground="{TemplateBinding Foreground}">
 						<StackPanel x:Name="PART_BUTTON" Orientation="Horizontal">
 							<!-- main content -->
 							<Border x:Name="PART_Header" Background="{TemplateBinding Background}" BorderThickness="1" BorderBrush="Transparent">
@@ -510,12 +510,12 @@
 							   PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
 							   AllowsTransparency="True"
 							   >
-							<Border Background="{TemplateBinding Background}"
+							<Border Background="{DynamicResource WhiteBrush}"
 									BorderBrush="{TemplateBinding BorderBrush}"
 									BorderThickness="1"
 									>
 								<Grid>
-									<cm:MenuItemsPanel IsItemsHost="True" x:Name="PART_Items"/>
+									<cm:MenuItemsPanel IsItemsHost="True" x:Name="PART_Items" Background="{TemplateBinding Background}"/>
 								</Grid>
 							</Border>
 						</Popup>
@@ -544,11 +544,11 @@
 						</DataTrigger>
 						<Trigger Property="IsHighlighted" Value="True">
 							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource HighlightBrush}"/>
-							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
-							<Setter TargetName="PART_Splitter" Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{DynamicResource AccentColorBrush}"/>
+							<Setter TargetName="PART_Splitter" Property="BorderBrush" Value="{DynamicResource AccentColorBrush}"/>
 						</Trigger>
 						<Trigger Property="IsOpen" Value="True">
-							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{DynamicResource HighlightBrush}"/>
 						</Trigger>
 						<Trigger Property="IsSplitButton" Value="True">
 							<Setter TargetName="PART_Splitter" Property="Visibility" Value="Visible"/>
