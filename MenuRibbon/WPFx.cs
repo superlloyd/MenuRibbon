@@ -84,23 +84,6 @@ namespace MenuRibbon.WPF
 
 		#region Mouse events
 
-		public static IObservable<IObservable<MouseEventArgs>> MouseDrag(this DependencyObject that)
-		{
-			return that.MouseDown()
-				.Where(x => x.ChangedButton == MouseButton.Left)
-				.Do(x => { if (that is UIElement) { ((UIElement)that).CaptureMouse(); } })
-				.Select(x => 
-				{
-					var start = new List<MouseEventArgs>() { x }.ToObservable();
-					var end = that.MouseUp()
-						.Where(y => y.ChangedButton == MouseButton.Left)
-						.Take(1)
-						.Do(y => { if (that is UIElement) { ((UIElement)that).ReleaseMouseCapture(); } });
-					var move = that.MouseMove().TakeUntil(end);
-					return Observable.Merge<MouseEventArgs>(start, move, end);
-				});
-		}
-
 		public static IObservable<MouseButtonEventArgs> MouseClick(this DependencyObject that)
 		{
 			UIElement ui = (UIElement)that;
