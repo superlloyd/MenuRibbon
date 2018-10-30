@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace MenuRibbon.WPF
 {
-    public static class CommandTool
+    internal static class CommandTool
     {
         public static object GetCommandContext(this ICommandSource commandSource)
         {

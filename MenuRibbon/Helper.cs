@@ -61,10 +61,10 @@ namespace MenuRibbon.WPF
 		public static object Box(int value) { return boxedValues[value]; }
 	}
 
-	/// <summary>
-	/// Utility class to update and dispose of a bunch of IDisposable
-	/// </summary>
-	public class DisposableBag : IDisposable
+    /// <summary>
+    /// Utility class to update and dispose of a bunch of IDisposable
+    /// </summary>
+    internal class DisposableBag : IDisposable
 	{
 		public IDisposable this[string key]
 		{
@@ -96,7 +96,7 @@ namespace MenuRibbon.WPF
 		}
 	}
 
-	public static class UIHelper
+    internal static class UIHelper
 	{
 		public static CultureInfo GetCultureInfo(this DependencyObject element)
 		{
