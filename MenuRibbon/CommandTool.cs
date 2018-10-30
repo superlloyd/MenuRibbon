@@ -14,7 +14,7 @@ namespace MenuRibbon.WPF
         {
             ICommand command = commandSource.Command;
             if (command == null)
-                return false;
+                return null;
 
             if (command is RoutedCommand routed)
             {
