@@ -31,10 +31,9 @@ namespace MenuRibbon.WPF
 
         static IInputElement GetTarget(this ICommandSource commandSource)
         {
-            var target = commandSource.CommandTarget;
-            if (target == null && Keyboard.FocusedElement == null)
-                target = commandSource as IInputElement;
-            return target;
+            return commandSource.CommandTarget
+                ?? Keyboard.FocusedElement
+                ?? commandSource as IInputElement;
         }
 
         public static bool CanExecuteCommand(this ICommandSource commandSource)
@@ -47,8 +46,7 @@ namespace MenuRibbon.WPF
 
             if (command is RoutedCommand routed)
             {
-                var target = commandSource.GetTarget();
-                return target != null && routed.CanExecute(parameter, target);
+                return routed.CanExecute(parameter, commandSource.GetTarget());
             }
             else
             {
@@ -67,7 +65,7 @@ namespace MenuRibbon.WPF
             if (command is RoutedCommand routed)
             {
                 var target = commandSource.GetTarget();
-                if (target != null && routed.CanExecute(parameter, target))
+                if (routed.CanExecute(parameter, target))
                 {
                     routed.Execute(parameter, target);
                     return true;
