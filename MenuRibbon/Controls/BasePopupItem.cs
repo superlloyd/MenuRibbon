@@ -173,7 +173,7 @@ namespace MenuRibbon.WPF.Controls
 
 		#endregion		
 
-		#region IPopupItem: IsOpen, ParentItem, PopupRoot
+		#region IPopupItem: IsOpen, ParentItem, PopupRoot, IsOpenChanged
 
 		void IPopupItem.Action() { OnClick(); }
 		bool IPopupItem.IsPressed { get { return IsPressed; } set { IsPressed = value; } }
@@ -204,7 +204,13 @@ namespace MenuRibbon.WPF.Controls
 						value = false;
 						break;
 				}
-				SetValue(IsOpenPropertyKey, BooleanBoxes.Box(value)); 
+                var previous = IsOpen;
+                if (previous == value)
+                    return;
+
+                RaiseEvent(new RoutedEventArgs(IsOpenChangingEvent, this));
+                SetValue(IsOpenPropertyKey, BooleanBoxes.Box(value));
+                RaiseEvent(new RoutedEventArgs(IsOpenChangedEvent, this));
 			}
 		}
 
@@ -213,11 +219,29 @@ namespace MenuRibbon.WPF.Controls
 
 		public static readonly DependencyProperty IsOpenProperty = IsOpenPropertyKey.DependencyProperty;
 
-		#endregion		
+        public static readonly RoutedEvent IsOpenChangedEvent = EventManager.RegisterRoutedEvent(
+            "IsOpenChanged", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(BasePopupItem));
 
-		#region IsPressed, IsHovering, IsHighlighted
+        public event RoutedEventHandler IsOpenChanged
+        {
+            add { AddHandler(IsOpenChangedEvent, value); }
+            remove { RemoveHandler(IsOpenChangedEvent, value); }
+        }
 
-		public bool IsPressed
+        public static readonly RoutedEvent IsOpenChangingEvent = EventManager.RegisterRoutedEvent(
+            "IsOpenChanging", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(BasePopupItem));
+
+        public event RoutedEventHandler IsOpenChanging
+        {
+            add { AddHandler(IsOpenChangingEvent, value); }
+            remove { RemoveHandler(IsOpenChangingEvent, value); }
+        }
+
+        #endregion
+
+        #region IsPressed, IsHovering, IsHighlighted
+
+        public bool IsPressed
 		{
 			get { return (bool)GetValue(IsPressedProperty); }
 			protected set { SetValue(IsPressedPropertyKey, BooleanBoxes.Box(value)); }
