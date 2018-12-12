@@ -104,15 +104,19 @@
 						<!-- main content -->
 						<Border x:Name="PART_Header" Background="{TemplateBinding Background}">
 							<cm:MenuHeaderPanel>
-                                <StackPanel x:Name="Column_Icon" Orientation="Horizontal">
+                                <Grid x:Name="Column_Icon">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 								    <ContentPresenter 
 									    MinWidth="17"
-									    VerticalAlignment="Center"
+									    VerticalAlignment="Center" HorizontalAlignment="Center"
 									    ContentSource="Icon" 
                                         Margin="{TemplateBinding Padding}"
 									    />
-                                    <Border Width="1" Margin="4,0" Background="LightGray" VerticalAlignment="Stretch"/>
-                                </StackPanel>
+                                    <Border Grid.Column="1" Width="1" Margin="4,0" Background="LightGray" VerticalAlignment="Stretch"/>
+                                </Grid>
 								<ContentPresenter 
 									x:Name="Column_Header"
 									ContentSource="Header"
