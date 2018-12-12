@@ -18,8 +18,8 @@
 	-->
 
 	<m:TextToUIConverter x:Key="Text2UICvt" Foreground="{x:Static SystemColors.ActiveCaptionTextBrush}"/>
-	
-	<Style TargetType="c:KeyTipControl">
+
+    <Style TargetType="c:KeyTipControl">
 		<Setter Property="Background" Value="#525252"/>
 		<Setter Property="BorderBrush" Value="Black"/>
 		<Setter Property="Foreground" Value="White"/>
@@ -93,7 +93,7 @@
 		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="Focusable" Value="True"/>
 		<Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="Padding" Value="2"/>
+		<Setter Property="Padding" Value="3"/>
 		<Setter Property="Foreground" Value="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type c:BasePopupItem}}}" />
 		<Setter Property="BorderBrush" Value="{Binding Path=BorderBrush, RelativeSource={RelativeSource AncestorType={x:Type c:BasePopupItem}}}" />
 		<Setter Property="Background" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type c:BasePopupItem}}}" />
@@ -102,21 +102,22 @@
 				<ControlTemplate TargetType="cm:MenuItem">
 					<Grid Background="Transparent">
 						<!-- main content -->
-						<Border x:Name="PART_Header" Background="{TemplateBinding Background}"
-								BorderThickness="1,1,1,0" BorderBrush="Transparent"
-								Padding="{TemplateBinding Padding}">
+						<Border x:Name="PART_Header" Background="{TemplateBinding Background}">
 							<cm:MenuHeaderPanel>
-								<ContentPresenter 
-									x:Name="Column_Icon"
-									MinWidth="17"
-									VerticalAlignment="Center"
-									ContentSource="Icon" 
-									Margin="2,0,8,0"
-									/>
+                                <StackPanel x:Name="Column_Icon" Orientation="Horizontal">
+								    <ContentPresenter 
+									    MinWidth="17"
+									    VerticalAlignment="Center"
+									    ContentSource="Icon" 
+                                        Margin="{TemplateBinding Padding}"
+									    />
+                                    <Border Width="1" Margin="4,0" Background="LightGray" VerticalAlignment="Stretch"/>
+                                </StackPanel>
 								<ContentPresenter 
 									x:Name="Column_Header"
 									ContentSource="Header"
 									VerticalAlignment="Center"
+                                    Margin="{TemplateBinding Padding}"
 									/>
 								<ContentPresenter 
 									x:Name="Column_IGT"
@@ -124,7 +125,7 @@
 									ContentSource="InputGestureText"
 									VerticalAlignment="Center"
 									/>
-								<Grid Margin="3,0,3,0" x:Name="Column_Arrow">
+								<Grid Margin="3,0" x:Name="Column_Arrow">
 									<Path
 										x:Name="PART_NextArrow"
 										HorizontalAlignment="Right"

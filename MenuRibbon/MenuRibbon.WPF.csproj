@@ -114,6 +114,7 @@
     <Compile Include="Controls\KeyTipService.cs" />
     <Compile Include="Markup\ImageExtension.cs" />
     <Compile Include="Markup\TextToUIConverter.cs" />
+    <Compile Include="Markup\ThicknessConverter.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Controls\RibbonEvents.cs" />
     <Compile Include="Utils\CollectionUtils.cs" />
