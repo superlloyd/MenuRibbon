@@ -73,9 +73,9 @@ namespace TestApp
 			int i = 0;
 			Action<DependencyObject> setKP = dp2 =>
 			{
-				if (dp2.HasDefaultValue(KeyTipService.KeyTipProperty))
+				if (dp2.HasDefaultValue(MenuRibbon.WPF.Controls.KeyTipService.KeyTipProperty))
 				{
-					KeyTipService.SetKeyTip(dp2, string.Format("{0:00}", i++));
+                    MenuRibbon.WPF.Controls.KeyTipService.SetKeyTip(dp2, string.Format("{0:00}", i++));
 					res++;
 				}
 			};

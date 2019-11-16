@@ -27,7 +27,7 @@ namespace MenuRibbon.WPF.Markup
 			var uc = (IUriContext)sp.GetService(typeof(IUriContext));
 			if (uc != null)
 			{
-				var uri = new Uri(uc.BaseUri, Uri);
+				var uri = new Uri(uc.BaseUri, "./"+  Uri);
 				var bi = new BitmapImage(uri);
 				var img = new Image { Source = bi, Width = Width, Height = Height };
 				return img;

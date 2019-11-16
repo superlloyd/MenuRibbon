@@ -19,7 +19,7 @@ namespace TestApp
             DependencyProperty.Register("CurrentColor", typeof(SolidColorBrush), typeof(ColorPalette), new PropertyMetadata(Brushes.Black));
         
         public static RoutedUICommand SelectColorCommand = new RoutedUICommand("SelectColorCommand","SelectColorCommand", typeof(ColorPalette));
-        private Window _advancedPickerWindow;
+        private Window _advancedPickerWindow = new Window();
 
         public ColorPalette()
         {
