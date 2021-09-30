@@ -10,6 +10,20 @@ namespace MenuRibbon.WPF.Tests
 		[Fact]
 		public void TestWeakList()
 		{
+			{
+				var wo = new WeakReference(new object());
+				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+				Assert.False(wo.IsAlive);
+			}
+            {
+				var wo = new WeakReference<object>(new object());
+				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+				Assert.False(wo.TryGetTarget(out var _));
+			}
+
+
+
+
 			var wl = new WeakList<object>();
 
 			AddObject(wl);
