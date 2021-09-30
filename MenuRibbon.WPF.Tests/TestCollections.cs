@@ -7,23 +7,9 @@ namespace MenuRibbon.WPF.Tests
 {
 	public class TestCollections
 	{
-		[Fact]
+		[Fact] // broken with .NET5, GC.Collect() seems broken, working with .NET4.7.2 and .NET6
 		public void TestWeakList()
 		{
-			{
-				var wo = new WeakReference(new object());
-				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-				Assert.False(wo.IsAlive);
-			}
-            {
-				var wo = new WeakReference<object>(new object());
-				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-				Assert.False(wo.TryGetTarget(out var _));
-			}
-
-
-
-
 			var wl = new WeakList<object>();
 
 			AddObject(wl);
