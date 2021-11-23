@@ -7,16 +7,12 @@
 	xmlns:m="clr-namespace:MenuRibbon.WPF.Markup"
 	>
 
-	<!-- From MahAPP
-	MahApps.Brushes.MenuItem.SelectionFill
-	MahApps.Brushes.Menu.Background
-	MahApps.Brushes.Controls.Border
-	MahApps.Brushes.Highlight
-	MahApps.Brushes.Text
-	MahApps.Brushes.Control.Background
-	-->
+    <SolidColorBrush x:Key="MenuRibbon.Highlight" Color="#FF00589F"/>
+    <SolidColorBrush x:Key="MenuRibbon.SelectionFill" Color="#FFDEDEDE"/>
+    <SolidColorBrush x:Key="MenuRibbon.Control.Border" Color="#FFCCCCCC"/>
+    <SolidColorBrush x:Key="MenuRibbon.Control.Background" Color="#FFFFFFFF"/>
 
-	<m:TextToUIConverter x:Key="Text2UICvt" Foreground="{x:Static SystemColors.ActiveCaptionTextBrush}"/>
+    <m:TextToUIConverter x:Key="Text2UICvt" Foreground="{x:Static SystemColors.ActiveCaptionTextBrush}"/>
 
     <Style TargetType="c:KeyTipControl">
 		<Setter Property="Background" Value="#525252"/>
@@ -65,12 +61,12 @@
 			</Setter.Value>
 		</Setter>
 		<Setter Property="Background" Value="Transparent"/>
-		<Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Controls.Border}" />
+        <Setter Property="Foreground" Value="{StaticResource MenuRibbon.Control.Border}" />
 		<Setter Property="Margin" Value="0,2,3,0"/>
 		<Setter Property="Padding" Value="5,2"/>
 		<Style.Triggers>
 			<Trigger Property="IsMouseOver" Value="True">
-				<Setter Property="Background" Value="{DynamicResource MahApps.Brushes.MenuItem.SelectionFill}"/>
+                <Setter Property="Background" Value="{StaticResource MenuRibbon.SelectionFill}"/>
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -80,7 +76,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="Separator">
-					<Border BorderBrush="{DynamicResource MahApps.Brushes.Controls.Border}"
+                    <Border BorderBrush="{StaticResource MenuRibbon.Control.Border}"
 							BorderThickness="1"
 							Margin="17,0,3,0" />
 				</ControlTemplate>
@@ -164,14 +160,14 @@
 					</Grid>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsHighlighted" Value="True">
-							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MahApps.Brushes.MenuItem.SelectionFill}"/>
+                            <Setter TargetName="PART_Header" Property="Background" Value="{StaticResource MenuRibbon.SelectionFill}"/>
 						</Trigger>
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
 								<Condition Property="IsTopLevel" Value="True"/>
 								<Condition Property="IsHighlighted" Value="True"/>
 							</MultiTrigger.Conditions>
-							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource MahApps.Brushes.Highlight}"/>
+                            <Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{StaticResource MenuRibbon.Highlight}"/>
 						</MultiTrigger>
 						<Trigger Property="Role" Value="TopLevelHeader">
 							<Setter TargetName="PART_Popup" Property="Placement" Value="Bottom"/>
@@ -262,8 +258,8 @@
 							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cm:MenuRibbon}}}"/>
 						</Trigger>
 						<Trigger Property="IsHighlighted" Value="True">
-							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MahApps.Brushes.MenuItem.SelectionFill}"/>
-							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource MahApps.Brushes.Highlight}"/>
+                            <Setter TargetName="PART_Header" Property="Background" Value="{StaticResource MenuRibbon.Highlight}"/>
+                            <Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{StaticResource MenuRibbon.Highlight}"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
@@ -277,9 +273,9 @@
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalContentAlignment" Value="Left"/>
 		<Setter Property="VerticalAlignment" Value="Top"/>
-		<Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Controls.Border}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource MenuRibbon.Control.Border}"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-		<Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Control.Background}"/>
+        <Setter Property="Background" Value="{StaticResource MenuRibbon.Control.Background}"/>
 		<Setter Property="ItemsPanel">
 			<Setter.Value>
 				<ItemsPanelTemplate>
@@ -471,9 +467,9 @@
 		<Setter Property="IsTabStop" Value="False"/>
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="Padding" Value="1"/>
-		<Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Controls.Border}"/>
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-		<Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Control.Background}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource MenuRibbon.Control.Border}"/>
+        <Setter Property="Foreground" Value="{x:Static SystemColors.ControlTextBrush}" />
+        <Setter Property="Background" Value="{StaticResource MenuRibbon.Control.Background}"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="c:ItemsButton">
@@ -547,12 +543,12 @@
 							<Setter TargetName="Column_Header" Property="Visibility" Value="Collapsed"/>
 						</DataTrigger>
 						<Trigger Property="IsHighlighted" Value="True">
-							<Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{DynamicResource MahApps.Brushes.Highlight}"/>
+                            <Setter TargetName="PART_Header" Property="TextBlock.Foreground" Value="{StaticResource MenuRibbon.Highlight}"/>
 							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{DynamicResource AccentColorBrush}"/>
 							<Setter TargetName="PART_Splitter" Property="BorderBrush" Value="{DynamicResource AccentColorBrush}"/>
 						</Trigger>
 						<Trigger Property="IsOpen" Value="True">
-							<Setter TargetName="PART_Header" Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Highlight}"/>
+                            <Setter TargetName="PART_Header" Property="BorderBrush" Value="{StaticResource MenuRibbon.Highlight}"/>
 						</Trigger>
 						<Trigger Property="IsSplitButton" Value="True">
 							<Setter TargetName="PART_Splitter" Property="Visibility" Value="Visible"/>
@@ -569,7 +565,7 @@
 								<Condition Property="IsSplitButton" Value="False"/>
 								<Condition Property="IsHighlighted" Value="True"/>
 							</MultiTrigger.Conditions>
-							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MahApps.Brushes.MenuItem.SelectionFill}"/>
+                            <Setter TargetName="PART_Header" Property="Background" Value="{StaticResource MenuRibbon.SelectionFill}"/>
 						</MultiTrigger>
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
@@ -577,7 +573,7 @@
 								<Condition Property="IsHighlighted" Value="True"/>
 								<Condition Property="IsHoveringSplitter" Value="False"/>
 							</MultiTrigger.Conditions>
-							<Setter TargetName="PART_Header" Property="Background" Value="{DynamicResource MahApps.Brushes.MenuItem.SelectionFill}"/>
+                            <Setter TargetName="PART_Header" Property="Background" Value="{StaticResource MenuRibbon.SelectionFill}"/>
 						</MultiTrigger>
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
@@ -585,7 +581,7 @@
 								<Condition Property="IsHighlighted" Value="True"/>
 								<Condition Property="IsHoveringSplitter" Value="True"/>
 							</MultiTrigger.Conditions>
-							<Setter TargetName="PART_Splitter" Property="Background" Value="{DynamicResource MahApps.Brushes.MenuItem.SelectionFill}"/>
+                            <Setter TargetName="PART_Splitter" Property="Background" Value="{StaticResource MenuRibbon.SelectionFill}"/>
 						</MultiTrigger>
 						<Trigger Property="IsEnabled" Value="False">
 							<Setter TargetName="PART_BUTTON" Property="Opacity" Value="0.4" />
