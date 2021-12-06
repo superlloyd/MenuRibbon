@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -232,6 +233,34 @@ namespace MenuRibbon.WPF
 				on => Mouse.AddMouseUpHandler(that, (o, e) => on(e)),
 				on => Mouse.RemoveMouseUpHandler(that, (o, e) => on(e))
 			);
+		}
+
+		#endregion
+
+		#region ToAsyncEnumerable()
+
+		public static IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IObservable<T> observable, CancellationToken token)
+			=> new CancellableObservable<T>(observable, token).ToAsyncEnumerable();
+
+		class CancellableObservable<T> : IObservable<T>
+		{
+			readonly IObservable<T> events;
+			readonly CancellationToken token;
+
+			public CancellableObservable(IObservable<T> events, CancellationToken token)
+			{
+				this.events = events;
+				this.token = token;
+			}
+
+			public IDisposable Subscribe(IObserver<T> observer)
+			{
+				var result = events.Subscribe(observer);
+				token.Register(observer.OnCompleted);
+				if (token.IsCancellationRequested)
+					observer.OnCompleted();
+				return result;
+			}
 		}
 
 		#endregion
