@@ -6,7 +6,19 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
-  <ItemGroup>
+	<!-- Nuget publish data -->
+	<PropertyGroup>
+		<PackageId>MenuRibbon.WPF</PackageId>
+		<Authors>Lloyd Dupont</Authors>
+		<Version>1.1.0</Version>
+		<PackageProjectUrl>https://github.com/superlloyd/MenuRibbon</PackageProjectUrl>
+		<Description>
+			Here is a set of control that merge the functionality of both Menu and Ribbon
+		</Description>
+	</PropertyGroup>
+
+
+	<ItemGroup>
     <PackageReference Include="System.Linq.Async" Version="5.1.0" />
     <PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
   </ItemGroup>
