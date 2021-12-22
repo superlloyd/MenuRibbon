@@ -94,7 +94,7 @@
 		<Setter Property="Background" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type c:BasePopupItem}}}" />
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="cm:MenuItem">
+				<ControlTemplate TargetType="{x:Type cm:MenuItem}">
 					<Grid Background="Transparent">
 						<!-- main content -->
 						<Border x:Name="PART_Header" Background="{TemplateBinding Background}">
@@ -583,7 +583,14 @@
 							</MultiTrigger.Conditions>
                             <Setter TargetName="PART_Splitter" Property="Background" Value="{StaticResource MenuRibbon.SelectionFill}"/>
 						</MultiTrigger>
-						<Trigger Property="IsEnabled" Value="False">
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="LargeIcon" Value="{x:Null}"/>
+                                <Condition Property="SmallIcon" Value="{x:Null}"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Image" Property="Visibility" Value="Collapsed"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
 							<Setter TargetName="PART_BUTTON" Property="Opacity" Value="0.4" />
 						</Trigger>
 					</ControlTemplate.Triggers>

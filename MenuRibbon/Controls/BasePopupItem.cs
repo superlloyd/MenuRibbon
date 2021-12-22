@@ -99,14 +99,14 @@ namespace MenuRibbon.WPF.Controls
 		[Category("Behavior")]
 		public MenuItemRole Role
 		{
-			get { return (MenuItemRole)GetValue(MenuTabItemRoleProperty); }
-			private set { SetValue(MenuTabItemRolePropertyKey, value); }
+			get { return (MenuItemRole)GetValue(RoleProperty); }
+			private set { SetValue(RolePropertyKey, value); }
 		}
 
-		static readonly DependencyPropertyKey MenuTabItemRolePropertyKey = DependencyProperty.RegisterReadOnly(
+		static readonly DependencyPropertyKey RolePropertyKey = DependencyProperty.RegisterReadOnly(
 			"Role", typeof(MenuItemRole), typeof(BasePopupItem), new PropertyMetadata(EnumBox<MenuItemRole>.Box((int)MenuItemRole.SubmenuItem)));
 
-		public static readonly DependencyProperty MenuTabItemRoleProperty = MenuTabItemRolePropertyKey.DependencyProperty;
+		public static readonly DependencyProperty RoleProperty = RolePropertyKey.DependencyProperty;
 
 		protected override void OnInitialized(EventArgs e)
 		{
