@@ -164,8 +164,8 @@ namespace MenuRibbon.WPF.Controls.Menu
 		public override void OnApplyTemplate()
 		{
 			base.OnApplyTemplate();
-			events.Clear();
 
+			events.Clear();
 			var main = GetTemplateChild("PART_Header");
 			if (main != null)
 			{
@@ -173,10 +173,6 @@ namespace MenuRibbon.WPF.Controls.Menu
 				events["L"] = main.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => OnMainUI_LeftMouseDown(x));
 				events["D"] = main.MouseClicks().Subscribe(x => { if (!this.HasCustomItem) OnClick(); });
 				events["P"] = main.MousePressed().Subscribe(x => IsPressed = this.IsPressed());
-			}
-			else
-			{
-				events.Clear();
 			}
 		}
 		DisposableBag events = new DisposableBag();
