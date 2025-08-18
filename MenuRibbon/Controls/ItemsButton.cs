@@ -207,16 +207,16 @@ namespace MenuRibbon.WPF.Controls
 			var splitter = GetTemplateChild("PART_Splitter");
 			var all = GetTemplateChild("PART_BUTTON");
 
-			events["1"] = all != null ? all.MouseHovering().Subscribe(x => IsHovering = x) : null;
-			events["HLBD"] = header != null ? header.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => 
+			events.Add(all != null ? all.MouseHovering().Subscribe(x => IsHovering = x) : null);
+			events.Add(header != null ? header.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => 
 			{
 				if (IsOpen) PopupManager.Tracking = false;
 				else if (HasItems && !IsSplitButton) PopupManager.Enter(this, true);
-			}) : null;
-			events["2"] = header != null ? header.MouseClicks().Subscribe(x => OnClick()) : null;
-			events["3"] = header != null ? header.MousePressed().Subscribe(x => IsPressed = this.IsPressed()) : null;
-			events["5"] = splitter != null ? splitter.MouseHovering().Subscribe(x => IsHoveringSplitter = x) : null;
-			events["4"] = splitter != null ? splitter.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => PopupManager.OpenedItem = this) : null;
+			}) : null);
+			events.Add(header != null ? header.MouseClick().Subscribe(x => OnClick()) : null);
+			events.Add(header != null ? header.MousePressed().Subscribe(x => IsPressed = this.IsPressed()) : null);
+			events.Add(splitter != null ? splitter.MouseHovering().Subscribe(x => IsHoveringSplitter = x) : null);
+			events.Add(splitter != null ? splitter.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => PopupManager.OpenedItem = this) : null);
 		}
 		DisposableBag events = new DisposableBag();
 

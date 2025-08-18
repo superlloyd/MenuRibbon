@@ -169,10 +169,10 @@ namespace MenuRibbon.WPF.Controls.Menu
 			var main = GetTemplateChild("PART_Header");
 			if (main != null)
 			{
-				events["H"] = main.MouseHovering().Subscribe(x => IsHovering = x);
-				events["L"] = main.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => OnMainUI_LeftMouseDown(x));
-				events["D"] = main.MouseClicks().Subscribe(x => { if (!this.HasCustomItem) OnClick(); });
-				events["P"] = main.MousePressed().Subscribe(x => IsPressed = this.IsPressed());
+				events.Add(main.MouseHovering().Subscribe(x => IsHovering = x));
+				events.Add(main.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => OnMainUI_LeftMouseDown(x)));
+				events.Add(main.MouseClick().Subscribe(x => { if (!this.HasCustomItem) OnClick(); }));
+				events.Add(main.MousePressed().Subscribe(x => IsPressed = this.IsPressed()));
 			}
 		}
 		DisposableBag events = new DisposableBag();

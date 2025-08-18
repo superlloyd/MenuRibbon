@@ -66,29 +66,17 @@ namespace MenuRibbon.WPF
     /// </summary>
     internal class DisposableBag : IDisposable
 	{
-		public IDisposable this[string key]
+		public void Add(IDisposable value)
 		{
-			get
-			{
-				IDisposable result;
-				storage.TryGetValue(key, out result);
-				return result;
-			}
-			set 
-			{
-				IDisposable previous;
-				storage.TryGetValue(key, out previous);
-				if (previous != null)
-					previous.Dispose();
-				storage[key] = value;
-			}
+			if (value != null)
+				storage.Add(value);
 		}
-		Dictionary<string, IDisposable> storage = new Dictionary<string, IDisposable>();
+		List<IDisposable> storage = new List<IDisposable>();
 
 		void IDisposable.Dispose() { Clear(); }
 		public void Clear()
 		{
-			foreach (var d in storage.Values)
+			foreach (var d in storage)
 			{
 				d.Dispose();
 			}

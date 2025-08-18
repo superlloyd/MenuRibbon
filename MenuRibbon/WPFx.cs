@@ -81,80 +81,46 @@ namespace MenuRibbon.WPF
 			);
 		}
 
-		#endregion
+        #endregion
 
-		#region Mouse events
+        #region Mouse events
 
-		public static IObservable<MouseButtonEventArgs> MouseClick(this DependencyObject that)
+        public static IObservable<MouseButtonEventArgs> LeftMouseUpEvents()
+        {
+            return Observable.FromEventPattern<PreProcessInputEventHandler, PreProcessInputEventArgs>(
+                    h => InputManager.Current.PreProcessInput += h,
+                    h => InputManager.Current.PreProcessInput -= h)
+                .Select(e => e.EventArgs.StagingItem.Input)
+                .OfType<MouseButtonEventArgs>()
+                .Where(e => e.ChangedButton == MouseButton.Left)
+                .Where(e => e.ButtonState == MouseButtonState.Released)
+                ;
+        }
+
+        public static IObservable<MouseButtonEventArgs> MouseClick(this DependencyObject that)
 		{
 			UIElement ui = (UIElement)that;
-			bool isIn = false;
-			return Observable.Merge(
-				that.MouseDown()
-					.Where(x => x.ChangedButton == MouseButton.Left)
-					.Do(x =>
-					{
-						isIn = true;
-						ui.CaptureMouse();
-					})
-					.Where(x => false) // don't select mouse down
-				, that.LostMouseCapture()
-					.Do(x => { isIn = false; })
-					.Where(x => false) // don't select that!
-				// event to return
-				, that.MouseUp()
-					.Where(x => x.ChangedButton == MouseButton.Left && isIn)
-					.Do(x => ui.ReleaseMouseCapture())
-					.Where(x => that.Contains(x.Source as DependencyObject))
-			)
-			.Select(x => (MouseButtonEventArgs)x);
-		}
-
-		public static IObservable<Tuple<MouseButtonEventArgs, int>> MouseClicks(this DependencyObject that) { return MouseClicks(that, TimeSpan.FromMilliseconds(System.Windows.Forms.SystemInformation.DoubleClickTime)); }
-		public static IObservable<Tuple<MouseButtonEventArgs, int>> MouseClicks(this DependencyObject that, TimeSpan interval)
-		{
-			// trying to avoid "new (ReferenceType)" as much as possible
-			UIElement ui = (UIElement)that;
-			int count = 0;
-			long tInterval = interval.Ticks / 2; // time between clicks is half a double click!
-			long t0 = 0, tLast = 0;
-			bool isIn = false;
-			return Observable.Merge(
-				that.MouseDown()
-					.Where(x => x.ChangedButton == MouseButton.Left)
-					.Do(x =>
-					{
-						isIn = true;
-						tLast = DateTime.Now.Ticks;
-						ui.CaptureMouse();
-					})
-					.Where(x => false) // don't select mouse down
-				, LostMouseCapture(ui)
-					.Do(x => { isIn = false; })
-					.Where(x => false) // don't select that!
-				// event to return
-				, that.MouseUp()
-					.Where(x => x.ChangedButton == MouseButton.Left && isIn)
-					.Do(x => ui.ReleaseMouseCapture())
-					.Where(x => that.Contains(x.Source as DependencyObject))
-			)
-				// no transform mouse up events
-			.Select(x =>
-			{
-				var e = (MouseButtonEventArgs)x;
-				count++;
-				var tNow = DateTime.Now.Ticks;
-				// multi click test
-				if (count > 1 && tNow > t0 + count * tInterval)
+			return that.MouseDown()
+				.Where(x => x.ChangedButton == MouseButton.Left)
+                .SelectMany(x =>
 				{
-					t0 = tLast;
-					count = 1;
-				}
-				return Tuple.Create(e, count);
-			});
+					return LeftMouseUpEvents()
+						.Take(1)
+						.Where(x => ui.IsMouseOver)
+						.Select(up => (MouseButtonEventArgs)up);
+				});
 		}
+        public static IObservable<MouseButtonEventArgs> MouseDoubleClick(this DependencyObject that)
+        {
+			var interval = TimeSpan.FromMilliseconds(System.Windows.Forms.SystemInformation.DoubleClickTime);
+            return that.MouseClick()
+				.Timestamp()
+				.Buffer(2, 1)
+				.Where(clicks => (clicks[1].Timestamp - clicks[0].Timestamp) <= interval)
+				.Select(clicks => clicks[1].Value); // emit the second click
+        }
 
-		public static IObservable<bool> MouseHovering(this DependencyObject that)
+        public static IObservable<bool> MouseHovering(this DependencyObject that)
 		{
 			return Observable.Merge(
 				that.MouseEnter().Select(x => true),
@@ -164,76 +130,38 @@ namespace MenuRibbon.WPF
 
 		public static IObservable<bool> MousePressed(this DependencyObject that)
 		{
-			UIElement ui = (UIElement)that;
-			bool isDown = false, isHover = false;
-			bool isPressed = false;
-			return Observable.Merge(
-				that.MouseMove().Do(x =>
-				{
-					var s = ui.RenderSize;
-					var p = x.GetPosition(ui);
-					isHover = p.X >= 0 && p.Y >= 0 && p.X < s.Width && p.Y < s.Height;
-				}),
-				that.MouseDown()
-					.Where(x => x.ChangedButton == MouseButton.Left)
-					.Do(x =>
-					{
-						isDown = true;
-						ui.CaptureMouse();
-					})
-				, that.LostMouseCapture().Do(x => { isDown = false; })
-				, that.MouseUp()
-					.Where(x => x.ChangedButton == MouseButton.Left && isDown)
-					.Do(x =>
-					{
-						ui.ReleaseMouseCapture();
-						isDown = false;
-					})
-			)
-			.Where(x => 
-			{
-				var prev = isPressed;
-				isPressed = isDown && isHover;
-				return isPressed != prev;
-			})
-			.Select(x => isPressed);
+            UIElement ui = (UIElement)that;
+            return that.MouseDown()
+                .Where(x => x.ChangedButton == MouseButton.Left)
+                .SelectMany(x =>
+                {
+                    return Observable.Return(true).Concat(
+						that.MouseHovering().TakeUntil(LeftMouseUpEvents())
+					).DistinctUntilChanged();
+                });
 		}
 
 		public static IObservable<MouseEventArgs> MouseEnter(this DependencyObject that)
 		{
-			return Observable.FromEvent<MouseEventArgs>(
-				on => Mouse.AddMouseEnterHandler(that, (o, e) => on(e)),
-				on => Mouse.RemoveMouseEnterHandler(that, (o, e) => on(e))
-			);
+            return Observable.FromEventPattern<MouseEventHandler, MouseEventArgs>(
+                h => Mouse.AddMouseEnterHandler(that, h),
+                h => Mouse.RemoveMouseEnterHandler(that, h)
+            ).Select(x => x.EventArgs);
 		}
 		public static IObservable<MouseEventArgs> MouseLeave(this DependencyObject that)
 		{
-			return Observable.FromEvent<MouseEventArgs>(
-				on => Mouse.AddMouseLeaveHandler(that, (o, e) => on(e)),
-				on => Mouse.RemoveMouseLeaveHandler(that, (o, e) => on(e))
-			);
-		}
-		public static IObservable<MouseEventArgs> MouseMove(this DependencyObject that)
-		{
-			return Observable.FromEvent<MouseEventArgs>(
-				on => Mouse.AddMouseMoveHandler(that, (o, e) => on(e)),
-				on => Mouse.RemoveMouseMoveHandler(that, (o, e) => on(e))
-			);
+            return Observable.FromEventPattern<MouseEventHandler, MouseEventArgs>(
+                h => Mouse.AddMouseLeaveHandler(that, h),
+                h => Mouse.RemoveMouseLeaveHandler(that, h)
+            ).Select(x => x.EventArgs);
 		}
 		public static IObservable<MouseButtonEventArgs> MouseDown(this DependencyObject that)
 		{
-			return Observable.FromEvent<MouseButtonEventArgs>(
-				on => Mouse.AddMouseDownHandler(that, (o, e) => on(e)),
-				on => Mouse.RemoveMouseDownHandler(that, (o, e) => on(e))
-			);
-		}
-		public static IObservable<MouseButtonEventArgs> MouseUp(this DependencyObject that)
-		{
-			return Observable.FromEvent<MouseButtonEventArgs>(
-				on => Mouse.AddMouseUpHandler(that, (o, e) => on(e)),
-				on => Mouse.RemoveMouseUpHandler(that, (o, e) => on(e))
-			);
-		}
+			return Observable.FromEventPattern<MouseButtonEventHandler, MouseButtonEventArgs>(
+				h => Mouse.AddMouseDownHandler(that, h),
+				h => Mouse.RemoveMouseDownHandler(that, h)
+			).Select(x => x.EventArgs);
+        }
 
 		#endregion
 	}

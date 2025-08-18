@@ -249,17 +249,17 @@ namespace MenuRibbon.WPF.Controls.Menu
 			var main = GetTemplateChild("PART_Header");
 			if (main != null)
 			{
-				events["H"] = main.MouseHovering().Subscribe(x => IsHovering = x);
-				events["L"] = main.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => OnMainUI_LeftMouseDown(x));
-				events["D"] = main.MouseClicks().Subscribe(x => OnClicks(x));
-				events["P"] = main.MousePressed().Subscribe(x => IsPressed = this.IsPressed());
+				events.Add(main.MouseHovering().Subscribe(x => IsHovering = x));
+				events.Add(main.MouseDown().Where(x => x.ChangedButton == MouseButton.Left).Subscribe(x => OnMainUI_LeftMouseDown(x)));
+				events.Add(main.MouseDoubleClick().Subscribe(x => OnClick()));
+				events.Add(main.MousePressed().Subscribe(x => IsPressed = this.IsPressed()));
 			}
 		}
 		DisposableBag events = new DisposableBag();
 
-		void OnClicks(Tuple<MouseButtonEventArgs, int> x)
+		void OnClick()
 		{
-			if (MenuRibbon != null && x.Item2 % 2 == 0)
+			if (MenuRibbon != null)
 			{
 				MenuRibbon.TogglePin();
 			}
