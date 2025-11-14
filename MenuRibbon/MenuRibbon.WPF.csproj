@@ -19,7 +19,6 @@
 
 
 	<ItemGroup>
-    <PackageReference Include="System.Linq.Async" Version="6.0.3" />
     <PackageReference Include="System.Reactive.Linq" Version="6.1.0" />
   </ItemGroup>
 
